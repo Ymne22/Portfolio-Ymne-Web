@@ -1734,10 +1734,6 @@
                     </div>
                 </div>
             </div>
-            <div class="content-layer absolute bottom-28 left-0 w-full flex flex-col items-center gap-2 text-zinc-500 animate-scroll-bounce z-20 pointer-events-none">
-                <span class="text-[9px] font-mono uppercase tracking-[0.2em]">Scroll</span>
-                <i class="fa-solid fa-chevron-down text-[10px]"></i>
-            </div>
         </section>
 
 
@@ -1936,7 +1932,7 @@
                     <script type="application/json" data-for="maid-of-sker-vr">
                     {
                         "title": "Maid of Sker VR",
-                        "status": "In-Production",
+                        "status": "Post-Production",
                         "description": "Maid of Sker VR is a survival horror game, set in a remote hotel with a gory and macabre history from Welsh folklore. Brave the nightmares of the Quiet Ones. Do not panic…don't even breathe!",
                         "heroImage": "Assets/Images/Game/MaidOfSkerVR_Hero.webp",
                         "heroImageDepth": "Assets/Images/Game/MaidOfSkerVR_Hero_Depth.webp",
@@ -1954,7 +1950,7 @@
                     <div class="masonry-overlay">
                         <h4>Maid of Sker VR</h4>
                         <div class="masonry-info">
-                            <span>In Production • Technical Artist</span>
+                            <span>Post-Production • Technical Artist</span>
                             <button class="view-btn">View</button>
                         </div>
                     </div>
@@ -1965,7 +1961,7 @@
                     <script type="application/json" data-for="gigabash-mobile">
                     {
                         "title": "GigaBash Mobile",
-                        "status": "Released",
+                        "status": "Post-Production",
                         "description": "GigaBash Mobile is the ultimate Kaiju Fighting Game for 1-4 players, where you battle as film-inspired Kaijus and giant Heroes in fully destructible cityscapes.",
                         "heroImage": "Assets/Images/Game/GigaBash_Hero.webp",
                         "heroImageDepth": "Assets/Images/Game/GigaBash_Hero_Depth.webp",
@@ -1983,7 +1979,7 @@
                     <div class="masonry-overlay">
                         <h4>GigaBash Mobile</h4>
                         <div class="masonry-info">
-                            <span>Released • Technical Artist</span>
+                            <span>Post-Production • Technical Artist</span>
                             <button class="view-btn">View</button>
                         </div>
                     </div>
@@ -2050,7 +2046,7 @@
                     <script type="application/json" data-for="port-of-jumanah">
                     {
                         "title": "Port of Jumanah",
-                        "status": "Released",
+                        "status": "In-Production",
                         "description": "Port of Jumanah is a 2.5D Action Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Players take on the role of Mansour, a young man who finds himself in a series of unfortunate events that bring him on a world-saving Journey.",
                         "heroImage": "Assets/Images/Game/PortofJumanah_Hero.webp",
                         "heroImageDepth": "Assets/Images/Game/PortofJumanah_Hero_Depth.webp",
@@ -2064,11 +2060,11 @@
                         "link": "https://portofjumanah.agate.id/"
                     }
                     </script>
-                    <img src="Assets/Images/Game/PortOfJumanah_Hero.webp" alt="Port of Jumanah" draggable="false" loading="lazy">
+                    <img src="Assets/Images/Game/PortofJumanah_Hero.webp" alt="Port of Jumanah" draggable="false" loading="lazy">
                     <div class="masonry-overlay">
                         <h4>Port of Jumanah</h4>
                         <div class="masonry-info">
-                            <span>Released • Technical Artist</span>
+                            <span>In-Production • Technical Artist</span>
                             <button class="view-btn">View</button>
                         </div>
                     </div>
@@ -2225,18 +2221,6 @@
                     </div>
                 </div>
 
-                <!-- Procedural Water -->
-                <div class="masonry-item masonry-1x1" data-blog="Blog/Shaders/ProceduralWater/index.html" data-blog-title="Procedural Water" data-blog-desc="A high-fidelity water shader implementing Gerstner waves, depth-based absorption, and screen-space refraction for realistic real-time water surfaces.">
-                    <video data-lazy-src="Assets/Video/Shader/WaterUnity.webm" loop muted playsinline preload="none"></video>
-                    <div class="masonry-overlay">
-                        <h4>Procedural Water</h4>
-                        <div class="masonry-info">
-                            <span>Unity Engine • Blog</span>
-                            <button class="view-btn">Read</button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- SSGI -->
                 <div class="masonry-item masonry-2x1" data-href="https://github.com/Ymne22/Screen-Space-Global-Illumination-SSGI-for-Unity-Built-in-RP">
                     <video data-lazy-src="Assets/Video/Shader/OLD_YmneSSGIUnity.webm" loop muted playsinline preload="none"></video>
@@ -2245,6 +2229,18 @@
                         <div class="masonry-info">
                             <span>Unity Engine</span>
                             <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Procedural Water -->
+                <div class="masonry-item masonry-1x1" data-blog="Blog/Shaders/ProceduralWater/index.html" data-blog-title="Procedural Water" data-blog-desc="A high-fidelity water shader implementing Gerstner waves, depth-based absorption, and screen-space refraction for realistic real-time water surfaces.">
+                    <video data-lazy-src="Assets/Video/Shader/WaterUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Procedural Water</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
                         </div>
                     </div>
                 </div>
@@ -2619,7 +2615,7 @@
 
         const observerOptions = {
             root: mainScroller, 
-            threshold: 0.25 
+            threshold: window.innerWidth <= 768 ? 0.05 : 0.20 
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -2635,7 +2631,9 @@
                     const cards = entry.target.querySelectorAll('.image-card');
                     cards.forEach((card, index) => {
                         setTimeout(() => {
-                            card.classList.add('in-view');
+                            if (entry.target.classList.contains('active-section')) {
+                                card.classList.add('in-view');
+                            }
                         }, index * 100); 
                     });
 
@@ -2643,7 +2641,9 @@
                     const masonryItems = entry.target.querySelectorAll('.masonry-item');
                     masonryItems.forEach((item, index) => {
                         setTimeout(() => {
-                            item.classList.add('in-view');
+                            if (entry.target.classList.contains('active-section')) {
+                                item.classList.add('in-view');
+                            }
                         }, index * 80);
                     });
 
@@ -2726,7 +2726,7 @@
                     artDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
                 }
             });
-        }, { root: mainScroller, threshold: 0.5 });
+        }, { root: mainScroller, threshold: window.innerWidth <= 768 ? 0.1 : 0.5 });
         
         sections.forEach(section => paginationObserver.observe(section));
         
@@ -3047,17 +3047,6 @@
                 
                 // "Cover" logic
                 if (screenAspect > imgAspect) {
-                     // Screen is wider than image: Fit Width, Crop Height
-                     // UV y needs to be scaled down (zoom in)
-                     // Logic: To show LESS horizontal image, we basically map 0..1 to a smaller portion
-                     // Wait, UV coordinates...
-                     // To fill width: X scale is 1.
-                     // Y scale needs to be adjusted.
-                     
-                     // If screen is 2:1 and image is 1:1.
-                     // We want image width to match screen width. 
-                     // Image height will be huge (cropped). 
-                     // UV Y stride will be smaller.
                      
                      scaleX = 1;
                      scaleY = imgAspect / screenAspect; 
@@ -3439,3 +3428,4 @@
     </script>
 </body>
 </html>
+P
