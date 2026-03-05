@@ -1,0 +1,3441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YMNE Portfolio</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#050505',
+                        card: '#0A0A0A',
+                    },
+                    height: {
+                        'screen-dvh': '100dvh',
+                    },
+                    animation: {
+                        'scroll-bounce': 'scrollBounce 2s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        scrollBounce: {
+                            '0%, 100%': { transform: 'translateY(0)', opacity: '0.5' },
+                            '50%': { transform: 'translateY(5px)', opacity: '1' },
+                        },
+                        drawLine: {
+                            '0%': { height: '0%' },
+                            '100%': { height: '100%' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html {
+            background-color: #050505;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #ffffff;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        /* --- LOADER --- */
+        #loader-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none; 
+        }
+
+        .loader-shutter {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #050505;
+            z-index: 1;
+            transition: transform 1.2s cubic-bezier(0.87, 0, 0.13, 1);
+        }
+
+        .shutter-top {
+            top: 0;
+            transform-origin: top;
+        }
+
+        .shutter-bottom {
+            bottom: 0;
+            transform-origin: bottom;
+        }
+
+        .loader-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader-bar-track {
+            width: 120px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            animation: fillBar 2s ease-in-out forwards;
+        }
+
+        @keyframes fillBar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; }
+
+        #main-scroller {
+            height: 100dvh;
+            width: 100%;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #main-scroller.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        section {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            scroll-snap-align: start;
+            scroll-snap-stop: always; 
+        }
+        
+        section.fixed-section {
+            height: 100dvh;
+            padding-bottom: 0; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+        }
+
+        section.long-section {
+            min-height: 100dvh;
+            height: auto;
+            justify-content: flex-start;
+            padding-top: 120px;
+            padding-bottom: 120px;
+        }
+
+        .parallax-wrap {
+            position: absolute;
+            inset: -15%;
+            width: 130%;
+            height: 130%;
+            z-index: 0; 
+            overflow: hidden;
+            background: #050505;
+        }
+        
+        .parallax-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s linear; 
+            opacity: 0.6; 
+        }
+
+        .content-layer { 
+            position: relative; 
+            z-index: 10; 
+            pointer-events: none;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content-layer a, .content-layer button, .content-layer .image-card, .content-layer .nav-btn, .content-layer input, .content-layer textarea, .content-layer .interactive, .content-layer .masonry-grid, .content-layer .masonry-item { pointer-events: auto; }
+        .overlay-layer { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+        .reveal-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(10px);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1s cubic-bezier(0.16, 1, 0.3, 1), 
+                        filter 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-visible {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        .stagger-1 { transition-delay: 100ms; }
+        .stagger-2 { transition-delay: 200ms; }
+        .stagger-3 { transition-delay: 300ms; }
+
+        .image-card {
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            flex-shrink: 0; 
+            scroll-snap-align: start;
+            aspect-ratio: 3/4;
+            cursor: default; 
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        border-color 0.3s ease,
+                        box-shadow 0.3s ease;
+            -webkit-user-drag: none;
+            user-select: none;
+            border: 1px solid #1a1a1a;
+            
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            mask-image: radial-gradient(white, black);
+        }
+        
+        .image-card.in-view {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .image-card:hover {
+            border-color: #666;
+        }
+        
+        .image-card img, .image-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            opacity: 0.8;
+            pointer-events: none; 
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .image-card:hover img, .image-card:hover video {
+            transform: scale(1.1);
+            opacity: 1; 
+        }
+        
+        .image-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            pointer-events: none;
+            z-index: 10;
+            transform: translateZ(0);
+            width: 100%;
+            height: 100%;
+        }
+        .image-card-overlay > * { pointer-events: auto; }
+
+        .expand-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .image-card:hover .expand-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .expand-btn:hover {
+            background: white;
+            color: black;
+        }
+
+        .h-scroll-container {
+            display: flex;
+            overflow-x: hidden; /* Hide scrollbar, rely on JS */
+            cursor: grab;
+            padding-bottom: 20px;
+            padding-left: 0; /* Remove padding to make math easier for looping */
+            padding-right: 0;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            user-select: none; /* Prevent text highlighting while dragging */
+        }
+
+        .h-scroll-container:active {
+            cursor: grabbing;
+        }
+
+        .h-scroll-wrapper {
+            display: flex;
+            gap: 1.5rem; /* Gap matched from your previous gap-6 */
+            padding-left: 1.5rem; /* Visual padding for the start */
+            padding-right: 1.5rem;
+            width: max-content;
+        }
+
+        .dock-container {
+            position: fixed;
+            bottom: 32px; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100; 
+            width: max-content;
+            opacity: 0; 
+            transform: translateX(-50%) translateY(20px);
+            transition: opacity 1s ease-out 1s, transform 1s ease-out 1s;
+        }
+        .dock-container.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dock {
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 999px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+            padding: 1rem 2rem; 
+        }
+        .dock-icon {
+            transition: all 0.3s ease-in-out;
+            color: #666;
+            position: relative;
+            font-size: 1.5rem; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+        .dock-icon:hover {
+            color: #ccc;
+            transform: translateY(-3px);
+        }
+        .dock-icon.active {
+            color: #fff;
+            transform: translateY(-3px);
+        }
+        .dock-icon::after {
+            content: '';
+            position: absolute;
+            bottom: -12px; 
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease-in-out;
+        }
+        .dock-icon.active::after {
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Game Section Pagination Dots */
+        .game-pagination {
+            position: fixed;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: none; /* Hidden - parallax sections removed */
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .game-pagination.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .game-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .game-dot::before {
+            content: attr(data-title);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .game-dot:hover::before {
+            opacity: 1;
+            transform: translateY(-50%) translateX(-5px);
+        }
+        
+        .game-dot:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.2);
+        }
+        
+        .game-dot.active {
+            background: white;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .game-pagination {
+                right: 16px;
+                gap: 10px;
+            }
+            
+            .game-dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .game-dot::before {
+                display: none;
+            }
+        }
+
+        /* Shader Section Pagination Dots */
+        .shader-pagination {
+            position: fixed;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: none; /* Hidden - parallax sections removed */
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .shader-pagination.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .shader-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .shader-dot::before {
+            content: attr(data-title);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .shader-dot:hover::before {
+            opacity: 1;
+            transform: translateY(-50%) translateX(-5px);
+        }
+        
+        .shader-dot:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.2);
+        }
+        
+        .shader-dot.active {
+            background: white;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Art Section Pagination Dots */
+        .art-pagination {
+            position: fixed;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: none; /* Hidden - parallax sections removed */
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .art-pagination.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .art-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .art-dot::before {
+            content: attr(data-title);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .art-dot:hover::before {
+            opacity: 1;
+            transform: translateY(-50%) translateX(-5px);
+        }
+        
+        .art-dot:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.2);
+        }
+        
+        .art-dot.active {
+            background: white;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .shader-pagination, .art-pagination {
+                right: 16px;
+                gap: 10px;
+            }
+            
+            .shader-dot, .art-dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .shader-dot::before, .art-dot::before {
+                display: none;
+            }
+        }
+
+        /* Masonry Grid Styles */
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-auto-rows: 180px;
+            gap: 4px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .masonry-item {
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05);
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        box-shadow 0.4s ease,
+                        border-color 0.3s ease;
+        }
+
+        .masonry-item.in-view {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .masonry-item.in-view:hover {
+            transform: scale(1.02);
+            z-index: 10;
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .masonry-item img,
+        .masonry-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            opacity: 0.9;
+        }
+
+        .masonry-item:hover img,
+        .masonry-item:hover video {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .masonry-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.25rem;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+
+
+        .masonry-overlay h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .masonry-overlay span {
+            font-size: 10px;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .masonry-overlay .masonry-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 0.5rem;
+        }
+
+        .masonry-overlay .view-btn {
+            background: white;
+            color: black;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.25rem 0.75rem;
+            border: none;
+            cursor: pointer;
+            pointer-events: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease, background 0.2s ease;
+        }
+
+        .masonry-item:hover .masonry-overlay .view-btn {
+            opacity: 1;
+        }
+
+        .masonry-overlay .view-btn:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .masonry-overlay .view-btn {
+                opacity: 1;
+            }
+        }
+
+        /* Grid size variants */
+        .masonry-1x1 { grid-column: span 1; grid-row: span 1; }
+        .masonry-2x1 { grid-column: span 2; grid-row: span 1; }
+        .masonry-1x2 { grid-column: span 1; grid-row: span 2; }
+        .masonry-2x2 { grid-column: span 2; grid-row: span 2; }
+        .masonry-3x2 { grid-column: span 3; grid-row: span 2; }
+
+        /* Featured item with special styling */
+        .masonry-featured .masonry-overlay {
+            opacity: 1;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
+        }
+
+        .masonry-featured .masonry-overlay h4 {
+            font-size: 1.5rem;
+        }
+
+        /* Star indicator for cards with preview modal */
+        .masonry-item[data-preview]::before,
+        .masonry-item[data-preview-id]::before {
+            content: '\f005';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 14px;
+            color: white;
+            z-index: 15;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            opacity: 0.9;
+        }
+
+        /* Blog indicator for cards with blog page */
+        .masonry-item[data-blog]::after {
+            content: '\f15c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 12px;
+            left: 32px;
+            font-size: 14px;
+            color: white;
+            z-index: 15;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            opacity: 0.9;
+        }
+        /* If no star icon, blog icon sits at left */
+        .masonry-item[data-blog]:not([data-preview-id]):not([data-preview])::after {
+            left: 12px;
+        }
+
+        /* Blog Modal — Fullscreen iframe window */
+        #blog-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 450;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.7);
+            padding: 2vh 2vw;
+        }
+        #blog-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .blog-window {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
+            height: 100%;
+            max-width: 1100px;
+            max-height: 96vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.9);
+            overflow: hidden;
+        }
+        #blog-modal.open .blog-window {
+            transform: translateY(0) scale(1);
+        }
+        .blog-window-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+        .blog-window-bar-title {
+            flex: 1;
+        }
+        .blog-open-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.35);
+            background: none;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        .blog-open-tab-btn:hover {
+            color: white;
+            border-color: rgba(255,255,255,0.3);
+        }
+        .blog-window-bar-title {
+            margin-left: 4px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            flex: 1;
+        }
+        .blog-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.45);
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 5px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .blog-back-btn:hover {
+            color: white;
+            border-color: rgba(255,255,255,0.3);
+        }
+        .blog-window-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: #050505;
+        }
+
+        /* Blog loading overlay */
+        .blog-window-loading {
+            position: absolute;
+            inset: 0;
+            top: 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: #0A0A0A;
+            z-index: 5;
+            transition: opacity 0.3s ease;
+        }
+        .blog-window-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .blog-loading-text {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.4);
+            animation: pulse-fade 1.5s ease-in-out infinite;
+        }
+        .blog-loading-retry {
+            display: none;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.5);
+            background: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .blog-loading-retry:hover {
+            color: white;
+            border-color: rgba(255,255,255,0.4);
+        }
+        .blog-loading-retry.visible {
+            display: inline-block;
+        }
+        @keyframes pulse-fade {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 1; }
+        }
+
+        /* Blur main content when blog is open */
+        #blog-modal.open ~ #main-scroller,
+        body:has(#blog-modal.open) #main-scroller {
+            filter: blur(8px);
+            transition: filter 0.4s ease;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .masonry-grid {
+                grid-template-columns: repeat(4, 1fr);
+                grid-auto-rows: 160px;
+            }
+            .masonry-3x2 { grid-column: span 2; }
+        }
+
+        @media (max-width: 768px) {
+            .masonry-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 140px;
+                gap: 3px;
+            }
+            .masonry-2x1, .masonry-3x2 { grid-column: span 2; }
+            .masonry-2x2 { grid-column: span 2; grid-row: span 2; }
+            .masonry-1x2 { grid-column: span 1; grid-row: span 2; }
+            
+            .masonry-overlay {
+                opacity: 1;
+                padding: 0.75rem;
+            }
+            .masonry-overlay h4 {
+                font-size: 0.85rem;
+            }
+            .masonry-featured .masonry-overlay h4 {
+                font-size: 1.1rem;
+            }
+        }
+
+        .roadmap-spine-fill.active-line {
+            animation: drawLine 1.0s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+        }
+        
+        .roadmap-box {
+            transition: border-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .roadmap-box:hover {
+            border-color: rgba(255,255,255,0.5);
+            transform: translateX(5px);
+        }
+
+        #media-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 450;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 2vh 2vw;
+        }
+        #media-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .media-window {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
+            height: 100%;
+            max-width: 1100px;
+            max-height: 96vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.9);
+            overflow: hidden;
+        }
+        #media-modal.open .media-window {
+            transform: translateY(0) scale(1);
+        }
+        .media-window-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+        .media-window-bar-title {
+            margin-left: 4px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            flex: 1;
+        }
+        .lightbox-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #050505;
+            min-height: 0;
+        }
+        .lightbox-content video,
+        .lightbox-content img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Console-Style Preview Modal */
+        #preview-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 400;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            background: #050505;
+        }
+        #preview-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .preview-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            transform: scale(1.25);
+            transition: transform 15s ease-out, opacity 0.8s ease;
+        }
+        #preview-modal.open .preview-bg {
+            transform: scale(1);
+            opacity: 0.75;
+        }
+        /* Blur backdrop when modal opens */
+        #preview-modal::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #preview-modal.open::before {
+            opacity: 1;
+        }
+        .preview-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.8) 30%, rgba(5,5,5,0.3) 60%, rgba(5,5,5,0.1) 100%),
+                        linear-gradient(to right, rgba(5,5,5,0.9) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        /* Vignette effect */
+        .preview-vignette {
+            position: absolute;
+            inset: 0;
+            box-shadow: inset 0 0 200px 80px rgba(0,0,0,0.7);
+            pointer-events: none;
+        }
+        /* Grain overlay */
+        .preview-grain {
+            position: absolute;
+            inset: 0;
+            opacity: 0.08;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        /* Loading spinner */
+        .preview-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #preview-modal.loading .preview-loader {
+            opacity: 1;
+        }
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .preview-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 3rem 4rem;
+            max-width: 900px;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s, opacity 0.5s ease 0.1s;
+        }
+        #preview-modal.open .preview-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .preview-logo {
+            max-height: 300px;
+            max-width: 400px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        .preview-title {
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        .preview-desc {
+            font-size: 1rem;
+            color: #a1a1aa;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+        }
+        .preview-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .preview-meta-item h5 {
+            font-size: 10px;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #71717a;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .preview-meta-item p {
+            font-size: 0.95rem;
+            color: white;
+            font-weight: 600;
+        }
+        .preview-meta-item .platform-icons {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            color: white;
+        }
+        .preview-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        .preview-btn-primary {
+            background: white;
+            color: black;
+            padding: 1rem 2rem;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .preview-btn-primary:hover {
+            background: #e4e4e7;
+            transform: translateY(-2px);
+        }
+        .preview-close {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: white;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 410;
+        }
+        .preview-close:hover {
+            background: white;
+            color: black;
+        }
+        .preview-status {
+            display: inline-block;
+            font-size: 10px;
+            font-family: 'Space Grotesk', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.25rem 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .preview-status.released {
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            background: rgba(74, 222, 128, 0.1);
+        }
+        .preview-status.in-production {
+            color: #facc15;
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            background: rgba(250, 204, 21, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .preview-content {
+                padding: 2rem 1.5rem;
+                padding-bottom: 3rem;
+            }
+            .preview-title {
+                font-size: 1.75rem;
+            }
+            .preview-desc {
+                font-size: 0.9rem;
+            }
+            .preview-meta {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .preview-logo {
+                max-height: 80px;
+                max-width: 70%;
+            }
+            .preview-close {
+                top: 1rem;
+                left: 1rem;
+                padding: 8px 16px;
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+        #roadmap .content-layer {
+            padding-left: 1rem !important; 
+            padding-right: 1rem !important;
+        }
+
+        #roadmap .reveal-hidden.relative {
+            padding-left: 1rem !important;
+            margin-bottom: 2.5rem !important;
+        }
+
+        #roadmap .reveal-hidden.relative > div.absolute.left-8 {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            margin-bottom: 0.5rem !important;
+            margin-left: 0.25rem !important;
+            width: auto !important;
+            text-align: left !important;
+        }
+
+        #roadmap .reveal-hidden.relative > div.absolute.left-\[-5px\] {
+            top: 0.5rem !important;
+        }
+
+        .roadmap-box {
+            width: 100% !important;
+            padding: 1rem !important;
+        }
+        
+        .roadmap-box h4 {
+            font-size: 1.1rem !important;
+        }
+        
+        .dock-container {
+            bottom: 20px !important;
+        }
+
+        .dock {
+            gap: 1.25rem !important; 
+            padding: 0.75rem 1.5rem !important;
+            border-width: 0.5px !important; 
+        }
+
+        .dock-icon {
+            font-size: 1.1rem !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        .dock-icon::after {
+            width: 3px !important;
+            height: 3px !important;
+            bottom: -6px !important;
+        }
+
+        section.fixed-section:has(.grid) .content-layer {
+            padding-bottom: 9rem !important;
+            justify-content: flex-end !important;
+        }
+
+        .fixed-section img.object-contain { 
+            height: 8rem !important;
+            width: auto !important;
+            max-width: 85% !important;
+            margin-bottom: 1.5rem !important; 
+            object-position: left bottom !important;
+        }
+
+        .fixed-section .content-layer > div > h2,
+        .fixed-section h2 { 
+            font-size: 3.5rem !important;
+            line-height: 0.9 !important;
+            margin-bottom: 1rem !important;
+            margin-left: -2px !important;
+        }
+        .fixed-section p.text-zinc-300 { font-size: 0.9rem !important; line-height: 1.4 !important; margin-bottom: 1rem !important; }
+        .w-full.h-px.bg-zinc-800 { margin-top: 0.5rem !important; margin-bottom: 1.25rem !important; }
+        .fixed-section .grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1rem 1.5rem !important; margin-bottom: 2rem !important; }
+        .fixed-section .grid div .flex.gap-4 { flex-wrap: wrap !important; gap: 0.6rem !important; align-items: center !important; }
+        
+        .fixed-section .grid div .flex.gap-4 i { font-size: 1.3rem !important; }
+        .fixed-section .grid div .flex.gap-4 svg { height: 1.6rem !important; width: auto !important; fill: white !important; }
+
+        section.fixed-section:has(.h-scroll-container) {
+            height: auto !important; 
+            min-height: 100dvh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            padding-top: 6rem !important;
+            padding-bottom: 8rem !important;
+            overflow: visible !important;
+        }
+
+        section.fixed-section:has(.h-scroll-container) .content-layer.flex.justify-between {
+            flex-direction: column !important;
+            align-items: flex-start !important; 
+            text-align: left !important;
+            margin-bottom: 2rem !important;
+            width: 100% !important;
+            
+            padding-left: 1.5rem !important; 
+            padding-right: 1.5rem !important;
+        }
+        
+        section.fixed-section:has(.h-scroll-container) .nav-btn {
+            display: none !important;
+        }
+
+        .h-scroll-container {
+            display: block !important;
+            overflow: visible !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            height: auto !important;
+            cursor: default !important;
+            touch-action: auto !important;
+        }
+
+        .h-scroll-container > div.flex {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 2rem !important;
+            padding-bottom: 0 !important;
+        }
+
+        .image-card {
+            width: 100% !important;
+            aspect-ratio: 16/9 !important; 
+            height: auto !important;
+            
+            opacity: 1 !important;
+            transform: none !important;
+            margin: 0 !important;
+        }
+
+        .expand-btn {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            background: rgba(0,0,0,0.5) !important;
+        }
+
+
+        .h-scroll-container {
+            padding-left: 12.5vw !important;
+            padding-right: 12.5vw !important;
+            scroll-padding-inline: 12.5vw !important;
+        }
+
+        .h-scroll-container > div.flex {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        #hero.fixed-section .content-layer {
+            padding-bottom: 0 !important;
+            justify-content: center !important;
+        }
+
+        #tech-start h2 {
+            font-size: 11vw !important;
+            line-height: 1.1 !important;
+            
+            white-space: normal !important;
+            overflow-wrap: anywhere !important; 
+        }
+
+        #contact {
+            height: 100dvh !important; 
+            min-height: auto !important; 
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            padding-top: 7rem !important;
+            padding-bottom: 12rem !important; 
+        }
+
+        #contact h2 {
+            margin-bottom: 1rem !important;
+        }
+        
+        #contact .interactive {
+             margin-bottom: 2.5rem !important;
+        }
+
+        #contact .flex.gap-8 {
+            margin-bottom: 2.5rem !important;
+            flex-direction: column !important;
+            gap: 1rem !important;
+            width: 100% !important;
+        }
+
+        #contact .flex.gap-8 a {
+            display: block !important;
+            width: 100% !important;
+            max-width: 280px !important;
+            padding: 1.25rem 0 !important;
+            border: 1px solid #27272a !important;
+            background: rgba(255,255,255,0.03) !important;
+            text-align: center !important;
+            color: #fff !important;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.2em !important;
+        }
+
+        #contact .border-t {
+            padding-top: 1.5rem !important;
+            margin-top: 0 !important; 
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+    }
+    </style>
+    
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <!-- LOADER -->
+    <div id="loader-screen">
+        <div class="loader-shutter shutter-top" id="shutter-top"></div>
+        <div class="loader-shutter shutter-bottom" id="shutter-bottom"></div>
+        
+        <div class="loader-content" id="loader-content">
+            <div class="loader-bar-track">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LINK MODAL -->
+    <div id="link-modal" class="fixed inset-0 z-[500] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm bg-black/60">
+        <div class="bg-[#0A0A0A] border border-zinc-800 p-8 max-w-sm w-full transform scale-95 transition-transform duration-300 shadow-2xl relative">
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-white"></div>
+            <h3 class="text-xl font-bold text-white mb-2 font-mono uppercase tracking-widest">External Link</h3>
+            <p class="text-zinc-400 text-sm mb-8 leading-relaxed">You are leaving the portfolio. Proceed to destination?</p>
+            <div class="flex gap-4 justify-end">
+                <button onclick="closeModal()" class="text-xs font-bold font-mono text-zinc-500 hover:text-white uppercase tracking-widest px-4 py-2 transition-colors">Cancel</button>
+                <button id="proceed-btn" class="bg-white text-black px-6 py-3 text-xs font-bold font-mono uppercase tracking-widest hover:bg-zinc-200 transition-colors">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEDIA MODAL (Window-style lightbox) -->
+    <div id="media-modal">
+        <div class="media-window">
+            <div class="media-window-bar">
+                <button class="blog-back-btn" onclick="closeMediaModal()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <span class="media-window-bar-title" id="media-bar-title"></span>
+                <button class="blog-open-tab-btn" id="media-open-tab-btn" onclick="openMediaInNewTab()" title="Open in New Tab"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Tab</button>
+            </div>
+            <div id="lightbox-container" class="lightbox-content">
+                <!-- Media injected here via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PREVIEW MODAL (Console-Style) -->
+    <div id="preview-modal">
+        <button class="preview-close" onclick="closePreviewModal()">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+        
+        
+        <!-- Background Media -->
+        <img id="preview-bg-img" class="preview-bg" src="" alt="" style="display: none;">
+        <video id="preview-bg-video" class="preview-bg" src="" autoplay loop muted playsinline style="display: none;"></video>
+        <canvas id="preview-webgl" class="preview-bg" style="display: none;"></canvas>
+        <div class="preview-gradient"></div>
+        
+        <!-- Content Panel -->
+        <div class="preview-content">
+            <span id="preview-status" class="preview-status released">Released</span>
+            <img id="preview-logo" class="preview-logo" src="" alt="" style="display: none;">
+            <h2 id="preview-title" class="preview-title"></h2>
+            <p id="preview-desc" class="preview-desc"></p>
+            
+            <div class="preview-meta" id="preview-meta">
+                <!-- Metadata items injected via JS -->
+            </div>
+            
+            <div class="preview-actions">
+                <button id="preview-link-btn" class="preview-btn-primary" onclick="">
+                    View Page
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOG MODAL (Iframe Window) -->
+    <div id="blog-modal">
+        <div class="blog-window">
+            <div class="blog-window-bar">
+                <button class="blog-back-btn" onclick="closeBlogModal()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <span class="blog-window-bar-title" id="blog-bar-title"></span>
+                <button class="blog-open-tab-btn" id="blog-open-tab-btn" onclick="openBlogInNewTab()" title="Open in New Tab"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Tab</button>
+            </div>
+            <iframe class="blog-window-iframe" id="blog-iframe" src="about:blank"></iframe>
+            <div class="blog-window-loading" id="blog-loading">
+                <span class="blog-loading-text" id="blog-loading-text">Loading...</span>
+                <button class="blog-loading-retry" id="blog-loading-retry" onclick="retryBlogLoad()">Retry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCK -->
+    <div class="dock-container" id="dock-nav">
+        <div class="dock flex items-center gap-8"> 
+            <button onclick="scrollToSection('hero')" class="dock-icon active" data-target="hero"><i class="fa-solid fa-home"></i></button>
+            <button onclick="scrollToSection('profile')" class="dock-icon" data-target="profile"><i class="fa-regular fa-user"></i></button>
+            <button onclick="scrollToSection('roadmap')" class="dock-icon" data-target="roadmap"><i class="fa-solid fa-list-check"></i></button>
+            <button onclick="scrollToSection('games-start')" class="dock-icon" data-target="games-start"><i class="fa-solid fa-gamepad"></i></button>
+            <button onclick="scrollToSection('tech-start')" class="dock-icon" data-target="tech-start"><i class="fa-solid fa-microchip"></i></button>
+            <button onclick="scrollToSection('art-showcase')" class="dock-icon" data-target="art-showcase"><i class="fa-regular fa-image"></i></button>
+            <button onclick="scrollToSection('contact')" class="dock-icon" data-target="contact"><i class="fa-regular fa-envelope"></i></button>
+        </div>
+    </div>
+
+    <!-- GAME SECTION PAGINATION DOTS -->
+    <div class="game-pagination" id="game-pagination">
+        <button class="game-dot" data-game-index="0" data-title="Tormented Souls II"></button>
+        <button class="game-dot" data-game-index="1" data-title="GigaBash Mobile"></button>
+        <button class="game-dot" data-game-index="2" data-title="Maid of Sker VR"></button>
+        <button class="game-dot" data-game-index="3" data-title="Loan Shark"></button>
+        <button class="game-dot" data-game-index="4" data-title="Holo-Attack"></button>
+        <button class="game-dot" data-game-index="5" data-title="Archive"></button>
+    </div>
+
+    <!-- SHADER SECTION PAGINATION DOTS -->
+    <div class="shader-pagination" id="shader-pagination">
+        <button class="shader-dot" data-shader-index="0" data-title="YmneLightingFX"></button>
+        <button class="shader-dot" data-shader-index="1" data-title="Procedural Sky"></button>
+        <button class="shader-dot" data-shader-index="2" data-title="Lab Experiments"></button>
+    </div>
+
+    <!-- ART SECTION PAGINATION DOTS -->
+    <div class="art-pagination" id="art-pagination">
+        <button class="art-dot" data-art-index="0" data-title="Visual Arts"></button>
+    </div>
+
+    <main id="main-scroller">
+
+        <!-- HERO -->
+        <section id="hero" class="fixed-section flex items-center justify-center" data-index="0">
+            <div class="absolute inset-0 z-0" id="hero-bg">
+                <video id="hero-video" class="block w-full h-full object-cover" autoplay muted loop playsinline style="filter: saturate(1.2); transform: scale(1.15); opacity: 0.5;">
+                    <source src="Assets/Video/Hero/Hero_BG.mp4" type="video/mp4">
+                </video>
+                <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size: 128px 128px;"></div>
+            </div>
+
+            <div class="overlay-layer bg-[radial-gradient(circle_at_center,rgba(5,5,5,0)_0%,#050505_100%)]"></div>
+            
+            <div class="content-layer max-w-7xl w-full px-6 flex flex-col items-center justify-center text-center h-full mx-auto relative z-10 pointer-events-none">
+                <p class="reveal-hidden font-mono text-[10px] uppercase tracking-[0.4em] mb-4 text-zinc-400 font-bold">Welcome to my Portfolio Page!</p>
+                
+                <h1 class="reveal-hidden stagger-1 text-[16vw] md:text-[10rem] font-black tracking-tighter text-white uppercase leading-none">YMNE</h1>
+                
+                <div class="reveal-hidden stagger-2 h-0.5 w-24 bg-white mx-auto my-8 shadow-lg"></div>
+                <p class="reveal-hidden stagger-3 font-mono text-[10px] md:text-sm uppercase tracking-widest text-zinc-300 font-bold">Technical Artist, Graphics Programmer, & Artist</p>
+            </div>
+            
+            <div class="content-layer absolute bottom-28 left-0 w-full flex flex-col items-center gap-2 text-zinc-500 animate-scroll-bounce z-20 pointer-events-none">
+                <span class="text-[9px] font-mono uppercase tracking-[0.2em]">Scroll</span>
+                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profile" class="fixed-section flex items-center justify-center bg-dark relative overflow-hidden" data-index="1">
+            <div class="absolute inset-0 pointer-events-none z-0">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/30 via-[#050505] to-[#050505] opacity-60"></div>
+                <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none" style="background-image: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size: 128px 128px;"></div>
+            </div>
+
+            <div class="content-layer profile-inner relative z-10 w-full h-full flex flex-col items-center justify-center py-12 lg:py-0">
+                
+                <div class="max-w-[90%] xl:max-w-7xl w-full mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-24">
+                    
+                    <div class="avatar-wrap reveal-hidden flex-shrink-0 relative group lg:order-1">
+                        <div class="absolute inset-[-20px] lg:inset-[-40px] rounded-full border border-zinc-800/50 scale-90 group-hover:scale-100 transition-transform duration-700 ease-out"></div>
+                        <div class="absolute inset-[-10px] lg:inset-[-20px] rounded-full border border-zinc-700/50 scale-95 group-hover:scale-105 transition-transform duration-500 ease-out"></div>
+                        
+                        <div class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 max-w-[40vh] max-h-[40vh] rounded-full overflow-hidden border border-zinc-600 relative z-10 shadow-2xl">
+                            <img src="https://avatars.githubusercontent.com/u/126408995?v=4"
+                                class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 ease-out"
+                                alt="Profile" draggable="false">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl lg:max-w-3xl lg:order-2">
+                        <div class="reveal-hidden stagger-1 font-mono text-zinc-500 text-xs md:text-sm uppercase tracking-[0.3em] mb-4 lg:mb-6 font-bold">
+                            ハンバーガー🍔
+                        </div>
+
+                        <h2 class="hero-name reveal-hidden stagger-2 text-6xl md:text-8xl lg:text-[6rem] font-black mb-6 lg:mb-5 leading-[0.8] uppercase text-white tracking-tighter mix-blend-screen">
+                            Ymne
+                        </h2>
+
+                        <div class="hero-bio reveal-hidden stagger-3 space-y-6 lg:space-y-8">
+                            <p class="text-zinc-400 text-base md:text-xl lg:text-2xl leading-relaxed font-sans">
+                                I’m a technical artist & graphics programmer, experienced in Unity Engine, Godot Engine, and Unreal Engine. Specialize in lighting, performance optimization, and also crafting custom shaders. 
+                            </p>
+
+                            <p class="text-zinc-400 text-base md:text-xl lg:text-2xl leading-relaxed font-sans">
+                                I also create 3D/2D art & animation!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-layer absolute bottom-28 left-0 w-full flex flex-col items-center gap-2 text-zinc-500 animate-scroll-bounce z-20 pointer-events-none">
+                <span class="text-[9px] font-mono uppercase tracking-[0.2em]">Scroll</span>
+                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </div>
+        </section>
+
+
+        <!-- ROADMAP -->
+        <section id="roadmap" class="long-section bg-black relative" data-index="2">
+            <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+            
+            <div class="content-layer max-w-5xl w-full mx-auto px-6 flex flex-col items-center">
+                <div class="mb-16 text-center">
+                    <h2 class="reveal-hidden text-5xl md:text-6xl font-black uppercase text-white mb-2 tracking-tight">Development <span class="text-zinc-600">Roadmap</span></h2>
+                    <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em]">Past, Present & Future</p>
+                </div>
+
+                <div class="relative w-full max-w-4xl mx-auto pl-4 md:pl-0">
+                    <div class="absolute left-[0px] md:left-[100px] top-0 bottom-0 w-[2px] bg-zinc-900 h-full z-0">
+                        <div class="roadmap-spine-fill absolute top-0 left-0 w-full bg-gradient-to-b from-white via-zinc-500 to-zinc-900 h-0"></div>
+                    </div>
+
+                    <div class="reveal-hidden stagger-1 relative mb-16 pl-8 md:pl-[140px] z-10">
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-black border border-zinc-500 z-20"></div>
+                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-zinc-500 font-bold">2024</span>
+                        </div>
+                        <div class="flex flex-col gap-4 max-w-2xl">
+                        
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Kanna and Lia the Witch</h4>
+                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm">A self-development project produced for a game jam and released exclusively for the event.</p>
+                            </div>
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Holo-Attack (Demo)</h4>
+                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm">A self-development fan game created based on Hololive Myth. A fast-paced combo-stacking game where you demolish landmarks and buildings.</p>
+                            </div>
+                            
+                        </div>  
+                    </div>
+
+                    <div class="reveal-hidden stagger-2 relative mb-16 pl-8 md:pl-[140px] z-10">
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-black border border-zinc-500 z-20"></div>
+                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-zinc-500 font-bold">2025</span>
+                        </div>
+                        <div class="flex flex-col gap-4 max-w-2xl">
+                        
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Tormented Souls II</h4>
+                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm">A single-player horror experience built on classic horror gameplay mechanics. Work as Technical Artist. Developed by Dual Effect & Co-Developed by Agate International, Published by PQube.</p>
+                            </div>
+                            
+                        </div>  
+                    </div>
+
+                    <div class="reveal-hidden stagger-2 relative mb-16 pl-8 md:pl-[140px] z-10">
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-black border border-zinc-500 z-20"></div>
+                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-zinc-500 font-bold">2026</span>
+                        </div>
+                        <div class="flex flex-col gap-4 max-w-2xl">
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Loan Shark Console Edition</h4>
+                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm mb-3">A short story-driven game, Work as Technical Artist and Graphics Programmer. Developed by Studio Ortica & Ported by Agate International, Published by Dark Product.</p>
+                            </div>
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">GigaBash Mobile</h4>
+                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Post-Production</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm mb-3">An ultimate kaiju fighting game, now available on mobile. Work as Technical Artist, Developed and published by Passion Republic Games, Co-Developed by Agate International.</p>
+                            </div>
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Maid of Sker VR</h4>
+                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Post-Production</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm mb-3">A VR game title, Work as Technical Artist. Developed and Published by Wales Interactive, Co-developed by Agate International</p>
+                            </div>
+                            
+                        </div>  
+                    </div>
+
+                    <div class="reveal-hidden stagger-3 relative mb-16 pl-8 md:pl-[140px] z-10">
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white shadow-[0_0_15px_white] z-20 animate-pulse"></div>
+                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-white font-bold bg-zinc-800 px-2 py-1">Current</span>
+                        </div>
+                        <div class="flex flex-col gap-4 max-w-2xl">
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Port of Jumanah</h4>
+                                    <span class="text-[10px] font-mono uppercase text-yellow-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">In-Production</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm mb-3">Action 2.5D Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Developed by Agate International and Red Dunes Games, Published by Red Dunes Games</p>
+                            </div>
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Project : 🐰</h4>
+                                    <span class="text-[10px] font-mono uppercase text-yellow-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">In-Production</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm mb-3">To be revealed soon...</p>
+                            </div>
+  
+                        </div>
+                    </div>
+
+                    <div class="reveal-hidden stagger-3 relative pl-8 md:pl-[140px] z-10">
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-zinc-800 border border-zinc-700 z-20"></div>
+                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-zinc-600 font-bold">Future</span>
+                        </div>
+                         <div class="flex flex-col gap-4 max-w-2xl">
+
+                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xl font-bold text-white">Project : 🌙</h4>
+                                    <span class="text-[10px] font-mono uppercase text-red-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">Pre-Production</span>
+                                </div>
+                                <p class="text-zinc-500 text-sm mb-3">To be revealed soon...</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MASONRY GRID: GAME ARCHIVE -->
+        <section id="games-start" class="long-section flex flex-col justify-center bg-[#050505]" data-index="3">
+            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-8 text-center">
+                <h3 class="reveal-hidden text-3xl md:text-4xl font-bold text-zinc-200 uppercase tracking-tight mb-2">Game Archive</h3>
+                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">Projects & Experiments</p>
+            </div>
+            
+            <div class="content-layer masonry-grid">
+
+                <!-- Tormented Souls II -->
+                <div class="masonry-item masonry-2x2 masonry-featured" data-preview-id="tormented-souls-2">
+                    <script type="application/json" data-for="tormented-souls-2">
+                    {
+                        "title": "Tormented Souls II",
+                        "status": "Released",
+                        "description": "Explore the decaying remains of the secluded Villa Hess, use improvised weapons to confront terrifying creatures, and bend the fabric of reality to save your sister from a twisted cult.",
+                        "heroImage": "Assets/Images/Game/TormentedSouls2_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/TormentedSouls2_Hero_Depth.webp",
+                        "logoImage": "Assets/Images/Game/TormentedSouls2_Logo.webp",
+                        "platforms": ["playstation", "xbox", "steam", "gog", "epic"],
+                        "engine": "Unreal Engine 5.5",
+                        "publisher": "PQube",
+                        "developer": "Dual Effect",
+                        "role": "Technical Artist",
+                        "releaseDate": "23 Oct 2025",
+                        "link": "https://pqube.co.uk/games/tormented-souls-2/"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/TormentedSouls2_Hero.webp" alt="Tormented Souls II" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Tormented Souls II</h4>
+                        <div class="masonry-info">
+                            <span>Released • Technical Artist</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanna & Lia -->
+                <div class="masonry-item masonry-2x1" data-href="https://ymne22.itch.io/kanna-and-lia-the-witch">
+                    <video data-lazy-src="Assets/Video/Game/Kanna_Hero.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Kanna and Lia the Witch</h4>
+                        <div class="masonry-info">
+                            <span>Game Jam • Self Development</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maid of Sker VR -->
+                <div class="masonry-item masonry-2x2" data-preview-id="maid-of-sker-vr">
+                    <script type="application/json" data-for="maid-of-sker-vr">
+                    {
+                        "title": "Maid of Sker VR",
+                        "status": "In-Production",
+                        "description": "Maid of Sker VR is a survival horror game, set in a remote hotel with a gory and macabre history from Welsh folklore. Brave the nightmares of the Quiet Ones. Do not panic…don't even breathe!",
+                        "heroImage": "Assets/Images/Game/MaidOfSkerVR_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/MaidOfSkerVR_Hero_Depth.webp",
+                        "logoImage": "Assets/Images/Game/MaidOfSkerVR_Logo.webp",
+                        "platforms": ["playstation", "meta", "steam"],
+                        "engine": "Unity Engine 6.0 HDRP & URP",
+                        "publisher": "Wales Interactive",
+                        "developer": "Wales Interactive",
+                        "role": "Technical Artist",
+                        "releaseDate": "TBA",
+                        "link": "https://www.walesinteractive.com/maidofskervr"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/MaidOfSkerVR_Hero.webp" alt="Maid of Sker VR" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Maid of Sker VR</h4>
+                        <div class="masonry-info">
+                            <span>In Production • Technical Artist</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GigaBash Mobile -->
+                <div class="masonry-item masonry-2x2" data-preview-id="gigabash-mobile">
+                    <script type="application/json" data-for="gigabash-mobile">
+                    {
+                        "title": "GigaBash Mobile",
+                        "status": "Released",
+                        "description": "GigaBash Mobile is the ultimate Kaiju Fighting Game for 1-4 players, where you battle as film-inspired Kaijus and giant Heroes in fully destructible cityscapes.",
+                        "heroImage": "Assets/Images/Game/GigaBash_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/GigaBash_Hero_Depth.webp",
+                        "logoImage": "Assets/Images/Game/GigaBash_Logo.webp",
+                        "platforms": ["android", "ios"],
+                        "engine": "Unreal Engine 5.5",
+                        "publisher": "Passion Republic Games",
+                        "developer": "Passion Republic Games",
+                        "role": "Technical Artist",
+                        "releaseDate": "TBA",
+                        "link": "https://www.passionrepublicgames.com/gigabash"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/GigaBash_Hero.webp" alt="GigaBash Mobile" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>GigaBash Mobile</h4>
+                        <div class="masonry-info">
+                            <span>Released • Technical Artist</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holo-Attack -->
+                <div class="masonry-item masonry-2x2" data-preview-id="holo-attack">
+                    <script type="application/json" data-for="holo-attack">
+                    {
+                        "title": "HOLO-ATTACK (DEMO)",
+                        "status": "Released",
+                        "description": "HoloAttack! is a fast-paced combo-stacking game where you demolish landmarks and buildings using unique skills on each holo-myth characters. Note: Canceled since Gura has already graduated and Ame is now just affiliated.",
+                        "heroImage": "Assets/Images/Game/HoloAttack_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/HoloAttack_Hero_Depth.webp",
+                        "platforms": ["itch"],
+                        "engine": "Unity Engine 6.0 HDRP",
+                        "publisher": "Ymne Game",
+                        "developer": "Ymne Game",
+                        "role": "Main Developer",
+                        "link": "https://ymne22.itch.io/project-hl-atk"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/HoloAttack_Hero.webp" alt="Holo-Attack (Demo)" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Holo-Attack (Demo)</h4>
+                        <div class="masonry-info">
+                            <span>Released • Self Development</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loan Shark -->
+                <div class="masonry-item masonry-2x2" data-preview-id="loan-shark">
+                    <script type="application/json" data-for="loan-shark">
+                    {
+                        "title": "Loan Shark Console Edition",
+                        "status": "Released",
+                        "description": "You are an angler haunted by huge debts. In the midst of yet another night working at sea, you catch something different, a fish which talks, and promises to make you rich... but at what cost?",
+                        "heroImage": "Assets/Images/Game/LoanShark_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/LoanShark_Hero_Depth.webp",
+                        "logoImage": "Assets/Images/Game/LoanShark_Logo.webp",
+                        "platforms": ["playstation", "xbox", "switch"],
+                        "engine": "Godot Engine 4.4",
+                        "publisher": "Dark Product",
+                        "developer": "Studio Ortica",
+                        "role": "Technical Artist & Graphics Programmer",
+                        "releaseDate": "13 Jan 2026",
+                        "link": "https://www.darkproduct.com/post/loan-shark"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/LoanShark_Hero.webp" alt="Loan Shark" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Loan Shark Console Edition</h4>
+                        <div class="masonry-info">
+                            <span>Released • Technical Artist and Graphics Programmer</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Port of Jumanah -->
+                <div class="masonry-item masonry-2x1 masonry-featured" data-preview-id="port-of-jumanah">
+                    <script type="application/json" data-for="port-of-jumanah">
+                    {
+                        "title": "Port of Jumanah",
+                        "status": "Released",
+                        "description": "Port of Jumanah is a 2.5D Action Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Players take on the role of Mansour, a young man who finds himself in a series of unfortunate events that bring him on a world-saving Journey.",
+                        "heroImage": "Assets/Images/Game/PortOfJumanah_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/PortOfJumanah_Hero_Depth.webp",
+                        "logoImage": "Assets/Images/Game/PortOfJumanah_Logo.webp",
+                        "platforms": ["playstation", "xbox", "steam", "switch"],
+                        "engine": "Unreal Engine 5.5",
+                        "publisher": "Red Dunes Games",
+                        "developer": "Agate International & Red Dunes Games",
+                        "role": "Technical Artist",
+                        "releaseDate": "TBA",
+                        "link": "https://portofjumanah.agate.id/"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/PortOfJumanah_Hero.webp" alt="Port of Jumanah" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Port of Jumanah</h4>
+                        <div class="masonry-info">
+                            <span>Released • Technical Artist</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MASONRY GRID: LAB EXPERIMENTS -->
+        <section id="tech-start" class="long-section flex flex-col justify-center bg-[#0a0a0a]" data-index="4">
+            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-8 text-center">
+                <h3 class="reveal-hidden text-3xl md:text-4xl font-bold text-zinc-200 uppercase tracking-tight mb-2">Lab Experiments</h3>
+                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">All shaders and scripts are under MIT license</p>
+            </div>
+            
+            <div class="content-layer masonry-grid">
+
+                <!-- YmneLightingFX -->
+                <div class="masonry-item masonry-3x2" data-blog="Blog/Shaders/YmneLightingFX/index.html" data-blog-title="YmneLightingFX" data-blog-desc="A comprehensive collection of advanced rendering effects for Unity BRP : including SSGI, SSAO, SSR, Volumetric Atmosphere, and Voxel-based Volumetric Lighting.">
+                    <video data-lazy-src="Assets/Video/Shader/YmneLightingFXUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>YmneLightingFX</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Procedural Texture Generator -->
+                <div class="masonry-item masonry-3x2" data-blog="Blog/Shaders/ProceduralTextureGen/index.html" data-blog-title="Procedural Texture Generator" data-blog-desc="A deep-dive into building a fully procedural texture generator for Unity's Built-in Render Pipeline : covering brick, stone, dirt, sand, and wood materials with parallax depth and randomized details.">
+                    <video data-lazy-src="Assets/Video/Shader/ProceduralTextureGenerator.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Procedural Texture Gen</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volumetric Cloud Shadow -->
+                <div class="masonry-item masonry-2x2" data-blog="Blog/Shaders/VolumetricCloudShader/index.html" data-blog-title="Volumetric Cloud Shadow" data-blog-desc="A performance-focused volumetric cloud shadow effect using depth reconstruction and object-space projection in Unity BRP.">
+                    <video data-lazy-src="Assets/Video/Shader/VolumetricCloudShadow.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Volumetric Cloud Shadow</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impostor Mesh Generator -->
+                <div class="masonry-item masonry-3x2" data-blog="Blog/Shaders/ImpostorGenerator/index.html" data-blog-title="Impostor Mesh Generator" data-blog-desc="A high-performance system for generating octahedral-mapped impostors with bilinear frame blending to replace complex 3D geometry with optimized quads.">
+                    <video data-lazy-src="Assets/Video/Shader/ImpostorMeshGenerator.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Impostor Mesh Generator</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Procedural Grass Shell Gen -->
+                <div class="masonry-item masonry-1x2" data-blog="Blog/Shaders/ProceduralGrassShellGen/index.html" data-blog-title="Procedural Grass Shell Gen" data-blog-desc="A high-performance procedural grass system utilizing shell texturing and parallax refinement to create dense, interactive foliage fields in real-time.">
+                    <video data-lazy-src="Assets/Video/Shader/ProceduralGrassShell.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Grass Shell Gen</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cel Shading -->
+                <div class="masonry-item masonry-1x2" 
+                    data-blog="Blog/Shaders/CelShading/index.html" 
+                    data-blog-title="Cel Shading" 
+                    data-blog-desc="A custom cel-shading shader for anime-style characters, featuring hard-edge shadows, SSS simulation, rim lighting, and double-sided rendering.">
+                    <video data-lazy-src="Assets/Video/Shader/ToonUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Cel Shading</h4>
+                        <div class="masonry-info">
+                            <span>Unity & Godot • Blog</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Procedural Skybox -->
+                <div class="masonry-item masonry-2x2" data-blog="Blog/Shaders/ProceduralSkybox/index.html" data-blog-title="Procedural Skybox & Clouds" data-blog-desc="A high-performance procedural sky system for Godot 4.x featuring dynamic atmospheric scattering, day/night cycles, and volumetric raymarched clouds.">
+                    <video data-lazy-src="Assets/Video/Shader/ProceduralCloudSkyGodot.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Procedural Skybox</h4>
+                        <div class="masonry-info">
+                            <span>Godot Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Software Raytracing -->
+                <div class="masonry-item masonry-3x2" 
+                    data-blog="Blog/Shaders/SoftwareRaytracing/index.html" 
+                    data-blog-title="Software Raytracing" 
+                    data-blog-desc="A real-time software-based ray tracer built from scratch in Unity using compute shaders, featuring BVH acceleration, recursive reflections, and temporal denoising.">
+                    <video data-lazy-src="Assets/Video/Shader/SRTUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Software Raytracing</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Fake Light-->
+                <div class="masonry-item masonry-2x2" data-blog="Blog/Shaders/FakeLight/index.html" data-blog-title="Fake Light System" data-blog-desc="A highly optimized localized lighting solution featuring Screen-Space raymarched shadows and volumetric halos without using Unity's native light system.">
+                    <video data-lazy-src="Assets/Video/Shader/FakeLight.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Fake Light</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stylized Water Shader -->
+                <div class="masonry-item masonry-2x2" data-blog="Blog/Shaders/StylizedWaterShader/index.html" data-blog-title="Stylized Water Shader" data-blog-desc="A cinematic ocean water shader for Unity BRP : featuring SSR, procedural wave generation, toon-shading, and customizable anime-style sparkles.">
+                    <video data-lazy-src="Assets/Video/Shader/StylizedWater.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Stylized Water Shader</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Texture Bulk Editor -->
+                <div class="masonry-item masonry-2x2" data-blog="Blog/Shaders/TextureBulkEditor/index.html" data-blog-title="Texture Bulk Editor" data-blog-desc="A custom Unity Editor tool for batch-modifying texture import settings, featuring platform overrides, selective setting toggles, and performance-optimized thumbnails.">
+                    <img src="Assets/Images/Shader/TextureBulkEditor.webp" alt="Texture Bulk Editor" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Texture Bulk Editor</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Procedural Water -->
+                <div class="masonry-item masonry-1x1" data-blog="Blog/Shaders/ProceduralWater/index.html" data-blog-title="Procedural Water" data-blog-desc="A high-fidelity water shader implementing Gerstner waves, depth-based absorption, and screen-space refraction for realistic real-time water surfaces.">
+                    <video data-lazy-src="Assets/Video/Shader/WaterUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Procedural Water</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine • Blog</span>
+                            <button class="view-btn">Read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SSGI -->
+                <div class="masonry-item masonry-2x1" data-href="https://github.com/Ymne22/Screen-Space-Global-Illumination-SSGI-for-Unity-Built-in-RP">
+                    <video data-lazy-src="Assets/Video/Shader/OLD_YmneSSGIUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>SSGI [Deprecated]</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom PBR -->
+                <div class="masonry-item masonry-1x1" data-href="https://github.com/Ymne22/Custom-GGX-PBR-Shader-for-Unity-BRP">
+                    <video data-lazy-src="Assets/Video/Shader/OLD_YmnePBRUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Custom PBR [Deprecated]</h4>
+                        <div class="masonry-info">
+                            <span>Unity Engine</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PSX Shader Pack (Unity & Godot) -->
+                <div class="masonry-item masonry-2x1" 
+                    data-blog="Blog/Shaders/PSX/index.html" 
+                    data-blog-title="PSX Shader Pack" 
+                    data-blog-desc="A collection of PlayStation 1-inspired shaders for Unity and Godot, featuring vertex jittering, color quantization, and dithered transparency.">
+                    <video data-lazy-src="Assets/Video/Shader/PSXUnity.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>PSX Shader Pack</h4>
+                        <div class="masonry-info">
+                            <span>Unity & Godot • Blog</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </section>
+
+        <!-- MASONRY GRID: VISUAL ARTS -->
+        <section id="art-showcase" class="long-section flex flex-col justify-center bg-black" data-index="5">
+            <div class="parallax-wrap">
+                <div class="absolute inset-0 opacity-20" style="background-image: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size: 64px 64px;"></div>
+            </div>
+            
+            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-8 text-center">
+                <h3 class="reveal-hidden text-3xl md:text-4xl font-bold text-white uppercase tracking-tight mb-2">Visual Arts</h3>
+                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">Art & Animation Highlights</p>
+            </div>
+            
+            <div class="content-layer masonry-grid">
+                <!-- Background Animation - Featured 2x2 -->
+                <div class="masonry-item masonry-2x2 masonry-featured" data-media="video" data-src="Assets/Video/Art/BG1.webm" data-title="Background Animation Practice">
+                    <video data-lazy-src="Assets/Video/Art/BG1.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Background Animation (2024)</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holo-Attack Opening - 2x1 -->
+                <div class="masonry-item masonry-2x1" data-media="video" data-src="Assets/Video/Art/Myth.webm" data-title="Holo-Attack Opening Layout">
+                    <video data-lazy-src="Assets/Video/Art/Myth.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Holo-Attack Opening (2024)</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summer Animation - 2x1 -->
+                <div class="masonry-item masonry-2x1" data-media="video" data-src="Assets/Video/Art/Summer23.webm" data-title="Summer Animation">
+                    <video data-lazy-src="Assets/Video/Art/Summer23.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Summer Animation (2023)</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gura Loop - 2x2 -->
+                <div class="masonry-item masonry-2x2" data-media="video" data-src="Assets/Video/Art/Gura2.webm" data-title="Gura Loop Animation">
+                    <video data-lazy-src="Assets/Video/Art/Gura2.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Gura Loop</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSM Practice - 1x2 -->
+                <div class="masonry-item masonry-2x2" data-media="video" data-src="Assets/Video/Art/Chenso.webm" data-title="Animation Practice - CSM">
+                    <video data-lazy-src="Assets/Video/Art/Chenso.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Animation Practice - CSM (2025)</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gura Animation - 2x2 -->
+                <div class="masonry-item masonry-2x2" data-media="video" data-src="Assets/Video/Art/Gura1.webm" data-title="Gura Animation">
+                    <video data-lazy-src="Assets/Video/Art/Gura1.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Gura Animation</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holo-Attack Loading - 2x1 -->
+                <div class="masonry-item masonry-2x1" data-media="video" data-src="Assets/Video/Art/HL-ATK-Load.webm" data-title="Holo-Attack Loading Animation">
+                    <video data-lazy-src="Assets/Video/Art/HL-ATK-Load.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Holo-Attack Loading</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanna & Lia Cut 4 - 1x2 -->
+                <div class="masonry-item masonry-1x2" data-media="video" data-src="Assets/Video/Art/KnL.webm" data-title="Kanna & Lia Animation Cut 4">
+                    <video data-lazy-src="Assets/Video/Art/KnL.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Kanna & Lia Cut 4</h4>
+                        <div class="masonry-info">
+                            <span>Animation</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KnL Sprite - 1x2 -->
+                <div class="masonry-item masonry-1x2" data-media="image" data-src="Assets/Images/Art/KnL-Sprite.jpg" data-title="Kanna & Lia Character Sprite">
+                    <img src="Assets/Images/Art/KnL-Sprite.jpg" alt="Kanna & Lia Character Sprite" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Kanna & Lia Sprites</h4>
+                        <div class="masonry-info">
+                            <span>Character Art</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HL-ATK Sprite - 2x1 -->
+                <div class="masonry-item masonry-2x1" data-media="image" data-src="Assets/Images/Art/HL-ATK-Sprite.jpg" data-title="Holo-Attack Character Sprite">
+                    <img src="Assets/Images/Art/HL-ATK-Sprite.jpg" alt="Holo-Attack Character Sprite" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Holo-Attack Sprites</h4>
+                        <div class="masonry-info">
+                            <span>Character Art</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HL-ATK Concept 2 - 1x1 -->
+                <div class="masonry-item masonry-1x1" data-media="image" data-src="Assets/Images/Art/HL-ATK-Concept2.jpg" data-title="Holo-Attack Concept">
+                    <img src="Assets/Images/Art/HL-ATK-Concept2.jpg" alt="Holo-Attack Concept" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>HL-ATK Concept 2</h4>
+                        <div class="masonry-info">
+                            <span>Concept</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HL-ATK Concept 1 - 1x1 -->
+                <div class="masonry-item masonry-1x1" data-media="image" data-src="Assets/Images/Art/HL-ATK-Concept1.jpg" data-title="Holo-Attack Concept">
+                    <img src="Assets/Images/Art/HL-ATK-Concept1.jpg" alt="Holo-Attack Concept" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>HL-ATK Concept 1</h4>
+                        <div class="masonry-info">
+                            <span>Concept</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="min-h-[100dvh] flex flex-col justify-center bg-black relative overflow-hidden pb-32" data-index="6">
+             <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-black to-black"></div>
+
+             <div class="content-layer w-full max-w-4xl mx-auto px-6 text-center relative z-10">
+                <p class="reveal-hidden font-mono text-zinc-500 text-xs uppercase tracking-[0.3em] mb-12 font-bold">Contact</p>
+                
+                <div class="reveal-hidden stagger-1">
+                    <h2 class="text-4xl md:text-6xl font-sans font-medium text-white mb-8 tracking-tight leading-tight">
+                        Let's connect<br>
+                        <span class="text-zinc-500">I'm always open for discussing.</span>
+                    </h2>
+                </div>
+
+                <div class="reveal-hidden stagger-2 mb-16">
+                    <a href="mailto:hello@YMNE.design" class="interactive inline-block relative group cursor-pointer">
+                        <span class="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 text-xs"><i class="fa-regular fa-copy"></i></span>
+                    </a>
+                </div>
+
+                <div class="reveal-hidden stagger-3 flex flex-wrap gap-8 md:gap-12 justify-center items-center mb-16">
+                    <a href="https://github.com/Ymne22" class="text-xs font-bold font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors uppercase">GitHub</a>
+                    <div class="w-1 h-1 bg-zinc-800 rounded-full"></div>
+                    <a href="https://x.com/ymne22" class="text-xs font-bold font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors uppercase">Twitter/X</a>
+                    <div class="w-1 h-1 bg-zinc-800 rounded-full"></div>
+                    <a href="https://ymne22.itch.io/" class="text-xs font-bold font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors uppercase">Itch.io</a>
+                </div>
+
+                <div class="reveal-hidden stagger-3 border-t border-zinc-800/50 pt-8">
+                    <p class="text-white text-[10px] font-mono tracking-widest mb-2">
+                        © 2026 Ymne. All rights reserved.
+                    </p>
+                    
+                    <p class="text-zinc-400 text-[9px] font-mono tracking-widest">
+                        All trademarks, logos and brand names are the property of their respective owners.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let currentLink = '';
+        const modal = document.getElementById('link-modal');
+        const proceedBtn = document.getElementById('proceed-btn');
+
+        // External Link Modal
+        function confirmLink(url) {
+            // Stop propagation so card click doesn't trigger lightbox if button is clicked
+            event.stopPropagation();
+            currentLink = url;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.remove('scale-95');
+            modal.firstElementChild.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.add('scale-95');
+            modal.firstElementChild.classList.remove('scale-100');
+            currentLink = '';
+        }
+
+        proceedBtn.addEventListener('click', () => {
+            if(currentLink) window.open(currentLink, '_blank');
+            closeModal();
+        });
+
+        // --- MEDIA LIGHTBOX LOGIC ---
+        const mediaModal = document.getElementById('media-modal');
+        const lightboxContainer = document.getElementById('lightbox-container');
+        const mediaBarTitle = document.getElementById('media-bar-title');
+        let mediaCurrentSrc = '';
+
+        function openMediaModal(type, src, title) {
+            // Check if user was dragging (scrolling)
+            if(window.isDragging) return;
+
+            lightboxContainer.innerHTML = ''; // Clear previous
+            mediaBarTitle.textContent = title || '';
+            mediaCurrentSrc = src || '';
+
+            if (type === 'video') {
+                const video = document.createElement('video');
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.controls = true;
+                video.preload = 'auto';
+                // Use <source> element for better browser compatibility
+                const source = document.createElement('source');
+                source.src = src;
+                source.type = src.endsWith('.webm') ? 'video/webm' : 'video/mp4';
+                video.appendChild(source);
+                lightboxContainer.appendChild(video);
+                // Wait for video data before playing
+                video.load();
+                video.addEventListener('canplay', function handler() {
+                    video.play().catch(() => {});
+                    video.removeEventListener('canplay', handler);
+                });
+            } else if (type === 'image') {
+                const img = document.createElement('img');
+                img.src = src;
+                lightboxContainer.appendChild(img);
+            }
+
+            mediaModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMediaModal() {
+            mediaModal.classList.remove('open');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                lightboxContainer.innerHTML = '';
+            }, 400);
+        }
+
+        function openMediaInNewTab() {
+            if (mediaCurrentSrc) {
+                window.open(mediaCurrentSrc, '_blank');
+            }
+        }
+
+        // Close media modal on backdrop click
+        mediaModal.addEventListener('click', function(e) {
+            if (e.target === mediaModal) {
+                closeMediaModal();
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeMediaModal();
+                closeModal();
+            }
+        });
+
+        // --- SCROLL & LOAD LOGIC (EXISTING) ---
+
+        window.addEventListener('load', () => {
+            const loaderContent = document.getElementById('loader-content');
+            const shutterTop = document.getElementById('shutter-top');
+            const shutterBottom = document.getElementById('shutter-bottom');
+            const mainScroller = document.getElementById('main-scroller');
+            const dockNav = document.getElementById('dock-nav');
+
+            setTimeout(() => {
+                loaderContent.style.opacity = '0';
+                
+                setTimeout(() => {
+                    shutterTop.style.transform = 'translateY(-100%)';
+                    shutterBottom.style.transform = 'translateY(100%)';
+                    
+                    mainScroller.classList.add('loaded');
+                    dockNav.classList.add('visible');
+
+                }, 400); 
+            }, 2000);
+        });
+
+        const mainScroller = document.getElementById('main-scroller');
+        const sections = document.querySelectorAll('section');
+        const dockIcons = document.querySelectorAll('.dock-icon');
+        
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const observerOptions = {
+            root: mainScroller, 
+            threshold: 0.25 
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active-section');
+                    const reveals = entry.target.querySelectorAll('.reveal-hidden');
+                    reveals.forEach(el => el.classList.add('reveal-visible'));
+                    
+                    const spine = entry.target.querySelector('.roadmap-spine-fill');
+                    if(spine) spine.classList.add('active-line');
+
+                    const cards = entry.target.querySelectorAll('.image-card');
+                    cards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('in-view');
+                        }, index * 100); 
+                    });
+
+                    // Animate masonry items with staggered delay
+                    const masonryItems = entry.target.querySelectorAll('.masonry-item');
+                    masonryItems.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('in-view');
+                        }, index * 80);
+                    });
+
+                    const id = entry.target.getAttribute('id');
+                    let navId = id;
+                    // Handle duplicates for dock highlighting
+                    if(!id || id === 'art-showcase-2') { 
+                         const idx = entry.target.getAttribute('data-index');
+                         if(idx == 2) navId = 'roadmap';
+                         if(idx == 3) navId = 'games-start';
+                         if(idx == 4) navId = 'tech-start';
+                         if(idx == 5) navId = 'art-showcase'; // Map both art sections to same dock icon
+                    }
+
+                    dockIcons.forEach(icon => {
+                        icon.classList.remove('active');
+                         if(icon.getAttribute('data-target') === navId) {
+                            icon.classList.add('active');
+                        }
+                    });
+                } else {
+                    // Reset animations when out of view
+                    entry.target.classList.remove('active-section');
+                    
+                    const reveals = entry.target.querySelectorAll('.reveal-hidden');
+                    reveals.forEach(el => el.classList.remove('reveal-visible'));
+                    
+                    const spine = entry.target.querySelector('.roadmap-spine-fill');
+                    if(spine) spine.classList.remove('active-line');
+
+                    const cards = entry.target.querySelectorAll('.image-card');
+                    cards.forEach(card => card.classList.remove('in-view'));
+
+                    const masonryItems = entry.target.querySelectorAll('.masonry-item');
+                    masonryItems.forEach(item => item.classList.remove('in-view'));
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        // Game Section Pagination Logic
+        const gamePagination = document.getElementById('game-pagination');
+        const gameDots = document.querySelectorAll('.game-dot');
+        const gameSections = document.querySelectorAll('section[data-index="3"]');
+        
+        // Shader Section Pagination (declare early for cross-reference)
+        const shaderPagination = document.getElementById('shader-pagination');
+        const shaderDots = document.querySelectorAll('.shader-dot');
+        const shaderSections = document.querySelectorAll('section[data-index="4"]');
+        
+        // Art Section Pagination (declare early for cross-reference)
+        const artPagination = document.getElementById('art-pagination');
+        const artDots = document.querySelectorAll('.art-dot');
+        const artSections = document.querySelectorAll('section[data-index="5"]');
+        
+        // --- CONSOLIDATED PAGINATION OBSERVER ---
+        // Replaces 5 separate observers with a single one
+        const paginationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const dataIndex = entry.target.getAttribute('data-index');
+                
+                // Hide all paginations first
+                gamePagination.classList.remove('visible');
+                shaderPagination.classList.remove('visible');
+                artPagination.classList.remove('visible');
+                
+                if (dataIndex === '3') {
+                    gamePagination.classList.add('visible');
+                    const index = Array.from(gameSections).indexOf(entry.target);
+                    gameDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                } else if (dataIndex === '4') {
+                    shaderPagination.classList.add('visible');
+                    const index = Array.from(shaderSections).indexOf(entry.target);
+                    shaderDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                } else if (dataIndex === '5') {
+                    artPagination.classList.add('visible');
+                    const index = Array.from(artSections).indexOf(entry.target);
+                    artDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                }
+            });
+        }, { root: mainScroller, threshold: 0.5 });
+        
+        sections.forEach(section => paginationObserver.observe(section));
+        
+        // Click to navigate pagination dots
+        gameDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                if (gameSections[index]) gameSections[index].scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        shaderDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                if (shaderSections[index]) shaderSections[index].scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        artDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                if (artSections[index]) artSections[index].scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // --- LAZY VIDEO LOADING ---
+        // Only load and play videos when they're visible, pause+unload when off-screen
+        const lazyVideos = document.querySelectorAll('video[data-lazy-src]');
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting) {
+                    // Load and play
+                    if (!video.src || video.src === '') {
+                        video.src = video.getAttribute('data-lazy-src');
+                        video.load();
+                    }
+                    video.play().catch(() => {}); // Ignore autoplay policy errors
+                } else {
+                    // Pause and free memory
+                    video.pause();
+                    // Only unload if far enough away (rootMargin handles this)
+                }
+            });
+        }, { root: null, rootMargin: '200px 0px', threshold: 0.1 });
+        
+        lazyVideos.forEach(video => videoObserver.observe(video));
+
+        // --- THROTTLED MOUSEMOVE PARALLAX ---
+        if (window.matchMedia("(min-width: 1024px)").matches) {
+            const mouseTargets = document.querySelectorAll('.mouse-target');
+            let rafPending = false;
+            let lastMouseX = 0, lastMouseY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                lastMouseX = (e.clientX / window.innerWidth) - 0.5;
+                lastMouseY = (e.clientY / window.innerHeight) - 0.5;
+                if (!rafPending) {
+                    rafPending = true;
+                    requestAnimationFrame(() => {
+                        mouseTargets.forEach(target => {
+                            const speed = parseFloat(target.getAttribute('data-speed')) || 0.01;
+                            const x = lastMouseX * window.innerWidth * speed;
+                            const y = lastMouseY * window.innerHeight * speed;
+                            target.style.transform = `translate(${x}px, ${y}px)`;
+                        });
+                        rafPending = false;
+                    });
+                }
+            });
+        }
+
+        const dragScrolls = document.querySelectorAll('.drag-scroll');
+        window.isDragging = false;
+
+        dragScrolls.forEach(ele => {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            ele.addEventListener('mousedown', (e) => {
+                isDown = true;
+                window.isDragging = false; 
+                ele.classList.add('active');
+                startX = e.pageX - ele.offsetLeft;
+                scrollLeft = ele.scrollLeft;
+            });
+
+            const stopDrag = () => {
+                isDown = false;
+                ele.classList.remove('active');
+                setTimeout(() => { window.isDragging = false; }, 50);
+            };
+
+            ele.addEventListener('mouseleave', stopDrag);
+            ele.addEventListener('mouseup', stopDrag);
+
+            ele.addEventListener('mousemove', (e) => {
+                if(!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - ele.offsetLeft;
+                const walk = (x - startX) * 2; 
+                
+                if(Math.abs(x - startX) > 5) {
+                    window.isDragging = true;
+                }
+                
+                ele.scrollLeft = scrollLeft - walk;
+            });
+        });
+
+        function scrollHorizontal(id, amount) {
+            const container = document.getElementById(id);
+            if(container) {
+                container.scrollBy({ left: amount, behavior: 'smooth' });
+            }
+        }
+
+        // --- PREVIEW MODAL FUNCTIONS ---
+        const previewModal = document.getElementById('preview-modal');
+        const previewBgImg = document.getElementById('preview-bg-img');
+        const previewBgVideo = document.getElementById('preview-bg-video');
+        const previewLogo = document.getElementById('preview-logo');
+        const previewTitle = document.getElementById('preview-title');
+        const previewDesc = document.getElementById('preview-desc');
+        const previewStatus = document.getElementById('preview-status');
+        const previewMeta = document.getElementById('preview-meta');
+        const previewLinkBtn = document.getElementById('preview-link-btn');
+
+        // --- WEBGL DEPTH CONTROLLER ---
+        const WebGLDepth = {
+            canvas: null,
+            gl: null,
+            program: null,
+            textures: {},
+            animationFrame: null,
+            mouse: { x: 0, y: 0 },
+            targetMouse: { x: 0, y: 0 },
+            isRunning: false,
+            imageAspect: 1,
+            
+            init() {
+                this.canvas = document.getElementById('preview-webgl');
+                this.gl = this.canvas.getContext('webgl');
+                
+                if (!this.gl) {
+                    console.error('WebGL not supported');
+                    return;
+                }
+
+                this.setupShaders();
+                this.setupBuffers();
+                
+                // Add mouse move listener
+                document.addEventListener('mousemove', (e) => {
+                    if (!this.isRunning) return;
+                    // Normalized coords -0.5 to 0.5
+                    this.targetMouse.x = (e.clientX / window.innerWidth) - 0.5;
+                    this.targetMouse.y = (e.clientY / window.innerHeight) - 0.5;
+                });
+            },
+
+            setupShaders() {
+                const vsSource = `
+                    attribute vec2 position;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = position * 0.5 + 0.5;
+                        vUv.y = 1.0 - vUv.y; 
+                        gl_Position = vec4(position, 0.0, 1.0);
+                    }
+                `;
+
+                const fsSource = `
+                    precision mediump float;
+                    uniform sampler2D u_image;
+                    uniform sampler2D u_depth;
+                    uniform vec2 u_mouse;
+                    uniform vec2 u_uvScale;
+                    uniform vec2 u_uvOffset;
+                    varying vec2 vUv;
+
+                    void main() {
+                        // 1. Apply Parallax Background Shift (whole image moves with mouse)
+                        float parallaxStrength = 0.05; // How much the whole image shifts
+                        vec2 parallaxOffset = u_mouse * parallaxStrength;
+                        
+                        // 2. Correct UVs with parallax shift
+                        vec2 correctedUv = (vUv * u_uvScale) + u_uvOffset + parallaxOffset;
+
+                        // 3. Get Base Depth
+                        float d = texture2D(u_depth, correctedUv).r; 
+                        
+                        // 4. Depth displacement (per-pixel 3D effect)
+                        float depthStrength = 0.075; 
+                        vec2 disp = u_mouse * d * depthStrength; 
+                        
+                        vec2 finalUv = correctedUv - disp;
+                        
+                        // 5. Artifact Reduction (Ghosting Fix)
+                        float dNew = texture2D(u_depth, finalUv).r;
+                        float ghostMask = smoothstep(0.05, 0.2, dNew - d); 
+                        finalUv = mix(finalUv, correctedUv, ghostMask); 
+
+                        gl_FragColor = texture2D(u_image, finalUv);
+                    }
+                `;
+
+                const vs = this.createShader(this.gl.VERTEX_SHADER, vsSource);
+                const fs = this.createShader(this.gl.FRAGMENT_SHADER, fsSource);
+                
+                if (!vs || !fs) return;
+
+                this.program = this.gl.createProgram();
+                this.gl.attachShader(this.program, vs);
+                this.gl.attachShader(this.program, fs);
+                this.gl.linkProgram(this.program);
+            },
+
+            createShader(type, source) {
+                const shader = this.gl.createShader(type);
+                this.gl.shaderSource(shader, source);
+                this.gl.compileShader(shader);
+                if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+                    console.error('Shader compile error:', this.gl.getShaderInfoLog(shader));
+                    this.gl.deleteShader(shader);
+                    return null;
+                }
+                return shader;
+            },
+
+            setupBuffers() {
+                const positions = new Float32Array([
+                    -1.0, -1.0, 1.0, -1.0, -1.0,  1.0,
+                    -1.0,  1.0, 1.0, -1.0, 1.0,  1.0,
+                ]);
+                this.buffer = this.gl.createBuffer();
+                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+                this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
+                
+                // Cache attribute and uniform locations (avoids string lookups per frame)
+                this.positionLocation = this.gl.getAttribLocation(this.program, "position");
+                this.u_image = this.gl.getUniformLocation(this.program, "u_image");
+                this.u_depth = this.gl.getUniformLocation(this.program, "u_depth");
+                this.u_mouse = this.gl.getUniformLocation(this.program, "u_mouse");
+            },
+
+            loadTexture(url, unit) {
+                const texture = this.gl.createTexture();
+                this.gl.activeTexture(this.gl.TEXTURE0 + unit);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+                this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,255]));
+
+                const image = new Image();
+                image.crossOrigin = "Anonymous";
+                image.onload = () => {
+                    if (unit === 0) {
+                        this.imageAspect = image.width / image.height;
+                        this.updateAspect(); // Recalculate aspect ratio match
+                    }
+                    try {
+                        this.gl.activeTexture(this.gl.TEXTURE0 + unit);
+                        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+                        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
+                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+                    } catch (e) {
+                        console.warn("WebGL Texture Error (CORS).");
+                        this.stop();
+                        const img = document.getElementById('preview-bg-img');
+                        if (img) { img.style.display = 'block'; img.src = url; }
+                    }
+                };
+                image.src = url;
+                return texture;
+            },
+
+            start(imageUrl, depthUrl) {
+                if (!this.canvas) this.init();
+                if (!this.gl || !this.program) return;
+
+                this.isRunning = true;
+                this.canvas.style.display = 'block';
+                
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+
+                this.textures.image = this.loadTexture(imageUrl, 0);
+                this.textures.depth = this.loadTexture(depthUrl, 1);
+
+                this.renderLoop();
+            },
+
+            stop() {
+                this.isRunning = false;
+                if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+                if (this.canvas) this.canvas.style.display = 'none';
+            },
+
+            resize() {
+                if (!this.canvas) return;
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+                this.updateAspect();
+            },
+
+            updateAspect() {
+                if(!this.gl || !this.program) return;
+                
+                const screenAspect = this.canvas.width / this.canvas.height;
+                const imgAspect = this.imageAspect;
+                
+                // Overscan factor to prevent edge artifacts during displacement
+                const zoom = 0.90; // Shows 90% of the image (10% overscan buffer)
+                
+                let scaleX = 1;
+                let scaleY = 1;
+                
+                // "Cover" logic
+                if (screenAspect > imgAspect) {
+                     // Screen is wider than image: Fit Width, Crop Height
+                     // UV y needs to be scaled down (zoom in)
+                     // Logic: To show LESS horizontal image, we basically map 0..1 to a smaller portion
+                     // Wait, UV coordinates...
+                     // To fill width: X scale is 1.
+                     // Y scale needs to be adjusted.
+                     
+                     // If screen is 2:1 and image is 1:1.
+                     // We want image width to match screen width. 
+                     // Image height will be huge (cropped). 
+                     // UV Y stride will be smaller.
+                     
+                     scaleX = 1;
+                     scaleY = imgAspect / screenAspect; 
+                } else {
+                     // Screen is taller than image: Fit Height, Crop Width
+                     scaleX = screenAspect / imgAspect;
+                     scaleY = 1;
+                }
+                
+                // Apply Zoom (Overscan)
+                // To zoom IN, we make the UV scale smaller (sampling a smaller region of texture)
+                scaleX *= zoom;
+                scaleY *= zoom;
+                
+                // Center the UVs
+                // Offset = (1 - scale) / 2
+                const offsetX = (1 - scaleX) / 2;
+                const offsetY = (1 - scaleY) / 2;
+                
+                this.gl.useProgram(this.program);
+                this.gl.uniform2f(this.gl.getUniformLocation(this.program, "u_uvScale"), scaleX, scaleY);
+                this.gl.uniform2f(this.gl.getUniformLocation(this.program, "u_uvOffset"), offsetX, offsetY);
+            },
+
+            renderLoop() {
+                if (!this.isRunning) return;
+
+                this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
+                this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
+
+                this.gl.useProgram(this.program);
+                
+                // Reuse the buffer created in setupBuffers — no allocation per frame
+                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+                this.gl.enableVertexAttribArray(this.positionLocation);
+                this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
+
+                this.gl.uniform1i(this.u_image, 0);
+                this.gl.uniform1i(this.u_depth, 1);
+                this.gl.uniform2f(this.u_mouse, this.mouse.x, this.mouse.y);
+
+                this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+                this.animationFrame = requestAnimationFrame(() => this.renderLoop());
+            }
+        };
+
+        // Platform icon mapping
+        const platformIcons = {
+            'playstation': '<i class="fa-brands fa-playstation" title="PlayStation"></i>',
+            'xbox': '<i class="fa-brands fa-xbox" title="Xbox"></i>',
+            'steam': '<i class="fa-brands fa-steam" title="Steam"></i>',
+            'itch': '<i class="fa-brands fa-itch-io" title="Itch.io"></i>',
+            'android': '<i class="fa-brands fa-android" title="Android"></i>',
+            'ios': '<i class="fa-brands fa-apple" title="iOS"></i>',
+            'meta': '<i class="fa-brands fa-meta" title="Meta Quest"></i>',
+            'gog': '<svg class="w-5 h-5 fill-current" role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>GOG</title><path d="M9.531 20.317h-3.719c-0.291 0-0.531 0.24-0.531 0.537v2.667c0 0.281 0.24 0.531 0.531 0.531h3.735v1.76h-4.667c-0.744 0-1.359-0.615-1.359-1.375v-4.516c0-0.749 0.615-1.359 1.375-1.359h4.635zM10.88 15.385c0 0.776-0.625 1.401-1.401 1.401h-5.973v-1.803h5.041c0.297 0 0.532-0.235 0.532-0.531v-5.932c0-0.297-0.235-0.537-0.532-0.537h-2.692c-0.303-0.005-0.548 0.235-0.548 0.537v2.692c0 0.308 0.24 0.532 0.532 0.532h2.161v1.801h-3.093c-0.771 0-1.401-0.615-1.401-1.385v-4.588c0-0.761 0.631-1.385 1.401-1.385h4.563c0.771 0 1.395 0.624 1.395 1.385v7.812zM28.479 25.812h-1.76v-5.495h-1.24c-0.291 0-0.531 0.24-0.531 0.537v4.957h-1.776v-5.495h-1.24c-0.292 0-0.531 0.24-0.531 0.537v4.957h-1.776v-5.891c0-0.749 0.615-1.359 1.375-1.359h7.479zM28.495 15.385c0 0.776-0.631 1.401-1.401 1.401h-5.973v-1.803h5.041c0.292 0 0.532-0.235 0.532-0.531v-5.932c0-0.297-0.24-0.537-0.532-0.537h-2.708c-0.297 0-0.532 0.24-0.532 0.537v2.692c0 0.308 0.24 0.532 0.532 0.532h2.161v1.801h-3.084c-0.771 0-1.395-0.615-1.395-1.385v-4.588c0-0.761 0.624-1.385 1.395-1.385h4.573c0.776 0 1.401 0.624 1.401 1.385v7.812zM18.292 6.188h-4.584c-0.776 0-1.391 0.624-1.391 1.385v4.588c0 0.771 0.615 1.385 1.391 1.385h4.584c0.76 0 1.391-0.615 1.391-1.385v-4.588c0-0.761-0.631-1.385-1.391-1.385zM17.896 8.521v2.692c0 0.297-0.24 0.532-0.536 0.532h-2.709c-0.291 0-0.531-0.235-0.531-0.532v-2.683c0-0.291 0.229-0.531 0.531-0.531h2.683c0.307 0 0.531 0.24 0.531 0.531zM16.839 18.563h-4.521c-0.755 0-1.369 0.609-1.369 1.359v4.516c0 0.76 0.615 1.375 1.369 1.375h4.521c0.76 0 1.375-0.615 1.375-1.375v-4.516c0-0.749-0.615-1.359-1.375-1.359zM16.437 20.855v2.667c0 0.291-0.235 0.531-0.531 0.531v-0.011h-2.652c-0.296 0-0.536-0.239-0.536-0.536v-2.651c0-0.292 0.24-0.537 0.536-0.537h2.667c0.292 0 0.532 0.245 0.532 0.537zM31.317 1.469c-0.432-0.448-1.031-0.693-1.651-0.699h-27.333c-1.292-0.005-2.339 1.041-2.333 2.333v25.792c-0.005 1.292 1.041 2.339 2.333 2.333h27.333c1.292 0.005 2.339-1.041 2.333-2.333v-25.792c0-0.635-0.265-1.224-0.683-1.651zM31.317 28.896c0.011 0.911-0.733 1.656-1.651 1.651h-27.333c-0.921 0.016-1.672-0.735-1.667-1.651v-25.792c-0.005-0.911 0.74-1.656 1.651-1.651h27.333c0.917 0 1.656 0.74 1.656 1.651v25.792z"/></svg>',
+            'epic': '<svg class="w-5 h-5 fill-current" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>EPIC</title><path d="M3.537 0C2.165 0 1.66.506 1.66 1.879V18.44a4.262 4.262 0 0 0 .02.433c.031.3.037.59.316.92.027.033.311.245.311.245.153.075.258.13.43.2l8.335 3.491c.433.199.614.276.928.27h.002c.314.006.495-.071.928-.27l8.335-3.492c.172-.07.277-.124.43-.2 0 0 .284-.211.311-.243.28-.33.285-.621.316-.92a4.261 4.261 0 0 0 .02-.434V1.879c0-1.373-.506-1.88-1.878-1.88zm13.366 3.11h.68c1.138 0 1.688.553 1.688 1.696v1.88h-1.374v-1.8c0-.369-.17-.54-.523-.54h-.235c-.367 0-.537.17-.537.539v5.81c0 .369.17.54.537.54h.262c.353 0 .523-.171.523-.54V8.619h1.373v2.143c0 1.144-.562 1.71-1.7 1.71h-.694c-1.138 0-1.7-.566-1.7-1.71V4.82c0-1.144.562-1.709 1.7-1.709zm-12.186.08h3.114v1.274H6.117v2.603h1.648v1.275H6.117v2.774h1.74v1.275h-3.14zm3.816 0h2.198c1.138 0 1.7.564 1.7 1.708v2.445c0 1.144-.562 1.71-1.7 1.71h-.799v3.338h-1.4zm4.53 0h1.4v9.201h-1.4zm-3.13 1.235v3.392h.575c.354 0 .523-.171.523-.54V4.965c0-.368-.17-.54-.523-.54zm-3.74 10.147a1.708 1.708 0 0 1 .591.108 1.745 1.745 0 0 1 .49.299l-.452.546a1.247 1.247 0 0 0-.308-.195.91.91 0 0 0-.363-.068.658.658 0 0 0-.28.06.703.703 0 0 0-.224.163.783.783 0 0 0-.151.243.799.799 0 0 0-.056.299v.008a.852.852 0 0 0 .056.31.7.7 0 0 0 .157.245.736.736 0 0 0 .238.16.774.774 0 0 0 .303.058.79.79 0 0 0 .445-.116v-.339h-.548v-.565H7.37v1.255a2.019 2.019 0 0 1-.524.307 1.789 1.789 0 0 1-.683.123 1.642 1.642 0 0 1-.602-.107 1.46 1.46 0 0 1-.478-.3 1.371 1.371 0 0 1-.318-.455 1.438 1.438 0 0 1-.115-.58v-.008a1.426 1.426 0 0 1 .113-.57 1.449 1.449 0 0 1 .312-.46 1.418 1.418 0 0 1 .474-.309 1.58 1.58 0 0 1 .598-.111 1.708 1.708 0 0 1 .045 0zm11.963.008a2.006 2.006 0 0 1 .612.094 1.61 1.61 0 0 1 .507.277l-.386.546a1.562 1.562 0 0 0-.39-.205 1.178 1.178 0 0 0-.388-.07.347.347 0 0 0-.208.052.154.154 0 0 0-.07.127v.008a.158.158 0 0 0 .022.084.198.198 0 0 0 .076.066.831.831 0 0 0 .147.06c.062.02.14.04.236.061a3.389 3.389 0 0 1 .43.122 1.292 1.292 0 0 1 .328.17.678.678 0 0 1 .207.24.739.739 0 0 1 .071.337v.008a.865.865 0 0 1-.081.382.82.82 0 0 1-.229.285 1.032 1.032 0 0 1-.353.18 1.606 1.606 0 0 1-.46.061 2.16 2.16 0 0 1-.71-.116 1.718 1.718 0 0 1-.593-.346l.43-.514c.277.223.578.335.9.335a.457.457 0 0 0 .236-.05.157.157 0 0 0 .082-.142v-.008a.15.15 0 0 0-.02-.077.204.204 0 0 0-.073-.066.753.753 0 0 0-.143-.062 2.45 2.45 0 0 0-.233-.062 5.036 5.036 0 0 1-.413-.113 1.26 1.26 0 0 1-.331-.16.72.72 0 0 1-.222-.243.73.73 0 0 1-.082-.36v-.008a.863.863 0 0 1 .074-.359.794.794 0 0 1 .214-.283 1.007 1.007 0 0 1 .34-.185 1.423 1.423 0 0 1 .448-.066 2.006 2.006 0 0 1 .025 0zm-9.358.025h.742l1.183 2.81h-.825l-.203-.499H8.623l-.198.498h-.81zm2.197.02h.814l.663 1.08.663-1.08h.814v2.79h-.766v-1.602l-.711 1.091h-.016l-.707-1.083v1.593h-.754zm3.469 0h2.235v.658h-1.473v.422h1.334v.61h-1.334v.442h1.493v.658h-2.255zm-5.3.897-.315.793h.624zm-1.145 5.19h8.014l-4.09 1.348z"/></svg>',
+            'switch': '<svg class="w-5 h-5 fill-current" role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>Nintendo Switch</title><path d="M18.901 32h4.901c4.5 0 8.198-3.698 8.198-8.198v-15.604c0-4.5-3.698-8.198-8.198-8.198h-5c-0.099 0-0.203 0.099-0.203 0.198v31.604c0 0.099 0.099 0.198 0.302 0.198zM25 14.401c1.802 0 3.198 1.5 3.198 3.198 0 1.802-1.5 3.198-3.198 3.198-1.802 0-3.198-1.396-3.198-3.198-0.104-1.797 1.396-3.198 3.198-3.198zM15.198 0h-7c-4.5 0-8.198 3.698-8.198 8.198v15.604c0 4.5 3.698 8.198 8.198 8.198h7c0.099 0 0.203-0.099 0.203-0.198v-31.604c0-0.099-0.099-0.198-0.203-0.198zM12.901 29.401h-4.703c-3.099 0-5.599-2.5-5.599-5.599v-15.604c0-3.099 2.5-5.599 5.599-5.599h4.604zM5 9.599c0 1.698 1.302 3 3 3s3-1.302 3-3c0-1.698-1.302-3-3-3s-3 1.302-3 3z"/></svg>'
+        };
+
+        function openPreviewModal(data) {
+            const heroSrc = data.heroImage || '';
+            const isVideo = heroSrc.endsWith('.webm') || heroSrc.endsWith('.mp4') || heroSrc.endsWith('.ogg');
+            
+            // Show video or image based on file type
+            const previewCanvas = document.getElementById('preview-webgl');
+            
+            // Show video or image based on file type
+            if (data.heroImageDepth) {
+                // Use WebGL depth effect
+                previewBgVideo.style.display = 'none';
+                previewBgImg.style.display = 'none';
+                // Start WebGL
+                WebGLDepth.start(data.heroImage, data.heroImageDepth);
+            } else if (isVideo) {
+                previewBgVideo.src = heroSrc;
+                previewBgVideo.style.display = 'block';
+                previewBgImg.style.display = 'none';
+                WebGLDepth.stop(); // Ensure WebGL is off
+                previewBgVideo.load();
+                previewBgVideo.play().catch(() => {});
+            } else {
+                previewBgImg.src = heroSrc;
+                previewBgImg.style.display = 'block';
+                previewBgVideo.style.display = 'none';
+                WebGLDepth.stop(); // Ensure WebGL is off
+            }
+            
+            // Set logo if available - hide title if logo exists
+            if (data.logoImage) {
+                previewLogo.src = data.logoImage;
+                previewLogo.style.display = 'block';
+                previewTitle.style.display = 'none';
+            } else {
+                previewLogo.style.display = 'none';
+                previewTitle.style.display = 'block';
+            }
+            
+            // Set title and description
+            previewTitle.textContent = data.title || '';
+            previewDesc.textContent = data.description || '';
+            
+            // Set status
+            previewStatus.textContent = data.status || 'Released';
+            previewStatus.className = 'preview-status ' + (data.status === 'In-Production' ? 'in-production' : 'released');
+            
+            // Build metadata grid
+            let metaHTML = '';
+            
+            // Platforms
+            if (data.platforms && data.platforms.length > 0) {
+                const icons = data.platforms.map(p => platformIcons[p] || '').join('');
+                metaHTML += `<div class="preview-meta-item"><h5>Platforms</h5><div class="platform-icons">${icons}</div></div>`;
+            }
+            
+            // Engine
+            if (data.engine) {
+                metaHTML += `<div class="preview-meta-item"><h5>Engine</h5><p>${data.engine}</p></div>`;
+            }
+            
+            // Publisher
+            if (data.publisher) {
+                metaHTML += `<div class="preview-meta-item"><h5>Publisher</h5><p>${data.publisher}</p></div>`;
+            }
+            
+            // Developer
+            if (data.developer) {
+                metaHTML += `<div class="preview-meta-item"><h5>Developer</h5><p>${data.developer}</p></div>`;
+            }
+            
+            // Role
+            if (data.role) {
+                metaHTML += `<div class="preview-meta-item"><h5>Role</h5><p>${data.role}</p></div>`;
+            }
+            
+            // Release Date
+            if (data.releaseDate) {
+                metaHTML += `<div class="preview-meta-item"><h5>Release Date</h5><p>${data.releaseDate}</p></div>`;
+            }
+            
+            previewMeta.innerHTML = metaHTML;
+            
+            // Set link button
+            if (data.link) {
+                previewLinkBtn.style.display = 'inline-block';
+                previewLinkBtn.onclick = () => confirmLink(data.link);
+            } else {
+                previewLinkBtn.style.display = 'none';
+            }
+            
+            // Reset background transform for animation - disable transitions first
+            previewBgImg.style.transition = 'none';
+            previewBgVideo.style.transition = 'none';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transition = 'none';
+            
+            previewBgImg.style.transform = 'scale(1.25)';
+            previewBgVideo.style.transform = 'scale(1.25)';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1.25)';
+            
+            previewBgImg.style.opacity = '0.3';
+            previewBgVideo.style.opacity = '0.3';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '0.3';
+            
+            // Force reflow
+            void previewBgImg.offsetWidth;
+            void previewBgVideo.offsetWidth;
+            if (WebGLDepth.canvas) void WebGLDepth.canvas.offsetWidth;
+            
+            // Re-enable transitions and animate to final state
+            previewBgImg.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
+            previewBgVideo.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
+
+            previewBgImg.style.transform = 'scale(1)';
+            previewBgVideo.style.transform = 'scale(1)';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1)';
+
+            previewBgImg.style.opacity = '0.75';
+            previewBgVideo.style.opacity = '0.75';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '0.75';
+            
+            // Open modal
+            previewModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreviewModal() {
+            previewModal.classList.remove('open');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                WebGLDepth.stop();
+            }, 500); // Wait for fade out
+        }
+
+        // Close preview modal on ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closePreviewModal();
+            }
+        });
+
+        // --- BLOG MODAL FUNCTIONS ---
+        const blogModal = document.getElementById('blog-modal');
+        const blogIframe = document.getElementById('blog-iframe');
+        const blogBarTitle = document.getElementById('blog-bar-title');
+        const blogLoading = document.getElementById('blog-loading');
+        const blogLoadingText = document.getElementById('blog-loading-text');
+        const blogLoadingRetry = document.getElementById('blog-loading-retry');
+        let blogLoadTimeout = null;
+        let blogCurrentUrl = '';
+        let blogLoadedUrl = ''; // Track what's actually loaded in the iframe
+
+        // Hide loading spinner when iframe finishes loading
+        blogIframe.addEventListener('load', () => {
+            if (blogIframe.src !== 'about:blank') {
+                clearTimeout(blogLoadTimeout);
+                blogLoading.classList.add('hidden');
+                blogLoadingRetry.classList.remove('visible');
+                blogLoadedUrl = blogCurrentUrl; // Mark as successfully loaded
+            }
+        });
+
+        // Also listen for early readiness signal from blog page (fires on DOMContentLoaded, much faster)
+        window.addEventListener('message', (e) => {
+            if (e.data === 'blog-ready') {
+                clearTimeout(blogLoadTimeout);
+                blogLoading.classList.add('hidden');
+                blogLoadingRetry.classList.remove('visible');
+                blogLoadedUrl = blogCurrentUrl;
+            }
+        });
+
+        // Handle iframe load errors
+        blogIframe.addEventListener('error', () => {
+            clearTimeout(blogLoadTimeout);
+            blogLoadingText.textContent = 'Failed to load';
+            blogLoadingText.style.animation = 'none';
+            blogLoadingRetry.classList.add('visible');
+            blogLoadedUrl = ''; // Clear cache on error
+        });
+
+        function openBlogModal(title, desc, url) {
+            blogBarTitle.textContent = title || 'Blog';
+            blogCurrentUrl = url || 'about:blank';
+
+            // If same blog is already loaded, just show the modal instantly
+            if (blogLoadedUrl === blogCurrentUrl && blogLoadedUrl !== '') {
+                blogLoading.classList.add('hidden');
+                blogLoadingRetry.classList.remove('visible');
+                blogModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                return;
+            }
+
+            // Different blog or first load — reset and load fresh
+            blogLoadedUrl = '';
+            blogLoadingText.textContent = 'Loading...';
+            blogLoadingText.style.animation = '';
+            blogLoadingRetry.classList.remove('visible');
+            blogLoading.classList.remove('hidden');
+            blogIframe.src = blogCurrentUrl;
+            blogModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+
+            // Timeout: if iframe hasn't loaded in 10s, show retry
+            clearTimeout(blogLoadTimeout);
+            blogLoadTimeout = setTimeout(() => {
+                if (!blogLoading.classList.contains('hidden')) {
+                    blogLoadingText.textContent = 'Taking too long...';
+                    blogLoadingText.style.animation = 'none';
+                    blogLoadingRetry.classList.add('visible');
+                }
+            }, 10000);
+        }
+
+        function retryBlogLoad() {
+            blogLoadingText.textContent = 'Loading...';
+            blogLoadingText.style.animation = '';
+            blogLoadingRetry.classList.remove('visible');
+            blogLoadedUrl = '';
+            blogIframe.src = 'about:blank';
+            // Small delay then reload
+            setTimeout(() => { blogIframe.src = blogCurrentUrl; }, 100);
+            // Reset timeout
+            clearTimeout(blogLoadTimeout);
+            blogLoadTimeout = setTimeout(() => {
+                if (!blogLoading.classList.contains('hidden')) {
+                    blogLoadingText.textContent = 'Taking too long...';
+                    blogLoadingText.style.animation = 'none';
+                    blogLoadingRetry.classList.add('visible');
+                }
+            }, 10000);
+        }
+
+        function closeBlogModal() {
+            blogModal.classList.remove('open');
+            document.body.style.overflow = '';
+            clearTimeout(blogLoadTimeout);
+            // Keep the iframe loaded! Don't reset src.
+            // The cached blogLoadedUrl will allow instant reopen.
+        }
+
+        function openBlogInNewTab() {
+            if (blogCurrentUrl && blogCurrentUrl !== 'about:blank') {
+                window.open(blogCurrentUrl, '_blank');
+            }
+        }
+
+        // Close blog modal on ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeBlogModal();
+            }
+        });
+
+        // Close blog modal on backdrop click
+        blogModal.addEventListener('click', function(e) {
+            if (e.target === blogModal) {
+                closeBlogModal();
+            }
+        });
+
+        // Event delegation for masonry grid items
+        document.addEventListener('click', (e) => {
+            const masonryItem = e.target.closest('.masonry-item');
+            if (!masonryItem) return;
+
+            // Handle blog modal (data-blog) — check first so blog cards open the blog window
+            if (masonryItem.hasAttribute('data-blog')) {
+                const blogUrl = masonryItem.getAttribute('data-blog');
+                const title = masonryItem.getAttribute('data-blog-title') || masonryItem.querySelector('h4')?.textContent || '';
+                const desc = masonryItem.getAttribute('data-blog-desc') || '';
+                openBlogModal(title, desc, blogUrl);
+                return;
+            }
+
+            // Handle preview modal - check both data-preview-id (script-based) and data-preview (inline)
+            if (masonryItem.hasAttribute('data-preview-id')) {
+                const previewId = masonryItem.getAttribute('data-preview-id');
+                const scriptTag = masonryItem.querySelector(`script[data-for="${previewId}"]`);
+                if (scriptTag) {
+                    try {
+                        const previewData = JSON.parse(scriptTag.textContent);
+                        openPreviewModal(previewData);
+                    } catch (err) {
+                        console.error('Failed to parse preview data:', err);
+                    }
+                }
+                return;
+            }
+            
+            if (masonryItem.hasAttribute('data-preview')) {
+                try {
+                    const previewData = JSON.parse(masonryItem.getAttribute('data-preview'));
+                    openPreviewModal(previewData);
+                } catch (err) {
+                    console.error('Failed to parse preview data:', err);
+                }
+                return;
+            }
+
+            // Handle external links (data-href)
+            if (masonryItem.hasAttribute('data-href')) {
+                const href = masonryItem.getAttribute('data-href');
+                if (href) {
+                    confirmLink(href);
+                }
+            }
+            // Handle media modal (data-media)
+            else if (masonryItem.hasAttribute('data-media')) {
+                const mediaType = masonryItem.getAttribute('data-media');
+                const src = masonryItem.getAttribute('data-src');
+                const title = masonryItem.getAttribute('data-title') || '';
+                if (mediaType && src) {
+                    openMediaModal(mediaType, src, title);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedural Grass Shell Gen — YMNE Blog</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/hlsl.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { background-color: #050505; scroll-behavior: smooth; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #050505;
+            color: #d4d4d4;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::selection { background: #00ff88; color: black; }
+
+        .back-btn {
+            position: fixed; top: 24px; left: 24px; z-index: 100;
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            padding: 10px 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { color: white; border-color: rgba(255,255,255,0.3); }
+
+        .blog-hero {
+            position: relative; width: 100%;
+            height: 50vh; min-height: 350px; max-height: 500px;
+            overflow: hidden; display: flex; align-items: flex-end;
+        }
+        .blog-hero-video {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.6; filter: saturate(1.1) brightness(0.8);
+        }
+        .blog-hero-gradient {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, #050505 0%, rgba(5,5,5,0.7) 40%, rgba(5,5,5,0.2) 100%),
+                        linear-gradient(to right, rgba(5,5,5,0.6) 0%, transparent 50%);
+        }
+        .blog-hero-content {
+            position: relative; z-index: 2;
+            max-width: 800px; width: 100%; margin: 0 auto; padding: 0 2rem 3rem;
+        }
+        .blog-hero-tag {
+            display: inline-block; font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 4px 12px; margin-bottom: 1rem;
+        }
+        .blog-hero-title {
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            font-weight: 900; color: white;
+            text-transform: uppercase; letter-spacing: -0.02em;
+            line-height: 1.1; margin-bottom: 0.75rem;
+        }
+        .blog-hero-meta {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .blog-article {
+            max-width: 800px; width: 100%;
+            margin: 0 auto; padding: 3rem 2rem 6rem;
+        }
+        .blog-article h2 {
+            font-size: 1.5rem; font-weight: 800; color: white;
+            text-transform: uppercase; letter-spacing: 0.03em;
+            margin-top: 3rem; margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .blog-article h3 {
+            font-size: 1.15rem; font-weight: 700; color: #e0e0e0;
+            margin-top: 2rem; margin-bottom: 0.75rem;
+        }
+        .blog-article p {
+            margin-bottom: 1.25rem; color: #a1a1a1;
+            font-size: 1rem; line-height: 1.9;
+        }
+        .blog-article strong { color: #e0e0e0; font-weight: 700; }
+        .blog-article ul, .blog-article ol {
+            margin-bottom: 1.25rem; padding-left: 1.5rem; color: #a1a1a1;
+        }
+        .blog-article li { margin-bottom: 0.4rem; }
+        .blog-article hr { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 2.5rem 0; }
+
+        .blog-article code:not([class*="language-"]):not(.hljs) {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+            background: rgba(255,255,255,0.08); color: #e2e8f0;
+            padding: 2px 6px; border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .code-block-wrapper {
+            position: relative; margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #1a1a2e; overflow: hidden;
+        }
+        .code-block-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .code-block-lang {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.4);
+        }
+        .code-block-copy {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.3); background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3px 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .code-block-copy:hover { color: white; border-color: rgba(255,255,255,0.3); }
+
+        .blog-toc {
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            padding: 1.5rem 2rem; margin-bottom: 2.5rem;
+        }
+        .blog-toc h4 {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.4); margin-bottom: 1rem;
+        }
+        .blog-toc ol { padding-left: 1.25rem; margin: 0; }
+        .blog-toc li { margin-bottom: 0.4rem; }
+        .blog-toc a {
+            font-size: 0.9rem; color: rgba(255,255,255,0.6);
+            text-decoration: none; transition: color 0.2s;
+        }
+        .blog-toc a:hover { color: white; }
+
+        .blog-image-container {
+            margin: 2.5rem 0;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            padding: 8px;
+        }
+        .blog-content-img {
+            width: 100%; height: auto; display: block;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .image-caption {
+            padding: 12px 16px; font-family: 'Space Grotesk', monospace;
+            font-size: 11px; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 1.5px;
+            text-align: center;
+        }
+
+        .download-section {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .download-card {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.02);
+            padding: 2.5rem 2rem; text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .download-card:hover { border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.02); }
+        .download-btn {
+            display: inline-flex; align-items: center; gap: 12px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: #000; text-decoration: none;
+            padding: 12px 24px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+        .download-btn:hover { background: #00ff88; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,255,136,0.15); }
+        .download-tag {
+            font-family: 'Space Grotesk', monospace; font-size: 10px;
+            color: rgba(255,255,255,0.3); text-transform: uppercase;
+        }
+
+        .blog-footer {
+            max-width: 800px; width: 100%; margin: 0 auto; padding: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .blog-footer span {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; color: rgba(255,255,255,0.2);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        body.in-iframe .back-btn { display: none; }
+        body.in-iframe .blog-hero { min-height: 280px; max-height: 380px; }
+
+        .fade-in {
+            opacity: 0; transform: translateY(15px);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .fade-in-d1 { animation-delay: 0.1s; }
+        .fade-in-d2 { animation-delay: 0.2s; }
+        .fade-in-d3 { animation-delay: 0.35s; }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <script>if (window.self !== window.top) { document.body.classList.add('in-iframe'); document.addEventListener('DOMContentLoaded', function() { window.parent.postMessage('blog-ready', '*'); }); }</script>
+
+    <a href="../../../Index.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Portfolio
+    </a>
+
+    <div class="blog-hero">
+        <video class="blog-hero-video" autoplay loop muted playsinline>
+            <source src="../../../Assets/Video/Shader/ProceduralGrassShell.webm" type="video/webm">
+        </video>
+        <div class="blog-hero-gradient"></div>
+        <div class="blog-hero-content">
+            <div class="blog-hero-tag fade-in">Unity BRP & HDRP</div>
+            <h1 class="blog-hero-title fade-in fade-in-d1">Procedural Grass Shell Gen</h1>
+            <div class="blog-hero-meta fade-in fade-in-d2">By Ymne | Real-time Dense Foliage Synthesis & Wind Dynamics</div>
+        </div>
+    </div>
+
+    <article class="blog-article fade-in fade-in-d3">
+
+        <nav class="blog-toc">
+            <h4>Table of Contents</h4>
+            <ol>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#shell-technique">Shell Texturing Stack</a></li>
+                <li><a href="#wind-dynamics">Wind Waves & Gusts</a></li>
+                <li><a href="#parallax">Parallax & Refinement</a></li>
+                <li><a href="#downloads">Downloads</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="overview">Overview</h2>
+        <p>
+            The <strong>Procedural Grass Shell Generator</strong> is a specialized shader system designed to render dense, lush grasslands without the overhead of thousands of individual mesh blades. 
+            By utilizing a <strong>Shell Texturing</strong> approach, the shader "stacks" virtual layers to create volume, depth, and complex motion.
+        </p>
+        <p>
+            This implementation is fully procedural, meaning it doesn't rely on pre-baked noise textures or UV maps. Instead, it synthesizes grass patterns in real-time using mathematical noise functions, allowing for infinite scalability and zero memory footprint for textures.
+        </p>
+
+        <h2 id="shell-technique">Shell Texturing Stack</h2>
+        <p>
+            Unlike traditional geometry-based grass, shell texturing works by rendering multiple "slices" of a volume. In this shader, we use a <strong>Parallax Marching</strong> approach inside a single pass to determine the intersection of the view ray with virtual grass blades.
+        </p>
+        <div class="blog-callout tip">
+            <p><strong>Note:</strong> While many shell shaders use multi-pass rendering (one pass per shell), this implementation uses a screen-space ray marching technique in a single shader pass, which is significantly more efficient for modern GPUs.</p>
+        </div>
+        <ul>
+            <li><strong>Virtual Height:</strong> Each sample represents a different height layer from the ground (0.0) to the tip (1.0).</li>
+            <li><strong>Alpha Thresholding:</strong> As we go higher, the blades become thinner, following a procedural curve to simulate natural tapering.</li>
+        </ul>
+
+        <h2 id="wind-dynamics">Wind Waves & Gusts</h2>
+        <p>
+            To achieve believable motion, the shader implements a multi-layered wind system that combines smooth sine waves with multi-octave noise (FBM).
+        </p>
+        <ul>
+            <li><strong>Primary Waves:</strong> Smooth, rolling sine-based displacement derived from world position. This creates the "big" movement across the field.</li>
+            <li><strong>Gust Intensity:</strong> High-frequency noise that modulates the wind strength over time, creating "bursts" of motion that feel unpredictable.</li>
+            <li><strong>Triplanar Compatibility:</strong> The wind is calculated in world-space and projected back into tangent-space, ensuring it works correctly on hills, slopes, and vertical surfaces.</li>
+        </ul>
+
+        <h2 id="parallax">Parallax & Refinement</h2>
+        <p>
+            Standard shell shaders often look like "pancakes" when viewed from steep angles. To solve this, we implement a <strong>Linear Search + focused Binary Refinement</strong> phase.
+        </p>
+        <p>
+            The shader first marches through the shells with a coarse step to find a potential hit. Once a hit is detected, it performs <code>_ParallaxRefinement</code> steps between the current and previous shell to pinpoint the exact intersection.
+        </p>
+        <div class="blog-callout">
+            <p>This hybrid approach allows us to achieve high-fidelity silhouettes with only 8-16 coarse steps, keeping the instruction count low while maintaining visual quality.</p>
+        </div>
+
+        <hr>
+
+        <h2 id="downloads">Downloads</h2>
+        <p>
+            Two versions of the shader are available. Note that the HDRP version is considered experimental and requires specific core includes from the HD Render Pipeline package.
+        </p>
+
+        <div class="download-section">
+            <div class="download-card">
+                <i class="fa-solid fa-cube" style="font-size: 2rem; color: #fff; margin-bottom: 0.5rem;"></i>
+                <h3 style="margin-top: 0; border: none;">Built-in RP (BRP)</h3>
+                <a href="Resource/Shader_ShellTexturingGrass_BRP.shader" class="download-btn" download>
+                    <i class="fa-solid fa-download"></i> Download BRP Shader
+                </a>
+                <span class="download-tag">Stable</span>
+            </div>
+            <div class="download-card">
+                <i class="fa-solid fa-flask" style="font-size: 2rem; color: #00ff88; margin-bottom: 0.5rem;"></i>
+                <h3 style="margin-top: 0; border: none;">High Definition RP</h3>
+                <a href="Resource/Shader_ShellTexturingGrass_HDRP.shader" class="download-btn" download>
+                    <i class="fa-solid fa-download"></i> Download HDRP Shader
+                </a>
+                <span class="download-tag">Experimental</span>
+            </div>
+        </div>
+
+    </article>
+
+    <footer class="blog-footer">
+        <span>YMNE Blog | 2026</span>
+    </footer>
+
+    <script>
+        (function() {
+            window.addEventListener('load', function() {
+                if (typeof hljs === 'undefined') return;
+                hljs.highlightAll();
+            });
+
+            document.querySelectorAll('.code-block-copy').forEach(btn => {
+                btn.onclick = () => {
+                    const code = btn.closest('.code-block-wrapper').querySelector('code').textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        const original = btn.textContent;
+                        btn.textContent = 'Copied!';
+                        btn.style.color = '#00ff88';
+                        setTimeout(() => { btn.textContent = original; btn.style.color = ''; }, 2000);
+                    });
+                };
+            });
+        })();
+    </script>
+</body>
+</html>

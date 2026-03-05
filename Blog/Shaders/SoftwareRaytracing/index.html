@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Raytracing — YMNE Blog</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { background-color: #050505; scroll-behavior: smooth; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #050505;
+            color: #d4d4d4;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::selection { background: white; color: black; }
+
+        .back-btn {
+            position: fixed; top: 24px; left: 24px; z-index: 100;
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            padding: 10px 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { color: white; border-color: rgba(255,255,255,0.3); }
+
+        .blog-hero {
+            position: relative; width: 100%;
+            height: 50vh; min-height: 350px; max-height: 500px;
+            overflow: hidden; display: flex; align-items: flex-end;
+        }
+        .blog-hero-video {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.6; filter: saturate(1.1) brightness(0.8);
+        }
+        .blog-hero-gradient {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, #050505 0%, rgba(5,5,5,0.7) 40%, rgba(5,5,5,0.2) 100%),
+                        linear-gradient(to right, rgba(5,5,5,0.6) 0%, transparent 50%);
+        }
+        .blog-hero-content {
+            position: relative; z-index: 2;
+            max-width: 800px; width: 100%; margin: 0 auto; padding: 0 2rem 3rem;
+        }
+        .blog-hero-tag {
+            display: inline-block; font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 4px 12px; margin-bottom: 1rem;
+        }
+        .blog-hero-title {
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            font-weight: 900; color: white;
+            text-transform: uppercase; letter-spacing: -0.02em;
+            line-height: 1.1; margin-bottom: 0.75rem;
+        }
+        .blog-hero-meta {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .blog-article {
+            max-width: 800px; width: 100%;
+            margin: 0 auto; padding: 3rem 2rem 6rem;
+        }
+        .blog-article h2 {
+            font-size: 1.5rem; font-weight: 800; color: white;
+            text-transform: uppercase; letter-spacing: 0.03em;
+            margin-top: 3rem; margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .blog-article h3 {
+            font-size: 1.15rem; font-weight: 700; color: #e0e0e0;
+            margin-top: 2rem; margin-bottom: 0.75rem;
+        }
+        .blog-article p {
+            margin-bottom: 1.25rem; color: #a1a1a1;
+            font-size: 1rem; line-height: 1.9;
+        }
+        .blog-article strong { color: #e0e0e0; font-weight: 700; }
+        .blog-article ul, .blog-article ol {
+            margin-bottom: 1.5rem; padding-left: 1.25rem;
+            color: #a1a1a1;
+        }
+        .blog-article li { margin-bottom: 0.5rem; }
+        
+        .blog-article code:not([class*="language-"]):not(.hljs) {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+            background: rgba(255,255,255,0.08); color: #e2e8f0;
+            padding: 2px 6px; border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .code-block-wrapper {
+            position: relative; margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #1a1a2e; overflow: hidden;
+        }
+        .code-block-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .code-block-lang {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.4);
+        }
+        .code-block-copy {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.3); background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3px 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .code-block-copy:hover { color: white; border-color: rgba(255,255,255,0.3); }
+        .code-block-wrapper pre {
+            margin: 0 !important; padding: 1.25rem 1.5rem !important;
+            background: transparent !important; border: none !important; border-radius: 0 !important;
+        }
+        .code-block-wrapper code {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 0.85rem !important; line-height: 1.7 !important;
+        }
+        .hljs { background: transparent !important; }
+
+        .blog-callout {
+            border-left: 3px solid rgba(255,255,255,0.2);
+            padding: 1rem 1.25rem; margin: 1.5rem 0;
+            background: rgba(255,255,255,0.03);
+        }
+        .blog-callout p { color: #b0b0b0; margin-bottom: 0; font-size: 0.95rem; }
+        .blog-callout.warning { border-left-color: #fca5a5; }
+        .blog-callout.tip { border-left-color: #4ade80; }
+
+        .blog-toc {
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            padding: 1.5rem 2rem; margin-bottom: 2.5rem;
+        }
+        .blog-toc h4 {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.4); margin-bottom: 1rem;
+        }
+        .blog-toc ol { padding-left: 1.25rem; margin: 0; }
+        .blog-toc li { margin-bottom: 0.4rem; }
+        .blog-toc a {
+            font-size: 0.9rem; color: rgba(255,255,255,0.6);
+            text-decoration: none; transition: color 0.2s;
+        }
+        .blog-toc a:hover { color: white; }
+
+        .github-link-section {
+            margin-top: 4rem;
+            padding: 3rem 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+        }
+        .github-link-section h3 {
+            margin-top: 0;
+            border-bottom: none;
+        }
+        .github-btn {
+            display: inline-flex; align-items: center; gap: 12px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: #000; text-decoration: none;
+            padding: 14px 28px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+        .github-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
+
+        .blog-footer {
+            max-width: 800px; width: 100%; margin: 0 auto; padding: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .blog-footer span {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px; color: rgba(255,255,255,0.2);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 768px) {
+            .back-btn { top: 16px; left: 16px; font-size: 10px; padding: 8px 12px; }
+            .blog-hero { min-height: 280px; }
+            .blog-hero-content { padding: 0 1.25rem 2rem; }
+            .blog-article { padding: 2rem 1.25rem 4rem; }
+        }
+
+        body.in-iframe .back-btn { display: none; }
+
+        .blog-image-container {
+            margin: 2.5rem 0;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            padding: 8px;
+        }
+        .blog-content-img {
+            width: 100%; height: auto; display: block;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .image-caption {
+            padding: 12px 16px; font-family: 'Space Grotesk', monospace;
+            font-size: 11px; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 0.1em;
+            text-align: center;
+        }
+
+        .fade-in {
+            opacity: 0; transform: translateY(15px);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .fade-in-d1 { animation-delay: 0.1s; }
+        .fade-in-d2 { animation-delay: 0.2s; }
+        .fade-in-d3 { animation-delay: 0.35s; }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+        /* Modern Table Styling */
+        .modern-table-wrapper {
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .modern-table th {
+            background: rgba(255,255,255,0.05);
+            padding: 12px 16px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.6);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .modern-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #a1a1a1;
+        }
+        .modern-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="../../../Index.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Portfolio
+    </a>
+
+    <div class="blog-hero">
+        <video class="blog-hero-video" autoplay loop muted playsinline>
+            <source src="../../../Assets/Video/Shader/SRTUnity.webm" type="video/webm">
+        </video>
+        <div class="blog-hero-gradient"></div>
+        <div class="blog-hero-content">
+            <div class="blog-hero-tag fade-in">Unity BRP</div>
+            <h1 class="blog-hero-title fade-in fade-in-d1">Software Raytracing</h1>
+            <div class="blog-hero-meta fade-in fade-in-d2">By Ymne | Real-Time Compute Shader-Based Ray Tracer</div>
+        </div>
+    </div>
+
+    <article class="blog-article fade-in fade-in-d3">
+
+        <nav class="blog-toc">
+            <h4>Table of Contents</h4>
+            <ol>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#system-architecture">System Architecture</a></li>
+                <li><a href="#features">Key Features</a></li>
+                <li><a href="#parameters">Technical Parameters</a></li>
+                <li><a href="#limitations">Limitations</a></li>
+                <li><a href="#usage">Usage Instructions</a></li>
+                <li><a href="#source-code">Source Code</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="overview">Overview</h2>
+        <p>
+            This project explores a real-time <strong>software-based ray tracer</strong> built from scratch in Unity, leveraging <strong>Compute Shaders</strong> instead of relying on hardware-accelerated ray tracing APIs (like RTX).
+        </p>
+        <p>
+            It implements a custom Bounding Volume Hierarchy (BVH) for acceleration, recursive light transport including reflections and indirect lighting, and a procedurally generated sky system. This approach allows for ray tracing capabilities on a wider range of hardware that may not support native DXR or Vulkan Ray Tracing.
+        </p>
+
+        <div class="blog-image-container">
+            <img src="https://raw.githubusercontent.com/Ymne22/Real-Time-Software-Ray-Tracing-in-Unity-BRP/main/Screenshots/Screenshot_1.gif" alt="Software Raytracing Preview" class="blog-content-img" loading="lazy">
+            <p class="image-caption">Software Raytracing Preview — Recursive reflections and indirect lighting</p>
+        </div>
+
+        <h2 id="system-architecture">System Architecture</h2>
+        <p>
+            The engine is divided into several core components that work together to translate Unity scene data into a format that the GPU can trace efficiently.
+        </p>
+
+        <h3>1. Scene Data Conversion</h3>
+        <p>
+            The <code>RayTracingController</code> collects all scene meshes and materials, flattens geometry into a single structure, extracts textures, and packs material data into compute buffers. Each mesh is stored with its vertices, normals, tangents, UVs, and triangle indices.
+        </p>
+
+        <h3>2. BVH Construction</h3>
+        <p>
+            A <strong>Surface Area Heuristic (SAH)</strong> based binary BVH is constructed on the CPU. This acceleration structure significantly reduces the number of intersection tests by grouping primitives into a hierarchical volume.
+        </p>
+
+        <h3>3. Compute Shader Dispatch</h3>
+        <p>
+            At render time, the ray tracing shader is dispatched with a thread group per screen tile. Each thread generates a primary ray from the camera, traverses the BVH for intersections, and computes the light transport (Direct, Indirect, Reflections, and AO).
+        </p>
+
+        <h3>4. Temporal Accumulation</h3>
+        <p>
+            To combat the noise inherent in undersampled ray tracing, the system implements a temporal accumulation buffer. This blends the current frame with previous frames using motion vectors and reprojection to achieve a clean, noise-free image over time.
+        </p>
+
+        <h2 id="features">Key Features</h2>
+        <div class="modern-table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>BVH Acceleration</td>
+                        <td>✅ Partial</td>
+                        <td>SAH-optimized, stackless traversal.</td>
+                    </tr>
+                    <tr>
+                        <td>Reflections</td>
+                        <td>✅ Full</td>
+                        <td>Recursive up to max bounce limit.</td>
+                    </tr>
+                    <tr>
+                        <td>Indirect Lighting</td>
+                        <td>✅ Partial</td>
+                        <td>Hemispherical bounce approximation.</td>
+                    </tr>
+                    <tr>
+                        <td>Ambient Occlusion</td>
+                        <td>⚠️ Exp.</td>
+                        <td>High performance cost hemisphere sampling.</td>
+                    </tr>
+                    <tr>
+                        <td>Temporal Denoising</td>
+                        <td>✅ Full</td>
+                        <td>Optional sample accumulation over frames.</td>
+                    </tr>
+                    <tr>
+                        <td>Procedural Sky</td>
+                        <td>✅ Full</td>
+                        <td>Gradient skybox with day/night parameters.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="parameters">Technical Parameters</h2>
+        <p>The system is highly configurable via the Unity Inspector, allowing for a balance between performance and visual quality:</p>
+        <ul>
+            <li><strong>Resolution Scale:</strong> Full, Half, or Quarter rendering resolution.</li>
+            <li><strong>Max Bounces:</strong> Controls the depth of recursive reflections (1–32).</li>
+            <li><strong>Samples Per Pixel:</strong> Per-frame sampling count for stochastic effects.</li>
+            <li><strong>Temporal Capture:</strong> Enables frame blending to reduce noise.</li>
+            <li><strong>Raster Fallback:</strong> Blends ray-traced results with the standard raster pass.</li>
+        </ul>
+
+        <h2 id="limitations">Limitations</h2>
+        <div class="blog-callout warning">
+            <p><strong>Note:</strong> As a software-based experimental project, there are several limitations to be aware of:</p>
+            <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                <li>Supports Unity Built-in Render Pipeline (BRP) only.</li>
+                <li>No caustics or energy conservation (it's not a full path tracer).</li>
+                <li>Basic transparency support (alpha only).</li>
+                <li>Performance scales linearly with triangle count and bounce depth.</li>
+                <li>No support for dynamic mesh deformation (skinned meshes).</li>
+            </ul>
+        </div>
+
+        <h2 id="usage">Usage Instructions</h2>
+        <p>To integrate the software ray tracer into your project:</p>
+        <ol>
+            <li>Add the <code>RayTracingController</code> script to your <strong>Main Camera</strong>.</li>
+            <li>Assign the <code>RayTracing.compute</code> shader in the component's inspector.</li>
+            <li>Configure your scene objects with the appropriate material settings.</li>
+            <li>Enable <code>ExecuteInEditMode</code> to see real-time ray-traced results directly in the scene view.</li>
+        </ol>
+
+        <h2 id="source-code">Source Code</h2>
+        <p>
+            The full source code for the BVH construction, compute shaders, and the Unity controller is available on GitHub. This project is licensed under MIT, making it a great resource for learning how ray tracers work under the hood.
+        </p>
+
+        <div class="github-link-section">
+            <h3>Download the Project</h3>
+            <p>Access the repository to explore the implementation details and run the sample scenes.</p>
+            <a href="https://github.com/Ymne22/Real-Time-Software-Ray-Tracing-in-Unity-BRP" class="github-btn" target="_blank">
+                <i class="fa-brands fa-github"></i> View on GitHub
+            </a>
+        </div>
+
+    </article>
+
+    <footer class="blog-footer">
+        <span>YMNE Blog | 2026</span>
+    </footer>
+
+    <script>
+        (function() {
+            // Iframe detection
+            if (window.self !== window.top) document.body.classList.add('in-iframe');
+
+            // Copy Functionality (if any code blocks are added later)
+            document.querySelectorAll('.code-block-copy').forEach(btn => {
+                btn.onclick = () => {
+                    const code = btn.closest('.code-block-wrapper').querySelector('code').textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        const original = btn.textContent;
+                        btn.textContent = 'Copied!';
+                        btn.style.color = '#4ade80';
+                        setTimeout(() => { btn.textContent = original; btn.style.color = ''; }, 2000);
+                    });
+                };
+            });
+        })();
+    </script>
+</body>
+</html>
