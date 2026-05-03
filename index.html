@@ -415,65 +415,86 @@
 
         .dock-container {
             position: fixed;
-            bottom: 32px; 
-            left: 50%;
-            transform: translateX(-50%);
+            right: 32px; 
+            top: 50%;
+            transform: translateY(-50%) translateX(20px);
             z-index: 100; 
-            width: max-content;
+            width: auto;
             opacity: 0; 
-            transform: translateX(-50%) translateY(20px);
             pointer-events: none;
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
         .dock-container.visible {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(-50%) translateX(0);
             pointer-events: auto;
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
 
         .dock {
-            background: rgba(5, 5, 5, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 999px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.9);
-            padding: 1rem 2rem; 
+            background: transparent;
+            border: none;
+            border-right: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: none;
+            padding: 3rem 0; 
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            align-items: flex-end;
         }
         .dock-icon {
-            transition: all 0.3s ease-in-out;
-            color: #666;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            color: rgba(255, 255, 255, 0.5);
             position: relative;
-            font-size: 1.5rem; 
+            font-size: 1.25rem; 
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
+            width: 56px;
+            height: 56px;
+            margin-right: -2px; /* Overlap the thicker spine */
+        }
+        .dock-icon::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 64px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: white;
+            opacity: 0;
+            transform: translateX(15px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            pointer-events: none;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
         .dock-icon:hover {
-            color: #ccc;
-            transform: translateY(-3px);
+            color: #fff;
+            transform: translateX(-5px);
+        }
+        .dock-icon:hover::before, .dock-icon.active::before {
+            opacity: 1;
+            transform: translateX(0);
         }
         .dock-icon.active {
             color: #fff;
-            transform: translateY(-3px);
         }
         .dock-icon::after {
             content: '';
             position: absolute;
-            bottom: -12px; 
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            width: 5px;
-            height: 5px;
+            right: 0; 
+            top: 50%;
+            transform: translateY(-50%) scaleY(0);
+            width: 3px;
+            height: 32px;
             background: white;
-            border-radius: 50%;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
         }
         .dock-icon.active::after {
-            transform: translateX(-50%) scale(1);
+            transform: translateY(-50%) scaleY(1);
         }
 
         .game-pagination {
@@ -713,25 +734,39 @@
             overflow: hidden;
             background: #000;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             opacity: 0;
-            transform: translateY(30px) scale(0.98);
+            transform: translateY(30px);
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
                         transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-                        box-shadow 0.4s ease,
-                        border-color 0.3s ease;
+                        border-color 0.4s ease;
         }
 
         .masonry-item.in-view {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
+        }
+
+        .masonry-item::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 4px;
+            height: 4px;
+            background: white;
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+            z-index: 20;
         }
 
         .masonry-item.in-view:hover {
-            transform: scale(1.02);
             z-index: 10;
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .masonry-item.in-view:hover::after {
+            opacity: 1;
         }
 
         .masonry-item img,
@@ -739,45 +774,53 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            opacity: 0.9;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            opacity: 0.8;
         }
 
         .masonry-item:hover img,
         .masonry-item:hover video {
-            transform: scale(1.1);
+            transform: scale(1.05);
             opacity: 1;
         }
 
         .masonry-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 1.25rem;
+            padding: 1.5rem;
             opacity: 1;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
+            z-index: 15;
+        }
+
+        .masonry-item:hover .masonry-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
         }
 
 
 
         .masonry-overlay h4 {
-            font-size: 1rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 800;
             text-transform: uppercase;
             color: white;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+            line-height: 1;
         }
 
         .masonry-overlay span {
             font-size: 10px;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
         }
 
         .masonry-overlay .masonry-info {
@@ -785,25 +828,24 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding-top: 0.75rem;
+            padding-top: 1rem;
             border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
         }
 
         .masonry-overlay .view-btn {
             background: white;
             color: black;
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9px;
+            font-weight: 800;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 0.25rem 0.75rem;
+            letter-spacing: 0.15em;
+            padding: 0.4rem 1rem;
             border: none;
             cursor: pointer;
             pointer-events: auto;
-            opacity: 0;
-            transition: opacity 0.3s ease, background 0.2s ease;
+            transition: background 0.2s ease, transform 0.2s ease;
         }
 
         .masonry-item:hover .masonry-overlay .view-btn {
@@ -1434,25 +1476,47 @@
         }
         
         .dock-container {
-            bottom: 20px !important;
+            right: auto !important;
+            left: 50% !important;
+            bottom: 24px !important;
+            top: auto !important;
+            transform: translateX(-50%) !important;
         }
 
         .dock {
-            gap: 1.25rem !important; 
+            flex-direction: row !important;
+            gap: 1.5rem !important; 
             padding: 0.75rem 1.5rem !important;
-            border-width: 0.5px !important; 
+            border-right: none !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(8px);
         }
 
         .dock-icon {
             font-size: 1.1rem !important;
-            width: auto !important;
-            height: auto !important;
+            width: 36px !important;
+            height: 36px !important;
+            margin-right: 0 !important;
+            margin-bottom: -1px !important;
+        }
+
+        .dock-icon::before {
+            display: none !important; 
         }
 
         .dock-icon::after {
-            width: 3px !important;
-            height: 3px !important;
-            bottom: -6px !important;
+            width: 16px !important;
+            height: 2px !important;
+            bottom: 0 !important;
+            right: auto !important;
+            top: auto !important;
+            left: 50% !important;
+            transform: translateX(-50%) scaleX(0) !important;
+        }
+
+        .dock-icon.active::after {
+            transform: translateX(-50%) scaleX(1) !important;
         }
 
         section.fixed-section:has(.grid) .content-layer {
@@ -1667,6 +1731,43 @@
             text-shadow: -2px 0 cyan;
             animation: text-glitch-2 3s infinite linear alternate-reverse;
         }
+        
+
+
+        /* --- MONOGATARI CINEMATIC BARS --- */
+        .monogatari-cinematic {
+            position: relative;
+            background-color: #050505; /* Fallback */
+        }
+        .monogatari-cinematic::before,
+        .monogatari-cinematic::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 12.5vh;
+            background-color: #000;
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: inset 0 0 10px rgba(0,0,0,1);
+        }
+        @media (max-width: 768px) {
+            .monogatari-cinematic::before,
+            .monogatari-cinematic::after {
+                display: none;
+            }
+        }
+        .monogatari-cinematic::before { top: 0; }
+        .monogatari-cinematic::after { bottom: 0; }
+
+        .mograph-scale-in {
+            animation: mographScale 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        @keyframes mographScale {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
     </style>
     
 <body class="antialiased selection:bg-white selection:text-black">
@@ -1749,94 +1850,93 @@
     </div>
 
     <!-- DOCK -->
-    <div class="dock-container" id="dock-nav">
-        <div class="dock flex items-center gap-8"> 
-            <button onclick="scrollToSection('hero')" class="dock-icon active" data-target="hero"><i class="fa-solid fa-home"></i></button>
-            <button onclick="scrollToSection('profile')" class="dock-icon" data-target="profile"><i class="fa-regular fa-user"></i></button>
-            <button onclick="scrollToSection('roadmap')" class="dock-icon" data-target="roadmap"><i class="fa-solid fa-list-check"></i></button>
-            <button onclick="scrollToSection('games-start')" class="dock-icon" data-target="games-start"><i class="fa-solid fa-gamepad"></i></button>
-            <button onclick="scrollToSection('tech-start')" class="dock-icon" data-target="tech-start"><i class="fa-solid fa-microchip"></i></button>
-            <button onclick="scrollToSection('art-showcase')" class="dock-icon" data-target="art-showcase"><i class="fa-regular fa-image"></i></button>
-            <button onclick="scrollToSection('contact')" class="dock-icon" data-target="contact"><i class="fa-regular fa-envelope"></i></button>
+    <div id="dock-nav" class="dock-container">
+        <div class="dock"> 
+            <button onclick="scrollToSection('hero')" class="dock-icon active" data-target="hero" data-label="Welcome / ようこそ"><i class="fa-solid fa-home"></i></button>
+            <button onclick="scrollToSection('profile')" class="dock-icon" data-target="profile" data-label="Profile / 略歴"><i class="fa-regular fa-user"></i></button>
+            <button onclick="scrollToSection('roadmap')" class="dock-icon" data-target="roadmap" data-label="Roadmap / 制作実績"><i class="fa-solid fa-list-check"></i></button>
+            <button onclick="scrollToSection('games-start')" class="dock-icon" data-target="games-start" data-label="Works / 開発作品"><i class="fa-solid fa-gamepad"></i></button>
+            <button onclick="scrollToSection('tech-start')" class="dock-icon" data-target="tech-start" data-label="Lab / 技術"><i class="fa-solid fa-microchip"></i></button>
+            <button onclick="scrollToSection('art-showcase')" class="dock-icon" data-target="art-showcase" data-label="Art / 作品集"><i class="fa-regular fa-image"></i></button>
         </div>
     </div>
 
     <main id="main-scroller" class="horizontal-mode">
 
         <!-- HERO -->
-        <section id="hero" class="fixed-section flex items-center justify-center grayscale" data-index="0">
-            <canvas id="hero-crt-canvas"></canvas>
-
-            <div class="overlay-layer bg-[radial-gradient(circle_at_center,rgba(5,5,5,0)_0%,#050505_100%)]"></div>
-            <div class="hero-crt-vignette"></div>
+        <section id="hero" class="fixed-section flex items-center justify-center bg-[#050505] relative overflow-hidden monogatari-cinematic" data-index="0">
+            <div class="absolute inset-0 bg-radial-gradient from-white/5 to-transparent opacity-30"></div>
             
             <div class="content-layer max-w-7xl w-full px-6 flex flex-col items-center justify-center text-center h-full mx-auto relative z-10 pointer-events-none">
-                <div class="flex flex-col items-center gap-2 mt-20 animate-[pulse_3s_ease-in-out_infinite]"></div>
+                <div class="flex flex-col items-center gap-2 mt-0">
+                     <h1 class="text-white font-black text-[12vh] tracking-[0.3em] uppercase mograph-scale-in select-none" style="writing-mode: vertical-rl; text-orientation: upright; font-family: 'Noto Serif JP', 'Times New Roman', serif;">歓迎</h1>
+                </div>
             </div>
         </section>
 
         <!-- PROFILE -->
-        <section id="profile" class="fixed-section flex items-center justify-center bg-dark relative overflow-hidden" data-index="1">
+        <section id="profile" class="fixed-section flex items-center justify-center bg-[#0d0d0d] relative overflow-hidden monogatari-cinematic" data-index="1">
             <div class="absolute inset-0 pointer-events-none z-0">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/30 via-dark to-dark opacity-80"></div>
-                <div class="absolute top-0 left-0 w-full h-full opacity-[0.15] lg:opacity-25 pointer-events-none animate-tv-noise" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;); background-size: 128px 128px; will-change: background-position;"></div>
+                <!-- Flat clean background -->
+                <div class="absolute inset-0 bg-[#0d0d0d]"></div>
                 
-                <!-- CRT Scanlines -->
-                <div class="absolute inset-0 opacity-90 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.8)_50%)] bg-[length:100%_4px] pointer-events-none"></div>
-                
-                <!-- CRT Vignette -->
-                <div class="hero-crt-vignette"></div>
+                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">略歴</div>
             </div>
 
             <div class="content-layer profile-inner relative z-10 w-full h-full flex flex-col items-center justify-center py-12 lg:py-0">
                 
-                <div class="max-w-[90%] xl:max-w-7xl w-full mx-auto flex flex-col lg:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-16">
+                <div class="w-full px-6 md:px-16 xl:px-32 mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-16 lg:gap-24">
                     
-                    <div class="avatar-wrap reveal-hidden flex-shrink-0 relative group lg:order-1">
-                        <div class="absolute inset-[-10px] lg:inset-[-20px] rounded-full border border-zinc-800/50 scale-90 group-hover:scale-100 transition-transform duration-700 ease-out"></div>
-                        <div class="absolute inset-[-5px] lg:inset-[-10px] rounded-full border border-zinc-700/50 scale-95 group-hover:scale-105 transition-transform duration-500 ease-out"></div>
-                        
-                        <div class="w-32 h-32 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-full overflow-hidden border border-zinc-600 relative z-10 shadow-[0_0_40px_rgba(255,255,255,0.05)]">
-                            <img src="https://avatars.githubusercontent.com/u/126408995?v=4"
-                                class="w-full h-full object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:scale-110"
-                                alt="Profile" draggable="false">
+                    <div class="flex flex-col items-center lg:order-1 flex-shrink-0">
+                        <div class="avatar-wrap reveal-hidden relative group mb-6 md:mb-8">
+                            <div class="absolute inset-[-10px] lg:inset-[-20px] rounded-full border border-white/20 scale-90 group-hover:scale-100 transition-transform duration-700 ease-out"></div>
+                            
+                            <div class="w-32 h-32 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 border-[#0d0d0d] relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                                <img src="https://avatars.githubusercontent.com/u/126408995?v=4"
+                                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                    alt="Profile" draggable="false">
+                            </div>
+                        </div>
+
+                        <!-- Social Icons below avatar container -->
+                        <div class="flex items-center justify-center gap-6 reveal-hidden stagger-2 relative z-20">
+                            <a href="https://github.com/Ymne22" target="_blank" class="text-zinc-400 hover:text-white transition-colors text-xl md:text-2xl" title="GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                            <a href="https://ymne22.itch.io/" target="_blank" class="text-zinc-400 hover:text-white transition-colors text-xl md:text-2xl" title="Itch.io">
+                                <i class="fa-brands fa-itch-io"></i>
+                            </a>
+                            <a href="https://x.com/ymne22" target="_blank" class="text-zinc-400 hover:text-white transition-colors w-5 h-5 md:w-6 md:h-6 flex items-center justify-center" title="X (Twitter)">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </a>
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-3xl lg:order-2 flex-1 relative">
+                    <div class="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-3xl lg:order-2 flex-1 relative mt-4 lg:mt-0">
                         <div class="reveal-hidden stagger-1 flex items-center gap-3 mb-4 lg:mb-6">
-                            <span class="font-mono text-zinc-500 text-xs md:text-sm uppercase tracking-[0.3em] font-bold">
-                                ハンバーガー🍔
+                            <span class="font-mono text-white text-xs md:text-sm uppercase tracking-[0.3em] font-bold">
+                                プロフィール
                             </span>
-                            <div class="h-[1px] w-12 bg-zinc-700/50 hidden lg:block"></div>
+                            <div class="h-[1px] w-12 bg-white hidden lg:block"></div>
                         </div>
 
-                        <h2 class="hero-name reveal-hidden stagger-2 text-4xl md:text-6xl lg:text-[5rem] font-black mb-6 lg:mb-8 leading-none uppercase text-white tracking-tighter">
-                            About Me
+                        <h2 class="hero-name reveal-hidden stagger-2 text-4xl md:text-5xl lg:text-[5.5rem] font-black mb-6 lg:mb-8 leading-none uppercase text-white tracking-tighter">
+                            YMNE <span class="font-light text-white tracking-[0.3em] text-xl pl-5">[MYKO]</span>
                         </h2>
 
-                        <!-- Scrollable Text Area -->
+                        <!-- Bio Text Area -->
                         <div class="reveal-hidden stagger-3 w-full relative">
-                            <div class="hero-bio profile-scroll max-h-[35vh] md:max-h-[35vh] lg:max-h-none overflow-y-auto lg:overflow-visible pr-2 lg:pr-0 space-y-6 text-left relative z-0 pb-32 lg:pb-0 w-full custom-scrollbar pointer-events-auto">
-                                <p class="text-zinc-400 text-xs md:text-sm lg:text-base leading-relaxed font-sans mt-4">
-                                    So, my pen name is <span class="text-zinc-200 font-medium">‘Ymne’</span>, but yeah… people get confused by it a lot. Just call me <span class="text-white font-bold">‘Myko’</span> it’s my nickname and way easier. And yeah, pen name and nickname are different, you know. I definitely prefer someone calling with it.
-                                </p>
+                            <div class="hero-bio pr-4 lg:pr-0 space-y-6 lg:space-y-8 text-left relative z-0 pb-12 lg:pb-0 w-full pointer-events-auto">
 
-                                <p class="text-zinc-400 text-xs md:text-sm lg:text-base leading-relaxed font-sans">
-                                    I do art, mostly animation and drawing, and I have a soft spot for cute stuff. On the more technical side, I’m into <span class="text-zinc-200 font-medium">graphics programming</span>, mainly lighting and performance. I also mess around with <span class="text-zinc-200 font-medium">technical art</span> role for content creation, but honestly I lean way more into graphics programming. That’s where most of my work goes.
+                                <p class="text-zinc-300 text-sm md:text-base lg:text-lg leading-[1.8] font-sans">
+                                    I do art, mostly <span class="text-white font-bold">2D, 3D art and animation</span>. On the more technical side, I’m into <span class="text-white font-medium">graphics programming</span>, mainly lighting and performance. I also mess around with <span class="text-white font-medium">technical artist</span> role for content creation, but honestly I lean way more into graphics programming. That’s where most of my work goes.
                                 </p>
                                 
-                                <p class="text-zinc-400 text-xs md:text-sm lg:text-base leading-relaxed font-sans">
-                                    I’ve worked with <span class="text-white font-medium">Unity, Unreal,</span> and <span class="text-white font-medium">Godot</span>. I focus on lighting, custom rendering shaders, and performance stuff.
+                                <p class="text-zinc-300 text-sm md:text-base lg:text-lg leading-[1.8] font-sans">
+                                    I’ve worked with <span class="text-white font-bold">Unity, Unreal,</span> and <span class="text-white font-bold">Godot</span>. I focus on lighting, custom rendering shaders, and performance stuff.
                                 </p>
 
-                                <p class="text-zinc-400 text-xs md:text-sm lg:text-base leading-relaxed font-sans">
-                                    And yeah, I also make <span class="text-zinc-200 font-medium">2D and 3D art and animation.</span>
-                                </p>
                             </div>
-                            
-                            <!-- Efficient Mobile Fade Out -->
-                            <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none lg:hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -1845,154 +1945,148 @@
 
 
         <!-- ROADMAP -->
-        <section id="roadmap" class="long-section bg-black relative overflow-hidden" data-index="2">
-            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
-                <!-- Moving Grid -->
-                <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:32px_32px] animate-grid-move-up"></div>
-                
-                <!-- CRT Scanlines -->
-                <div class="absolute inset-0 opacity-40 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.8)_50%)] bg-[length:100%_4px] pointer-events-none"></div>
- 
-                <!-- CRT Vignette -->
-                <div class="hero-crt-vignette"></div>
+        <section id="roadmap" class="long-section bg-[#42445a] relative overflow-hidden" data-index="2">
+            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0 -mt-[120px]" style="margin-bottom: -100dvh">
+                <!-- Huge Vertical Text -->
+                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">制作実績</div>
             </div>
             
-            <div class="content-layer max-w-5xl w-full mx-auto px-6 flex flex-col items-center relative z-10">
+            <div class="content-layer max-w-5xl w-full mx-auto px-6 flex flex-col items-center relative z-10 pt-8 lg:pt-16">
                 <div class="mb-16 text-center">
-                    <h2 class="reveal-hidden text-5xl md:text-6xl font-black uppercase text-white mb-2 tracking-tight">Development <span class="text-zinc-600">Roadmap</span></h2>
-                    <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em]">Excluding Gamejam Collaborations and Freelance Projects</p>
+                    <h2 class="reveal-hidden text-5xl md:text-6xl font-black uppercase text-white mb-2 tracking-tighter" style="font-family: 'Noto Serif JP', serif;">制作実績</h2>
+                    <p class="reveal-hidden stagger-1 text-zinc-300 font-mono text-xs uppercase tracking-[0.3em] font-bold">Portfolio Roadmap</p>
                 </div>
 
                 <div class="relative w-full max-w-4xl mx-auto pl-4 md:pl-0">
-                    <div class="absolute left-[0px] md:left-[100px] top-0 bottom-0 w-[2px] bg-zinc-900 h-full z-0">
-                        <div class="roadmap-spine-fill absolute top-0 left-0 w-full bg-gradient-to-b from-white via-zinc-500 to-zinc-900 h-0"></div>
+                    <div class="absolute left-[0px] md:left-[100px] top-0 bottom-0 w-[1px] bg-white/20 h-full z-0">
+                        <div class="roadmap-spine-fill absolute top-0 left-0 w-full bg-white h-0"></div>
                     </div>
 
                     <div class="reveal-hidden stagger-1 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-black border border-zinc-500 z-20"></div>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white z-20 shadow-[0_0_10px_white]"></div>
                         <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-zinc-500 font-bold">2024</span>
+                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em]">2024</span>
                         </div>
-                        <div class="flex flex-col gap-4 max-w-2xl">
+                        <div class="flex flex-col gap-10 max-w-2xl">
                         
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Kanna and Lia the Witch</h4>
-                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Kanna and Lia the Witch</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm">A self-development project produced for a game jam and released exclusively for the event.</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A self-development project produced for a game jam and released exclusively for the event.</p>
                             </div>
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Holo-Attack (Demo)</h4>
-                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Holo-Attack (Demo)</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm">A self-development fan game created based on Hololive Myth. A fast-paced combo-stacking game where you demolish landmarks and buildings.</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A self-development fan game created based on Hololive Myth. A fast-paced combo-stacking game where you demolish landmarks and buildings.</p>
                             </div>
                             
                         </div>  
                     </div>
 
                     <div class="reveal-hidden stagger-2 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-black border border-zinc-500 z-20"></div>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white z-20 shadow-[0_0_10px_white]"></div>
                         <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-zinc-500 font-bold">2025</span>
+                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em]">2025</span>
                         </div>
-                        <div class="flex flex-col gap-4 max-w-2xl">
+                        <div class="flex flex-col gap-10 max-w-2xl">
                         
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Tormented Souls II</h4>
-                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Tormented Souls II</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm">A single-player horror experience built on classic horror gameplay mechanics. Work as Technical Artist. Developed by Dual Effect & Co-Developed by Agate International, Published by PQube.</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A single-player horror experience built on classic horror gameplay mechanics. Work as Technical Artist. Developed by Dual Effect & Co-Developed by Agate International, Published by PQube.</p>
                             </div>
                             
                         </div>  
                     </div>
 
                     <div class="reveal-hidden stagger-2 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-black border border-zinc-500 z-20"></div>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white z-20 shadow-[0_0_10px_white]"></div>
                         <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-zinc-500 font-bold">2026</span>
+                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em]">2026</span>
                         </div>
-                        <div class="flex flex-col gap-4 max-w-2xl">
+                        <div class="flex flex-col gap-10 max-w-2xl">
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Loan Shark Console Edition</h4>
-                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Loan Shark Console Edition</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">A short story-driven game, Work as Technical Artist and Graphics Programmer. Developed by Studio Ortica & Ported by Agate International, Published by Dark Product.</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A short story-driven game, Work as Technical Artist and Graphics Programmer. Developed by Studio Ortica & Ported by Agate International, Published by Dark Product.</p>
                             </div>
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Maid of Sker VR</h4>
-                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Maid of Sker VR</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">A VR game title, Work as Technical Artist. Developed and Published by Wales Interactive, Co-developed by Agate International</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A VR game title, Work as Technical Artist. Developed and Published by Wales Interactive, Co-developed by Agate International.</p>
                             </div>
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">GigaBash Mobile</h4>
-                                    <span class="text-[10px] font-mono uppercase text-green-400 border border-green-900 bg-green-900/20 px-2 py-0.5">Released</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">GigaBash Mobile</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">An ultimate kaiju fighting game, now available on mobile. Work as Technical Artist, Developed and published by Passion Republic Games, Co-Developed by Agate International.</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">An ultimate kaiju fighting game, now available on mobile. Work as Technical Artist, Developed and published by Passion Republic Games, Co-Developed by Agate International.</p>
                             </div>
                             
                         </div>  
                     </div>
 
                     <div class="reveal-hidden stagger-3 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white shadow-[0_0_15px_white] z-20 animate-pulse"></div>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white shadow-[0_0_15px_white] z-20 animate-pulse"></div>
                         <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-white font-bold bg-zinc-800 px-2 py-1">Current</span>
+                            <span class="font-mono text-xs text-black font-bold tracking-[0.2em] bg-white px-2 py-1">CURRENT</span>
                         </div>
-                        <div class="flex flex-col gap-4 max-w-2xl">
+                        <div class="flex flex-col gap-10 max-w-2xl">
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Port of Jumanah</h4>
-                                    <span class="text-[10px] font-mono uppercase text-yellow-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">In-Production</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Port of Jumanah</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">In-Production</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">Action 2.5D Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Developed by Agate International and Red Dunes Games, Published by Red Dunes Games</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">Action 2.5D Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Developed by Agate International and Red Dunes Games, Published by Red Dunes Games.</p>
                             </div>
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Project : 🥕</h4>
-                                    <span class="text-[10px] font-mono uppercase text-yellow-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">In-Production</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Project : 🥕</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">In-Production</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">To be revealed soon...</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
                             </div>
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Project : 🐰</h4>
-                                    <span class="text-[10px] font-mono uppercase text-yellow-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">In-Production</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Project : 🐰</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">In-Production</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">To be revealed soon...</p>
+                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
                             </div>
   
                         </div>
                     </div>
 
                     <div class="reveal-hidden stagger-3 relative pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-zinc-800 border border-zinc-700 z-20"></div>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-transparent border border-white/50 z-20"></div>
                         <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-zinc-600 font-bold">Future</span>
+                            <span class="font-mono text-xs text-white/50 font-bold tracking-[0.2em]">FUTURE</span>
                         </div>
-                         <div class="flex flex-col gap-4 max-w-2xl">
+                         <div class="flex flex-col gap-10 max-w-2xl">
 
-                            <div class="roadmap-box bg-zinc-900/50 border border-zinc-800 p-6 max-w-2xl">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-xl font-bold text-white">Project : 🌙</h4>
-                                    <span class="text-[10px] font-mono uppercase text-red-400 border border-yellow-900 bg-yellow-900/20 px-2 py-0.5">Pre-Production</span>
+                            <div class="roadmap-box flex flex-col">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <h4 class="text-2xl font-black text-white/50 tracking-tight uppercase">Project : 🌙</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white/50 border border-white/20 px-2 py-0.5 tracking-widest">Pre-Production</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm mb-3">To be revealed soon...</p>
+                                <p class="text-zinc-500 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
                             </div>
                             
                         </div>
@@ -2002,13 +2096,17 @@
         </section>
 
         <!-- MASONRY GRID: GAME ARCHIVE -->
-        <section id="games-start" class="long-section flex flex-col justify-center bg-[#050505]" data-index="3">
-            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-8 text-center">
-                <h3 class="reveal-hidden text-3xl md:text-4xl font-bold text-zinc-200 uppercase tracking-tight mb-2">Game Archive</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">Excluding Gamejam Collaborations and Freelance Projects</p>
+        <section id="games-start" class="long-section bg-[#1a1c2c] relative overflow-hidden" data-index="3">
+            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
+                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">開発作品</div>
+            </div>
+
+            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
+                <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">開発作品</h3>
+                <p class="reveal-hidden stagger-1 text-zinc-400 font-mono text-xs uppercase tracking-[0.3em] font-bold">Commercial & Professional Works</p>
             </div>
             
-            <div class="content-layer masonry-grid">
+            <div class="content-layer masonry-grid relative z-10">
 
                 <!-- GigaBash Mobile -->
                 <div class="masonry-item masonry-3x2" data-preview-id="gigabash-mobile">
@@ -2198,13 +2296,17 @@
         </section>
 
         <!-- MASONRY GRID: LAB EXPERIMENTS -->
-        <section id="tech-start" class="long-section flex flex-col justify-center bg-[#0a0a0a]" data-index="4">
-            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-8 text-center">
-                <h3 class="reveal-hidden text-3xl md:text-4xl font-bold text-zinc-200 uppercase tracking-tight mb-2">Lab Experiments</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">All shaders and scripts are under MIT license</p>
+        <section id="tech-start" class="long-section bg-[#0f0f12] relative overflow-hidden" data-index="4">
+            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
+                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">技術</div>
+            </div>
+
+            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
+                <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-zinc-200 uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">技術</h3>
+                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em] font-bold">All shaders and scripts are under MIT license</p>
             </div>
             
-            <div class="content-layer masonry-grid">
+            <div class="content-layer masonry-grid relative z-10">
 
                 <!-- Ymne LightingStack URP -->
                 <div class="masonry-item masonry-2x2" data-blog-title="YmneLightingStackURP" data-blog-desc="A comprehensive collection of advanced rendering effects for Unity URP : including SSGI and SSAO.">
@@ -2449,17 +2551,17 @@
         </section>
 
         <!-- MASONRY GRID: VISUAL ARTS -->
-        <section id="art-showcase" class="long-section flex flex-col justify-center bg-black" data-index="5">
-            <div class="parallax-wrap">
-                <div class="absolute inset-0 opacity-20" style="background-image: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size: 64px 64px;"></div>
+        <section id="art-showcase" class="long-section bg-[#050505] relative overflow-hidden" data-index="5">
+            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
+                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">作品集</div>
+            </div>
+
+            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
+                <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">作品集</h3>
+                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em] font-bold">Art & Animation Highlights</p>
             </div>
             
-            <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-8 text-center">
-                <h3 class="reveal-hidden text-3xl md:text-4xl font-bold text-white uppercase tracking-tight mb-2">Visual Arts</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">Art & Animation Highlights</p>
-            </div>
-            
-            <div class="content-layer masonry-grid">
+            <div class="content-layer masonry-grid relative z-10">
                 
                 <!-- Holo-Attack Opening -->
                 <div class="masonry-item masonry-3x2" data-media="video" data-src="Assets/Video/Art/Myth.webm" data-title="Holo-Attack Opening Layout">
@@ -2692,46 +2794,6 @@
             </div>
         </section>
 
-        <!-- CONTACT -->
-        <section id="contact" class="min-h-[100dvh] flex flex-col justify-center bg-black relative overflow-hidden pb-32" data-index="6">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/30 via-dark to-dark opacity-80"></div>
-                
-             <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-black to-black"></div>
-
-             <div class="content-layer w-full max-w-4xl mx-auto px-6 text-center relative z-10">
-                <p class="reveal-hidden font-mono text-zinc-500 text-xs uppercase tracking-[0.3em] mb-12 font-bold">Contact</p>
-                
-                <div class="reveal-hidden stagger-1">
-                    <h2 class="text-4xl md:text-6xl font-sans font-medium text-white mb-8 tracking-tight leading-tight">
-                        Let's connect<br>
-                        <span class="text-zinc-500">I'm always open for discussing.</span>
-                    </h2>
-                </div>
-
-                <div class="reveal-hidden stagger-2 mb-16">
-                    <a href="mailto:hello@YMNE.design" class="interactive inline-block relative group cursor-pointer">
-                        <span class="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 text-xs"><i class="fa-regular fa-copy"></i></span>
-                    </a>
-                </div>
-
-                <div class="reveal-hidden stagger-3 flex flex-wrap gap-8 md:gap-12 justify-center items-center mb-16">
-                    <a href="https://github.com/Ymne22" class="text-xs font-bold font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors uppercase">GitHub</a>
-                    <div class="w-1 h-1 bg-zinc-800 rounded-full"></div>
-                    <a href="https://x.com/ymne22" class="text-xs font-bold font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors uppercase">Twitter/X</a>
-                    <div class="w-1 h-1 bg-zinc-800 rounded-full"></div>
-                    <a href="https://ymne22.itch.io/" class="text-xs font-bold font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors uppercase">Itch.io</a>
-                </div>
-
-                <div class="reveal-hidden stagger-3 border-t border-zinc-800/50 pt-8">
-                    <p class="text-white text-[10px] font-mono tracking-widest mb-2">
-                        © 2026 Ymne. All rights reserved.
-                    </p>
-                    
-                    <p class="text-zinc-400 text-[9px] font-mono tracking-widest">
-                        All trademarks, logos, arts, and brand names are the property of their respective owners.
-                    </p>
-                </div>
-            </div>
         </section>
 
     </main>
@@ -2844,251 +2906,11 @@
             // Immediately show the main scroller with the hero as loading screen
             mainScroller.classList.add('loaded');
 
-            // Start hero CRT boot animation
-            HeroCRT.init();
-            HeroCRT.start();
-
-            // Auto-launch to profile after CRT boot
+            // Auto-launch to profile
             setTimeout(() => {
                 launchPortfolio();
-            }, 2500);
+            }, 1500);
         });
-
-        // --- HERO CRT WEGL LOGIC ---
-        const HeroCRT = {
-            canvas: null,
-            gl: null,
-            program: null,
-            animationFrame: null,
-            startTime: 0,
-            bootProgress: 0,
-            isBooting: false,
-
-            init() {
-                this.canvas = document.getElementById('hero-crt-canvas');
-                if (!this.canvas) return;
-                this.gl = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
-                if (!this.gl) return;
-
-                this.setupShaders();
-                this.setupBuffers();
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-            },
-
-            setupShaders() {
-                const vsSource = `
-                    attribute vec2 position;
-                    varying vec2 vUv;
-                    void main() {
-                        vUv = position * 0.5 + 0.5;
-                        gl_Position = vec4(position, 0.0, 1.0);
-                    }
-                `;
-
-                const fsSource = `
-                    precision mediump float;
-                    uniform float iTime;
-                    uniform vec2 iResolution;
-                    uniform float bootProgress;
-                    varying vec2 vUv;
-
-                    float rand(vec2 co) {
-                        return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-                    }
-                    
-                    vec2 crtCurve(vec2 uv) {
-                        uv = uv * 2.0 - 1.0;
-                        vec2 offset = abs(uv.yx) / vec2(5.0, 3.5);
-                        uv = uv + uv * offset * offset;
-                        uv = uv * 0.5 + 0.5;
-                        return uv;
-                    }
-
-                    vec3 smpteBars(vec2 uv) {
-                        vec3 c = vec3(0.0);
-                        if (uv.y > 0.33) {
-                            float b = floor(uv.x * 7.0);
-                            if(b==0.0) c = vec3(0.75, 0.75, 0.75);
-                            else if(b==1.0) c = vec3(0.75, 0.75, 0.0);
-                            else if(b==2.0) c = vec3(0.0, 0.75, 0.75);
-                            else if(b==3.0) c = vec3(0.0, 0.75, 0.0);
-                            else if(b==4.0) c = vec3(0.75, 0.0, 0.75);
-                            else if(b==5.0) c = vec3(0.75, 0.0, 0.0);
-                            else c = vec3(0.0, 0.0, 0.75);
-                        } else if(uv.y > 0.25) {
-                            float b = floor(uv.x * 7.0);
-                            if(b==0.0) c = vec3(0.0, 0.0, 0.75);
-                            else if(b==1.0) c = vec3(0.05);
-                            else if(b==2.0) c = vec3(0.75, 0.0, 0.75);
-                            else if(b==3.0) c = vec3(0.05);
-                            else if(b==4.0) c = vec3(0.0, 0.75, 0.75);
-                            else if(b==5.0) c = vec3(0.05);
-                            else c = vec3(0.75, 0.75, 0.75);
-                        } else {
-                            float b = floor(uv.x * 6.0);
-                            if(b==0.0) c = vec3(0.0, 0.2, 0.4);
-                            else if(b==1.0) c = vec3(1.0);
-                            else if(b==2.0) c = vec3(0.1, 0.0, 0.3);
-                            else if(b==3.0) c = vec3(0.05);
-                            else if(b==4.0) c = vec3(0.0);
-                            else c = vec3(0.05);
-                        }
-                        return c;
-                    }
-
-                    void main() {
-                        vec2 uv = vUv;
-                        
-                        // Boot Sequence scaling - snap much faster
-                        float verticalScale = smoothstep(0.05, 0.15, bootProgress);
-                        if (bootProgress > 0.0 && bootProgress < 1.0) {
-                            uv = (uv - 0.5) / max(verticalScale, 0.001) + 0.5;
-                        }
-
-                        vec2 crtUv = crtCurve(uv);
-
-                        if (crtUv.x < 0.0 || crtUv.x > 1.0 || crtUv.y < 0.0 || crtUv.y > 1.0) {
-                            gl_FragColor = vec4(0.05, 0.05, 0.05, 1.0);
-                            return;
-                        }
-
-                        // Glitch distortions (less tiled, more continuous tearing)
-                        float glitchY = fract(iTime * 0.15);
-                        if (abs(crtUv.y - glitchY) < 0.03) {
-                            crtUv.x += (rand(vec2(iTime)) - 0.5) * 0.05;
-                        }
-                        
-                        // Random wavy screen tear (VHS style)
-                        if (rand(vec2(floor(iTime * 12.0), 0.0)) > 0.95) {
-                            crtUv.x += sin(crtUv.y * 150.0 + iTime * 20.0) * 0.02 * rand(vec2(iTime));
-                        }
-
-                        // Sharp, thin horizontal line jumps
-                        if (rand(vec2(iTime, floor(crtUv.y * 200.0))) > 0.995) {
-                            crtUv.x += (rand(vec2(crtUv.y, iTime)) - 0.5) * 0.08;
-                        }
-
-                        // Sample SMPTE Test Bars
-                        vec3 col = smpteBars(crtUv);
-
-                        // Desaturate the test bars heavily
-                        float gray = dot(col, vec3(0.299, 0.587, 0.114));
-                        col = mix(vec3(gray), col, 0.12); // 12% saturation
-
-                        // Occasional glitch color splitting
-                        if (rand(vec2(floor(iTime * 8.0), floor(crtUv.y * 80.0))) > 0.97) {
-                            col.r = mix(vec3(gray), smpteBars(crtUv + vec2(0.015, 0.0)), 0.12).r;
-                            col.b = mix(vec3(gray), smpteBars(crtUv - vec2(0.015, 0.0)), 0.12).b;
-                        }
-
-                        // Multiple CRT Scanlines (smaller, more varied)
-                        float scanline = sin(crtUv.y * iResolution.y * 3.0) * 0.04;
-                        scanline += sin(crtUv.y * iResolution.y * 1.5) * 0.02;
-                        scanline += sin((crtUv.y - iTime * 0.05) * 100.0) * 0.01;
-                        col -= scanline;
-
-                        // Phosphor Grid
-                        float grid = sin(crtUv.x * iResolution.x * 1.5) * sin(crtUv.y * iResolution.y * 1.5);
-                        col += grid * 0.03;
-
-                        // White Noise
-                        col += (rand(crtUv * iTime) - 0.5) * 0.08;
-
-                        // Edge Vignetting for the Tube
-                        float edge = min(crtUv.x, 1.0 - crtUv.x) * min(crtUv.y, 1.0 - crtUv.y);
-                        float vignette = smoothstep(0.0, 0.05, edge);
-                        col *= vignette;
-
-                        // Boot sequence flashes and line
-                        if (bootProgress < 1.0) {
-                            if (bootProgress < 0.05) {
-                                // Intense thin horizontal line gathering power
-                                float intensity = smoothstep(0.01, 0.0, abs(vUv.y - 0.5)) * (bootProgress / 0.05);
-                                col = mix(vec3(0.0), vec3(1.0), intensity);
-                            } else {
-                                // Screen flash and fade quickly
-                                float flash = smoothstep(0.3, 0.05, bootProgress);
-                                col += vec3(flash * 0.9);
-                            }
-                        }
-
-                        gl_FragColor = vec4(col, 1.0);
-                    }
-                `;
-
-                const vs = this.createShader(this.gl.VERTEX_SHADER, vsSource);
-                const fs = this.createShader(this.gl.FRAGMENT_SHADER, fsSource);
-
-                this.program = this.gl.createProgram();
-                this.gl.attachShader(this.program, vs);
-                this.gl.attachShader(this.program, fs);
-                this.gl.linkProgram(this.program);
-                
-                this.positionLocation = this.gl.getAttribLocation(this.program, "position");
-                this.u_time = this.gl.getUniformLocation(this.program, "iTime");
-                this.u_resolution = this.gl.getUniformLocation(this.program, "iResolution");
-                this.u_bootProgress = this.gl.getUniformLocation(this.program, "bootProgress");
-            },
-
-            createShader(type, source) {
-                const shader = this.gl.createShader(type);
-                this.gl.shaderSource(shader, source);
-                this.gl.compileShader(shader);
-                if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-                    console.error('Shader compile error:', this.gl.getShaderInfoLog(shader));
-                }
-                return shader;
-            },
-
-            setupBuffers() {
-                const positions = new Float32Array([
-                    -1.0, -1.0, 1.0, -1.0, -1.0,  1.0,
-                    -1.0,  1.0, 1.0, -1.0, 1.0,  1.0,
-                ]);
-                this.buffer = this.gl.createBuffer();
-                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
-                this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
-            },
-
-            resize() {
-                if (!this.canvas) return;
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-                this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-            },
-
-            start() {
-                if (!this.gl) return;
-                this.startTime = performance.now();
-                this.isBooting = true;
-                this.bootProgress = 0.0;
-                this.renderLoop();
-            },
-
-            renderLoop(time = 0) {
-                if (this.isBooting) {
-                    const elapsed = Math.max(0, performance.now() - this.startTime);
-                    this.bootProgress = Math.min(elapsed / 600.0, 1.0); // 0.6 second boot for an instant flash
-                    if (this.bootProgress >= 1.0) {
-                        this.isBooting = false;
-                    }
-                }
-
-                this.gl.useProgram(this.program);
-                
-                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
-                this.gl.enableVertexAttribArray(this.positionLocation);
-                this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
-
-                this.gl.uniform1f(this.u_time, time * 0.001);
-                this.gl.uniform2f(this.u_resolution, this.canvas.width, this.canvas.height);
-                this.gl.uniform1f(this.u_bootProgress, this.bootProgress);
-
-                this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-                this.animationFrame = requestAnimationFrame((t) => this.renderLoop(t));
-            }
-        };
 
         const mainScroller = document.getElementById('main-scroller');
         const sections = document.querySelectorAll('section');
@@ -3097,54 +2919,66 @@
 
         // PC 2D hybrid scroll
         let horizScrollCooldown = false;
-        window.addEventListener('wheel', (e) => {
-            const scroller = document.getElementById('main-scroller');
-            
-            if (!scroller.classList.contains('horizontal-mode') || !scroller.classList.contains('unlocked')) return;
-            if (e.shiftKey) return; // Allow native horizontal layout to trackpad
-
-            const currentSectionIndex = Math.round(scroller.scrollLeft / window.innerWidth);
-            const sectionsList = Array.from(scroller.querySelectorAll('section')).filter(s => s.style.display !== 'none');
-            const currentSection = sectionsList[currentSectionIndex];
-            
-            if (!currentSection) return;
-
-            if (e.deltaY > 0) { // Scrolling down
-                // Allow a tiny margin of 5px for sub-pixel bottom calculations
-                const isAtBottom = currentSection.scrollHeight - currentSection.scrollTop <= currentSection.clientHeight + 5;
-                if (isAtBottom && !horizScrollCooldown) {
-                    e.preventDefault();
-                    if (currentSectionIndex < sectionsList.length - 1) {
-                        horizScrollCooldown = true;
-                        // Reset next section to top before navigating
-                        const nextSection = sectionsList[currentSectionIndex + 1];
-                        if (nextSection) nextSection.scrollTop = 0;
-                        scroller.scrollBy({ left: window.innerWidth, behavior: 'smooth' });
-                        setTimeout(() => horizScrollCooldown = false, 800);
-                    }
-                }
-            } else if (e.deltaY < 0) { // Scrolling up
-                const isAtTop = currentSection.scrollTop <= 5;
-                if (isAtTop && !horizScrollCooldown) {
-                    e.preventDefault();
-                    if (currentSectionIndex > 0) {
-                        horizScrollCooldown = true;
-                        // Reset previous section to top before navigating back
-                        const prevSection = sectionsList[currentSectionIndex - 1];
-                        if (prevSection) prevSection.scrollTop = 0;
-                        scroller.scrollBy({ left: -window.innerWidth, behavior: 'smooth' });
-                        setTimeout(() => horizScrollCooldown = false, 800);
-                    }
-                }
-            }
-        }, { passive: false });
+        let isNavigating = false;
         
+        // Auto next-page scrolling disabled by user
+        // window.addEventListener('wheel', (e) => { ... });
+        
+        const sectionTitles = {
+            'profile': '略歴',
+            'roadmap': '制作実績',
+            'games-start': '開発作品', 
+            'tech-start': '技術',
+            'art-showcase': '作品集'
+        };
+
         function scrollToSection(id) {
+            if (isNavigating) return;
             const el = document.getElementById(id);
-            if(el) {
-                // If on PC, we scroll horizontally to it. The root 'scrollIntoView' handles this automatically!
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
+            if(!el) return;
+
+            isNavigating = true;
+            horizScrollCooldown = true;
+
+            // Create Mograph Transition Frame
+            const transitionFrame = document.createElement('div');
+            transitionFrame.className = 'fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center';
+            
+            const title = sectionTitles[id] || '移動';
+
+            transitionFrame.innerHTML = `
+                <div id="nav-curtain" class="absolute inset-0 bg-[#0d0d0d]" style="transform: scaleX(0); transform-origin: left; transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);"></div>
+                <div id="nav-text" class="relative z-10 font-black text-white text-[10vh] md:text-[14vh] tracking-[0.4em] opacity-0 transition-opacity duration-200 select-none uppercase" style="font-family: 'Noto Serif JP', 'Times New Roman', serif; writing-mode: vertical-rl; text-orientation: upright;">${title}</div>
+            `;
+            document.body.appendChild(transitionFrame);
+
+            // 1. Sweep curtain in (Left to Right)
+            requestAnimationFrame(() => {
+                const curtain = document.getElementById('nav-curtain');
+                curtain.style.transform = 'scaleX(1)';
+                
+                setTimeout(() => {
+                    // Show text and jump to section instantly while screen is completely covered
+                    document.getElementById('nav-text').style.opacity = '1';
+                    el.scrollIntoView({ behavior: 'auto' }); // Instant jump
+                    
+                    // 2. Sweep curtain out (Left to Right) after a hold
+                    setTimeout(() => {
+                        const text = document.getElementById('nav-text');
+                        text.style.opacity = '0';
+                        
+                        curtain.style.transformOrigin = 'right';
+                        curtain.style.transform = 'scaleX(0)';
+                        
+                        // Cleanup
+                        setTimeout(() => {
+                            transitionFrame.remove();
+                            isNavigating = false;
+                            horizScrollCooldown = false;
+                        }, 400);
+                    }, 1000);
+                }, 400);
+            });
         }
 
         const observerOptions = {
@@ -3976,45 +3810,23 @@
             if (window.hasLaunched) return;
             window.hasLaunched = true;
 
-            const tvFlash = document.createElement('div');
-            // Full dark background exactly like the other sections
-            tvFlash.className = 'fixed inset-0 z-[9999] pointer-events-none transition-opacity duration-150 opacity-0 bg-[#050505]';
+            const hero = document.getElementById('hero');
+            const scroller = document.getElementById('main-scroller');
             
-            const noiseBg = `background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;); background-size: 128px 128px; will-change: background-position;`;
-
-            tvFlash.innerHTML = `
-                <!-- Base Static -->
-                <div class="absolute inset-0 opacity-30 pointer-events-none animate-tv-noise mix-blend-screen" style="${noiseBg}"></div>
+            if(hero) {
+                // Smooth fade out for background
+                hero.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                hero.style.opacity = '0';
                 
-                <!-- Red Tracking Glitch -->
-                <div class="absolute inset-0 mix-blend-screen opacity-70 pointer-events-none" style="animation: text-glitch-1 0.25s infinite linear alternate-reverse;">
-                    <div class="w-full h-full animate-tv-noise shadow-[inset_0_0_100px_rgba(255,0,0,0.4)]" style="${noiseBg}"></div>
-                </div>
+                // Animate only the text scaling up
+                const heroTextLayer = hero.querySelector('.content-layer');
+                if (heroTextLayer) {
+                    heroTextLayer.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    heroTextLayer.style.transform = 'scale(1.05)';
+                }
                 
-                <!-- Cyan Tracking Glitch -->
-                <div class="absolute inset-0 mix-blend-screen opacity-70 pointer-events-none" style="animation: text-glitch-2 0.35s infinite linear alternate-reverse;">
-                    <div class="w-full h-full animate-tv-noise shadow-[inset_0_0_100px_rgba(0,255,255,0.4)]" style="${noiseBg}"></div>
-                </div>
-
-                <!-- CRT Scanlines -->
-                <div class="absolute inset-0 opacity-90 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.8)_50%)] bg-[length:100%_4px] pointer-events-none z-10"></div>
-                
-                <!-- CRT Vignette -->
-                <div class="hero-crt-vignette z-20"></div>
-            `;
-
-            document.body.appendChild(tvFlash);
-
-            // Fade in the fizzle
-            requestAnimationFrame(() => {
-                tvFlash.style.opacity = '1';
-                
-                // Hold the glitch
                 setTimeout(() => {
-                    const hero = document.getElementById('hero');
-                    if(hero) hero.style.display = 'none';
-
-                    const scroller = document.getElementById('main-scroller');
+                    hero.style.display = 'none';
                     scroller.classList.add('unlocked');
                     scroller.style.overflowY = 'hidden'; 
                     scroller.style.overflowX = 'auto';
@@ -4023,14 +3835,8 @@
                     if(homeBtn) homeBtn.style.display = 'none';
 
                     scroller.scrollTop = 0;
-
-                    // Fade out glitch
-                    tvFlash.style.transition = 'opacity 0.6s ease-out';
-                    tvFlash.style.opacity = '0';
-                    
-                    setTimeout(() => tvFlash.remove(), 600);
-                }, 400); // Glitch duration
-            });
+                }, 800);
+            }
         }
     </script>
 </body>
