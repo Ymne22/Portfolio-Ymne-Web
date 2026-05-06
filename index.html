@@ -451,7 +451,7 @@
             justify-content: center;
             width: 56px;
             height: 56px;
-            margin-right: -2px; /* Overlap the thicker spine */
+            margin-right: -2px;
         }
         .dock-icon::before {
             content: attr(data-label);
@@ -909,12 +909,12 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.8);
             opacity: 0.9;
         }
-        /* If no star icon, blog icon sits at left */
+
         .masonry-item[data-blog]:not([data-preview-id]):not([data-preview])::after {
             left: 12px;
         }
 
-        /* Blog Modal — Fullscreen iframe window */
+        /* Blog Modal */
         #blog-modal {
             position: fixed;
             inset: 0;
@@ -1222,7 +1222,7 @@
             transform: scale(1);
             opacity: 0.75;
         }
-        /* Blur backdrop when modal opens */
+
         #preview-modal::before {
             content: '';
             position: fixed;
@@ -1243,14 +1243,14 @@
                         linear-gradient(to right, rgba(5,5,5,0.9) 0%, transparent 50%);
             pointer-events: none;
         }
-        /* Vignette effect */
+
         .preview-vignette {
             position: absolute;
             inset: 0;
             box-shadow: inset 0 0 200px 80px rgba(0,0,0,0.7);
             pointer-events: none;
         }
-        /* Grain overlay */
+
         .preview-grain {
             position: absolute;
             inset: 0;
@@ -1258,7 +1258,7 @@
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Loading spinner */
+
         .preview-loader {
             position: absolute;
             top: 50%;
@@ -1654,7 +1654,7 @@
             margin-bottom: 1.5rem !important;
         }
 
-        /* Selecting the social links container */
+
         #contact .flex.gap-8 {
             margin-bottom: 1.5rem !important;
             flex-direction: column !important;
@@ -1737,7 +1737,7 @@
         /* --- MONOGATARI CINEMATIC BARS --- */
         .monogatari-cinematic {
             position: relative;
-            background-color: #050505; /* Fallback */
+            background-color: #050505;
         }
         .monogatari-cinematic::before,
         .monogatari-cinematic::after {
@@ -1801,20 +1801,20 @@
         </div>
     </div>
 
-    <!-- PREVIEW MODAL (Console-Style) -->
+    <!-- PREVIEW MODAL -->
     <div id="preview-modal">
         <button class="preview-close" onclick="closePreviewModal()">
             <i class="fa-solid fa-arrow-left"></i> Back
         </button>
         
         
-        <!-- Background Media -->
+
         <img id="preview-bg-img" class="preview-bg" src="" alt="" style="display: none;">
         <video id="preview-bg-video" class="preview-bg" src="" autoplay loop muted playsinline style="display: none;"></video>
         <canvas id="preview-webgl" class="preview-bg" style="display: none;"></canvas>
         <div class="preview-gradient"></div>
         
-        <!-- Content Panel -->
+
         <div class="preview-content">
             <span id="preview-status" class="preview-status released">Released</span>
             <img id="preview-logo" class="preview-logo" src="" alt="" style="display: none;">
@@ -1833,7 +1833,7 @@
         </div>
     </div>
 
-    <!-- BLOG MODAL (Iframe Window) -->
+    <!-- BLOG MODAL -->
     <div id="blog-modal">
         <div class="blog-window">
             <div class="blog-window-bar">
@@ -1852,7 +1852,6 @@
     <!-- DOCK -->
     <div id="dock-nav" class="dock-container">
         <div class="dock"> 
-            <button onclick="scrollToSection('hero')" class="dock-icon active" data-target="hero" data-label="Welcome / ようこそ"><i class="fa-solid fa-home"></i></button>
             <button onclick="scrollToSection('profile')" class="dock-icon" data-target="profile" data-label="Profile / 略歴"><i class="fa-regular fa-user"></i></button>
             <button onclick="scrollToSection('roadmap')" class="dock-icon" data-target="roadmap" data-label="Roadmap / 制作実績"><i class="fa-solid fa-list-check"></i></button>
             <button onclick="scrollToSection('games-start')" class="dock-icon" data-target="games-start" data-label="Works / 開発作品"><i class="fa-solid fa-gamepad"></i></button>
@@ -1868,8 +1867,17 @@
             <div class="absolute inset-0 bg-radial-gradient from-white/5 to-transparent opacity-30"></div>
             
             <div class="content-layer max-w-7xl w-full px-6 flex flex-col items-center justify-center text-center h-full mx-auto relative z-10 pointer-events-none">
-                <div class="flex flex-col items-center gap-2 mt-0">
-                     <h1 class="text-white font-black text-[12vh] tracking-[0.3em] uppercase mograph-scale-in select-none" style="writing-mode: vertical-rl; text-orientation: upright; font-family: 'Noto Serif JP', 'Times New Roman', serif;">歓迎</h1>
+                <div class="flex items-center gap-12 md:gap-20 mt-0">
+                    <!-- Japanese Main -->
+                    <h1 class="text-white font-black text-[12vh] tracking-[0.3em] uppercase mograph-scale-in select-none" style="writing-mode: vertical-rl; text-orientation: upright; font-family: 'Noto Serif JP', 'Times New Roman', serif;">歓迎</h1>
+                    
+                    <!-- Divider Line -->
+                    <div class="h-[25vh] w-px bg-white/20 reveal-hidden stagger-1"></div>
+                    
+                    <!-- English Secondary -->
+                    <div class="flex flex-col items-center reveal-hidden stagger-2">
+                        <span class="text-zinc-500 font-bold text-[3vh] md:text-[4vh] tracking-[0.5em] uppercase select-none" style="writing-mode: vertical-rl; text-orientation: upri font-family: 'Space Grotesk', sans-serif;">WELCOME</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1877,7 +1885,7 @@
         <!-- PROFILE -->
         <section id="profile" class="fixed-section flex items-center justify-center bg-[#0d0d0d] relative overflow-hidden monogatari-cinematic" data-index="1">
             <div class="absolute inset-0 pointer-events-none z-0">
-                <!-- Flat clean background -->
+
                 <div class="absolute inset-0 bg-[#0d0d0d]"></div>
                 
                 <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">略歴</div>
@@ -1898,7 +1906,7 @@
                             </div>
                         </div>
 
-                        <!-- Social Icons below avatar container -->
+
                         <div class="flex items-center justify-center gap-6 reveal-hidden stagger-2 relative z-20">
                             <a href="https://github.com/Ymne22" target="_blank" class="text-zinc-400 hover:text-white transition-colors text-xl md:text-2xl" title="GitHub">
                                 <i class="fa-brands fa-github"></i>
@@ -1924,7 +1932,7 @@
                             YMNE <span class="font-light text-white tracking-[0.3em] text-xl pl-5">[MYKO]</span>
                         </h2>
 
-                        <!-- Bio Text Area -->
+
                         <div class="reveal-hidden stagger-3 w-full relative">
                             <div class="hero-bio pr-4 lg:pr-0 space-y-6 lg:space-y-8 text-left relative z-0 pb-12 lg:pb-0 w-full pointer-events-auto">
 
@@ -1946,8 +1954,8 @@
 
         <!-- ROADMAP -->
         <section id="roadmap" class="long-section bg-[#42445a] relative overflow-hidden" data-index="2">
-            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0 -mt-[120px]" style="margin-bottom: -100dvh">
-                <!-- Huge Vertical Text -->
+            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
+
                 <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">制作実績</div>
             </div>
             
@@ -2303,7 +2311,8 @@
 
             <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
                 <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-zinc-200 uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">技術</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em] font-bold">All shaders and scripts are under MIT license</p>
+                <p class="reveal-hidden stagger-1 text-zinc-200 font-mono text-s uppercase tracking-[0.3em] font-bold">Technical Works [Shaders, Script, and Tutorials]</p>
+                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em] font-bold">All assets here are under MIT license</p>
             </div>
             
             <div class="content-layer masonry-grid relative z-10">
@@ -2803,7 +2812,7 @@
         const modal = document.getElementById('link-modal');
         const proceedBtn = document.getElementById('proceed-btn');
 
-        // External Link Modal
+
         function confirmLink(url) {
             // Stop propagation so card click doesn't trigger lightbox if button is clicked
             event.stopPropagation();
@@ -2825,7 +2834,7 @@
             closeModal();
         });
 
-        // --- MEDIA LIGHTBOX LOGIC ---
+        /* --- MEDIA LIGHTBOX LOGIC --- */
         const mediaModal = document.getElementById('media-modal');
         const lightboxContainer = document.getElementById('lightbox-container');
         const mediaBarTitle = document.getElementById('media-bar-title');
@@ -2835,7 +2844,7 @@
             // Check if user was dragging (scrolling)
             if(window.isDragging) return;
 
-            lightboxContainer.innerHTML = ''; // Clear previous
+            lightboxContainer.innerHTML = '';
             mediaBarTitle.textContent = title || '';
             mediaCurrentSrc = src || '';
 
@@ -2882,14 +2891,14 @@
             }
         }
 
-        // Close media modal on backdrop click
+
         mediaModal.addEventListener('click', function(e) {
             if (e.target === mediaModal) {
                 closeMediaModal();
             }
         });
 
-        // Close on escape key
+
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closeMediaModal();
@@ -2897,7 +2906,7 @@
             }
         });
 
-        // --- SCROLL & LOAD LOGIC (EXISTING) ---
+        /* --- SCROLL & LOAD LOGIC --- */
 
         window.addEventListener('load', () => {
             const mainScroller = document.getElementById('main-scroller');
@@ -2917,7 +2926,7 @@
         const dockIcons = document.querySelectorAll('.dock-icon');
         const dockContainer = document.getElementById('dock-nav');
 
-        // PC 2D hybrid scroll
+
         let horizScrollCooldown = false;
         let isNavigating = false;
         
@@ -2940,45 +2949,14 @@
             isNavigating = true;
             horizScrollCooldown = true;
 
-            // Create Mograph Transition Frame
-            const transitionFrame = document.createElement('div');
-            transitionFrame.className = 'fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center';
+            // Use native smooth sliding instead of curtain transition
+            el.scrollIntoView({ behavior: 'smooth' });
             
-            const title = sectionTitles[id] || '移動';
-
-            transitionFrame.innerHTML = `
-                <div id="nav-curtain" class="absolute inset-0 bg-[#0d0d0d]" style="transform: scaleX(0); transform-origin: left; transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);"></div>
-                <div id="nav-text" class="relative z-10 font-black text-white text-[10vh] md:text-[14vh] tracking-[0.4em] opacity-0 transition-opacity duration-200 select-none uppercase" style="font-family: 'Noto Serif JP', 'Times New Roman', serif; writing-mode: vertical-rl; text-orientation: upright;">${title}</div>
-            `;
-            document.body.appendChild(transitionFrame);
-
-            // 1. Sweep curtain in (Left to Right)
-            requestAnimationFrame(() => {
-                const curtain = document.getElementById('nav-curtain');
-                curtain.style.transform = 'scaleX(1)';
-                
-                setTimeout(() => {
-                    // Show text and jump to section instantly while screen is completely covered
-                    document.getElementById('nav-text').style.opacity = '1';
-                    el.scrollIntoView({ behavior: 'auto' }); // Instant jump
-                    
-                    // 2. Sweep curtain out (Left to Right) after a hold
-                    setTimeout(() => {
-                        const text = document.getElementById('nav-text');
-                        text.style.opacity = '0';
-                        
-                        curtain.style.transformOrigin = 'right';
-                        curtain.style.transform = 'scaleX(0)';
-                        
-                        // Cleanup
-                        setTimeout(() => {
-                            transitionFrame.remove();
-                            isNavigating = false;
-                            horizScrollCooldown = false;
-                        }, 400);
-                    }, 1000);
-                }, 400);
-            });
+            // Release navigation lock after typical scroll duration
+            setTimeout(() => {
+                isNavigating = false;
+                horizScrollCooldown = false;
+            }, 1000);
         }
 
         const observerOptions = {
@@ -3109,7 +3087,7 @@
         
         sections.forEach(section => paginationObserver.observe(section));
         
-        // Click to navigate pagination dots
+
         gameDots.forEach((dot, index) => {
             dot.addEventListener('click', () => {
                 if (gameSections[index]) gameSections[index].scrollIntoView({ behavior: 'smooth' });
@@ -3140,7 +3118,7 @@
                         video.src = video.getAttribute('data-lazy-src');
                         video.load();
                     }
-                    video.play().catch(() => {}); // Ignore autoplay policy errors
+                    video.play().catch(() => {});
                 } else {
                     // Pause and free memory
                     video.pause();
@@ -3151,7 +3129,7 @@
         
         lazyVideos.forEach(video => videoObserver.observe(video));
 
-        // --- THROTTLED MOUSEMOVE PARALLAX ---
+        /* --- THROTTLED MOUSEMOVE PARALLAX --- */
         if (window.matchMedia("(min-width: 1024px)").matches) {
             const mouseTargets = document.querySelectorAll('.mouse-target');
             let rafPending = false;
@@ -3185,7 +3163,7 @@
 
             ele.addEventListener('mousedown', (e) => {
                 isDown = true;
-                window.isDragging = false; 
+                window.isDragging = false;
                 ele.classList.add('active');
                 startX = e.pageX - ele.offsetLeft;
                 scrollLeft = ele.scrollLeft;
@@ -3204,7 +3182,7 @@
                 if(!isDown) return;
                 e.preventDefault();
                 const x = e.pageX - ele.offsetLeft;
-                const walk = (x - startX) * 2; 
+                const walk = (x - startX) * 2;
                 
                 if(Math.abs(x - startX) > 5) {
                     window.isDragging = true;
@@ -3221,7 +3199,7 @@
             }
         }
 
-        // --- PREVIEW MODAL FUNCTIONS ---
+        /* --- PREVIEW MODAL FUNCTIONS --- */
         const previewModal = document.getElementById('preview-modal');
         const previewBgImg = document.getElementById('preview-bg-img');
         const previewBgVideo = document.getElementById('preview-bg-video');
@@ -3232,7 +3210,7 @@
         const previewMeta = document.getElementById('preview-meta');
         const previewLinkBtn = document.getElementById('preview-link-btn');
 
-        // --- WEBGL DEPTH CONTROLLER ---
+        /* --- WEBGL DEPTH CONTROLLER --- */
         const WebGLDepth = {
             canvas: null,
             gl: null,
@@ -3256,7 +3234,7 @@
                 this.setupShaders();
                 this.setupBuffers();
                 
-                // Add mouse move listener
+
                 document.addEventListener('mousemove', (e) => {
                     if (!this.isRunning) return;
                     // Normalized coords -0.5 to 0.5
@@ -3271,7 +3249,7 @@
                     varying vec2 vUv;
                     void main() {
                         vUv = position * 0.5 + 0.5;
-                        vUv.y = 1.0 - vUv.y; 
+                        vUv.y = 1.0 - vUv.y;
                         gl_Position = vec4(position, 0.0, 1.0);
                     }
                 `;
@@ -3286,7 +3264,7 @@
                     varying vec2 vUv;
 
                     void main() {
-                        // 1. Apply Parallax Background Shift (whole image moves with mouse)
+                        // 1. Parallax Background Shift
                         float parallaxStrength = 0.05; // How much the whole image shifts
                         vec2 parallaxOffset = u_mouse * parallaxStrength;
                         
@@ -3297,15 +3275,15 @@
                         float d = texture2D(u_depth, correctedUv).r; 
                         
                         // 4. Depth displacement (per-pixel 3D effect)
-                        float depthStrength = 0.075; 
+                        float depthStrength = 0.075;
                         vec2 disp = u_mouse * d * depthStrength; 
                         
                         vec2 finalUv = correctedUv - disp;
                         
                         // 5. Artifact Reduction (Ghosting Fix)
                         float dNew = texture2D(u_depth, finalUv).r;
-                        float ghostMask = smoothstep(0.05, 0.2, dNew - d); 
-                        finalUv = mix(finalUv, correctedUv, ghostMask); 
+                        float ghostMask = smoothstep(0.05, 0.2, dNew - d);
+                        finalUv = mix(finalUv, correctedUv, ghostMask);
 
                         gl_FragColor = texture2D(u_image, finalUv);
                     }
@@ -3343,7 +3321,7 @@
                 this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
                 this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
                 
-                // Cache attribute and uniform locations (avoids string lookups per frame)
+
                 this.positionLocation = this.gl.getAttribLocation(this.program, "position");
                 this.u_image = this.gl.getUniformLocation(this.program, "u_image");
                 this.u_depth = this.gl.getUniformLocation(this.program, "u_depth");
@@ -3361,7 +3339,7 @@
                 image.onload = () => {
                     if (unit === 0) {
                         this.imageAspect = image.width / image.height;
-                        this.updateAspect(); // Recalculate aspect ratio match
+                        this.updateAspect();
                     }
                     try {
                         this.gl.activeTexture(this.gl.TEXTURE0 + unit);
@@ -3424,7 +3402,7 @@
                 let scaleX = 1;
                 let scaleY = 1;
                 
-                // "Cover" logic
+
                 if (screenAspect > imgAspect) {
                      
                      scaleX = 1;
@@ -3472,7 +3450,7 @@
             }
         };
 
-        // Platform icon mapping
+        /* Platform icons */
         const platformIcons = {
             'playstation': '<i class="fa-brands fa-playstation" title="PlayStation"></i>',
             'xbox': '<i class="fa-brands fa-xbox" title="Xbox"></i>',
@@ -3514,7 +3492,7 @@
                 WebGLDepth.stop(); // Ensure WebGL is off
             }
             
-            // Set logo if available - hide title if logo exists
+
             if (data.logoImage) {
                 previewLogo.src = data.logoImage;
                 previewLogo.style.display = 'block';
@@ -3620,14 +3598,14 @@
             }, 500); // Wait for fade out
         }
 
-        // Close preview modal on ESC
+
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closePreviewModal();
             }
         });
 
-        // --- BLOG MODAL FUNCTIONS ---
+        /* --- BLOG MODAL FUNCTIONS --- */
         const blogModal = document.getElementById('blog-modal');
         const blogIframe = document.getElementById('blog-iframe');
         const blogBarTitle = document.getElementById('blog-bar-title');
@@ -3636,9 +3614,9 @@
         const blogLoadingRetry = document.getElementById('blog-loading-retry');
         let blogLoadTimeout = null;
         let blogCurrentUrl = '';
-        let blogLoadedUrl = ''; // Track what's actually loaded in the iframe
+        let blogLoadedUrl = '';
 
-        // Hide loading spinner when iframe finishes loading
+
         blogIframe.addEventListener('load', () => {
             if (blogIframe.src !== 'about:blank') {
                 clearTimeout(blogLoadTimeout);
@@ -3648,7 +3626,7 @@
             }
         });
 
-        // Also listen for early readiness signal from blog page (fires on DOMContentLoaded, much faster)
+
         window.addEventListener('message', (e) => {
             if (e.data === 'blog-ready') {
                 clearTimeout(blogLoadTimeout);
@@ -3658,20 +3636,20 @@
             }
         });
 
-        // Handle iframe load errors
+
         blogIframe.addEventListener('error', () => {
             clearTimeout(blogLoadTimeout);
             blogLoadingText.textContent = 'Failed to load';
             blogLoadingText.style.animation = 'none';
             blogLoadingRetry.classList.add('visible');
-            blogLoadedUrl = ''; // Clear cache on error
+            blogLoadedUrl = '';
         });
 
         function openBlogModal(title, desc, url) {
             blogBarTitle.textContent = title || 'Blog';
             blogCurrentUrl = url || 'about:blank';
 
-            // If same blog is already loaded, just show the modal instantly
+
             if (blogLoadedUrl === blogCurrentUrl && blogLoadedUrl !== '') {
                 blogLoading.classList.add('hidden');
                 blogLoadingRetry.classList.remove('visible');
@@ -3680,7 +3658,7 @@
                 return;
             }
 
-            // Different blog or first load — reset and load fresh
+
             blogLoadedUrl = '';
             blogLoadingText.textContent = 'Loading...';
             blogLoadingText.style.animation = '';
@@ -3690,7 +3668,7 @@
             blogModal.classList.add('open');
             document.body.style.overflow = 'hidden';
 
-            // Timeout: if iframe hasn't loaded in 10s, show retry
+
             clearTimeout(blogLoadTimeout);
             blogLoadTimeout = setTimeout(() => {
                 if (!blogLoading.classList.contains('hidden')) {
@@ -3707,9 +3685,9 @@
             blogLoadingRetry.classList.remove('visible');
             blogLoadedUrl = '';
             blogIframe.src = 'about:blank';
-            // Small delay then reload
+
             setTimeout(() => { blogIframe.src = blogCurrentUrl; }, 100);
-            // Reset timeout
+
             clearTimeout(blogLoadTimeout);
             blogLoadTimeout = setTimeout(() => {
                 if (!blogLoading.classList.contains('hidden')) {
@@ -3734,26 +3712,26 @@
             }
         }
 
-        // Close blog modal on ESC
+
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closeBlogModal();
             }
         });
 
-        // Close blog modal on backdrop click
+
         blogModal.addEventListener('click', function(e) {
             if (e.target === blogModal) {
                 closeBlogModal();
             }
         });
 
-        // Event delegation for masonry grid items
+        /* --- EVENT DELEGATION --- */
         document.addEventListener('click', (e) => {
             const masonryItem = e.target.closest('.masonry-item');
             if (!masonryItem) return;
 
-            // Handle blog modal (data-blog) — check first so blog cards open the blog window
+
             if (masonryItem.hasAttribute('data-blog')) {
                 const blogUrl = masonryItem.getAttribute('data-blog');
                 const title = masonryItem.getAttribute('data-blog-title') || masonryItem.querySelector('h4')?.textContent || '';
@@ -3762,7 +3740,7 @@
                 return;
             }
 
-            // Handle preview modal - check both data-preview-id (script-based) and data-preview (inline)
+
             if (masonryItem.hasAttribute('data-preview-id')) {
                 const previewId = masonryItem.getAttribute('data-preview-id');
                 const scriptTag = masonryItem.querySelector(`script[data-for="${previewId}"]`);
@@ -3814,11 +3792,11 @@
             const scroller = document.getElementById('main-scroller');
             
             if(hero) {
-                // Smooth fade out for background
+
                 hero.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
                 hero.style.opacity = '0';
                 
-                // Animate only the text scaling up
+
                 const heroTextLayer = hero.querySelector('.content-layer');
                 if (heroTextLayer) {
                     heroTextLayer.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
