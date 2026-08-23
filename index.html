@@ -1550,10 +1550,12 @@
         }
 
         /* Blur main content when blog is open */
-        #blog-modal.open ~ #main-scroller,
-        body:has(#blog-modal.open) #main-scroller {
-            filter: blur(8px);
-            transition: filter 0.4s ease;
+        @media (min-width: 769px) {
+            #blog-modal.open ~ #main-scroller,
+            body:has(#blog-modal.open) #main-scroller {
+                filter: blur(8px);
+                transition: filter 0.4s ease;
+            }
         }
 
         /* Reworked Bulletproof Profile Avatar System */
@@ -1721,7 +1723,6 @@
             .masonry-item {
                 border-radius: 1.25rem;
                 border: 2px solid rgba(255, 255, 255, 0.55);
-                transform: translateZ(0);
             }
             .masonry-item img,
             .masonry-item video {
