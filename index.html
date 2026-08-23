@@ -398,12 +398,10 @@
             transition: transform 1.5s cubic-bezier(0.1, 0.9, 0.2, 1) 0.24s;
         }
 
-        /* Raise class starts the animation */
+        /* Multi-Layer Wave Shutter Animation (Intro -> Profile) */
         #transition-wave-container.raise .transition-wave-layer {
             transform: translateY(0%);
         }
-
-        /* Exit class slides back down (reverse order for rolling liquid exit) */
         #transition-wave-container.exit .layer-white {
             transform: translateY(100%);
             transition: transform 1.1s cubic-bezier(0.76, 0, 0.24, 1) 0.24s;
@@ -419,6 +417,25 @@
         #transition-wave-container.exit .layer-dark-blue {
             transform: translateY(100%);
             transition: transform 1.1s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        /* Expanding Circle Shutter Animation (Profile <-> Other Section Navigation) */
+        /* Shrinking (Exit): Smooth & relaxed 1.4s ease-out shrink */
+        #circle-shutter-layer {
+            transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        /* Expanding (Opening): 1.2s ease-out burst */
+        #circle-shutter-layer.expand {
+            transform: translate(-50%, -50%) scale(1) !important;
+            transition: transform 1.2s cubic-bezier(0.05, 0.95, 0.05, 1) !important;
+        }
+        /* Continuous downward moving grid animation (Top -> Bottom) */
+        @keyframes gridMoveDown {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 36px; }
+        }
+        .animate-grid-down {
+            animation: gridMoveDown 1.5s linear infinite;
         }
 
         .shutter-top {
@@ -4824,65 +4841,139 @@
             }
         });
 
+        // Reusable function to trigger wave transition between pages/sections
+        function triggerWaveTransition(onCoverCallback, coverDurationMs = 1000, direction = 'bottom-to-top') {
+            const transitionWave = document.getElementById('transition-wave-container');
+            const waveCenterContent = document.getElementById('wave-center-content');
+
+            if (!transitionWave) {
+                if (typeof onCoverCallback === 'function') onCoverCallback();
+                return;
+            }
+
+            const dirClass = (direction === 'top-to-bottom') ? 'direction-top-down' : 'direction-bottom-up';
+
+            // Set wave sweep direction class & force layout reflow so initial state is applied
+            transitionWave.classList.remove('direction-top-down', 'direction-bottom-up');
+            transitionWave.classList.add(dirClass);
+            void transitionWave.offsetWidth;
+
+            // Step 1: Multi-layer waves sweep in to cover screen
+            transitionWave.classList.remove('exit');
+            transitionWave.classList.add('raise');
+
+            // Reveal central loading badge as waves cover the view
+            if (waveCenterContent) {
+                setTimeout(() => {
+                    waveCenterContent.classList.remove('opacity-0', 'scale-90');
+                    waveCenterContent.classList.add('opacity-100', 'scale-100');
+                }, 750);
+            }
+
+            // Step 2: Midpoint - execute section swap callback when screen is 100% covered (1500ms)
+            setTimeout(() => {
+                if (typeof onCoverCallback === 'function') {
+                    onCoverCallback();
+                }
+            }, 1500);
+
+            // Step 3: Fade out badge right before waves roll back
+            if (waveCenterContent) {
+                setTimeout(() => {
+                    waveCenterContent.classList.remove('opacity-100', 'scale-100');
+                    waveCenterContent.classList.add('opacity-0', 'scale-90');
+                }, 1500 + Math.max(0, coverDurationMs - 300));
+            }
+
+            // Step 4: Hold cover for coverDurationMs (1s default), then roll waves back out
+            setTimeout(() => {
+                transitionWave.classList.remove('raise');
+                transitionWave.classList.add('exit');
+            }, 1500 + coverDurationMs);
+
+            // Step 5: Reset animation state (keep direction class so layers rest off-screen in proper direction)
+            setTimeout(() => {
+                transitionWave.classList.remove('exit');
+            }, 1500 + coverDurationMs + 1500);
+        }
+
+        // Reusable function to trigger expanding circle transition (Profile <-> Other navigation)
+        function triggerCircleTransition(onCoverCallback, coverDurationMs = 2000) {
+            const circleLayer = document.getElementById('circle-shutter-layer');
+            const circleCenterContent = document.getElementById('circle-center-content');
+
+            if (!circleLayer) {
+                if (typeof onCoverCallback === 'function') onCoverCallback();
+                return;
+            }
+
+            // Step 1: Rapid burst expansion with decelerating ease-out curve (1.2s transition)
+            circleLayer.classList.add('expand');
+
+            // Reveal center badge text as circle covers screen
+            if (circleCenterContent) {
+                setTimeout(() => {
+                    circleCenterContent.classList.remove('opacity-0', 'scale-90');
+                    circleCenterContent.classList.add('opacity-100', 'scale-100');
+                }, 400);
+            }
+
+            // Step 2: Midpoint - execute section swap callback when screen is covered (1000ms)
+            setTimeout(() => {
+                if (typeof onCoverCallback === 'function') {
+                    onCoverCallback();
+                }
+            }, 1000);
+
+            // Step 3: Fade out badge right before circle shrinks back
+            if (circleCenterContent) {
+                setTimeout(() => {
+                    circleCenterContent.classList.remove('opacity-100', 'scale-100');
+                    circleCenterContent.classList.add('opacity-0', 'scale-90');
+                }, 1000 + Math.max(0, coverDurationMs - 300));
+            }
+
+            // Step 4: Shrink circle back to top pivot after 2s hold duration
+            setTimeout(() => {
+                circleLayer.classList.remove('expand');
+            }, 1000 + coverDurationMs);
+        }
+
+        // Track current section state for conditional wave transitions
+        let currentSectionId = 'hero';
+
+        // Global section navigation triggered via dock icons & links
+        function scrollToSection(targetId) {
+            const targetEl = document.getElementById(targetId);
+            if (!targetEl) return;
+
+            const isFromProfile = (currentSectionId === 'profile');
+            const isToProfile = (targetId === 'profile');
+
+            // Profile <-> Other section navigation triggers expanding circle shutter transition
+            if (isFromProfile || isToProfile) {
+                triggerCircleTransition(() => {
+                    targetEl.scrollIntoView({ behavior: 'auto' });
+                    currentSectionId = targetId;
+                }, 2000); // 2s hold delay
+            } else {
+                // Native smooth scroll without transition overlay for other section navigation
+                targetEl.scrollIntoView({ behavior: 'smooth' });
+                currentSectionId = targetId;
+            }
+        }
+
         window.hasLaunched = false;
         function launchPortfolio() {
             if (window.hasLaunched) return;
             window.hasLaunched = true;
+            currentSectionId = 'profile'; // Mark as launched into profile
 
             const scroller = document.getElementById('main-scroller');
             const profileEl = document.getElementById('profile');
-            const transitionWave = document.getElementById('transition-wave-container');
-            const waveCenterContent = document.getElementById('wave-center-content');
             
-            if (transitionWave) {
-                // Step 1: Multi-layer waves rise from bottom with fast-to-slow ease curve
-                transitionWave.classList.remove('exit');
-                transitionWave.classList.add('raise');
-
-                // Reveal central loading badge as waves cover the view
-                if (waveCenterContent) {
-                    setTimeout(() => {
-                        waveCenterContent.classList.remove('opacity-0', 'scale-90');
-                        waveCenterContent.classList.add('opacity-100', 'scale-100');
-                    }, 750);
-                }
-
-                // Step 2: Swap content/scroll when screen is completely covered by final dark blue wave layer (1500ms)
-                setTimeout(() => {
-                    if (scroller) {
-                        scroller.classList.add('unlocked');
-                        scroller.style.overflowY = 'hidden'; 
-                        scroller.style.overflowX = 'auto';
-                        
-                        const homeBtn = document.querySelector('.dock-icon[data-target="hero"]');
-                        if (homeBtn) homeBtn.style.display = 'none';
-
-                        if (profileEl) {
-                            profileEl.scrollIntoView({ behavior: 'auto' });
-                        }
-                    }
-                }, 1500);
-
-                // Fade out central badge right before waves recede (at 4200ms = 2.7s into full cover)
-                if (waveCenterContent) {
-                    setTimeout(() => {
-                        waveCenterContent.classList.remove('opacity-100', 'scale-100');
-                        waveCenterContent.classList.add('opacity-0', 'scale-90');
-                    }, 4200);
-                }
-
-                // Step 3: Hold solid cover with dot grid pattern for 3 Seconds, then roll waves back down (at 4500ms)
-                setTimeout(() => {
-                    transitionWave.classList.remove('raise');
-                    transitionWave.classList.add('exit');
-                }, 4500);
-
-                // Step 4: Reset classes after exit completes
-                setTimeout(() => {
-                    transitionWave.classList.remove('exit');
-                }, 6000);
-            } else {
-                // Fallback scroll if transition element is missing
+            // Intro -> Profile is ALWAYS multi-layer wave shutter rising from bottom
+            triggerWaveTransition(() => {
                 if (scroller) {
                     scroller.classList.add('unlocked');
                     scroller.style.overflowY = 'hidden'; 
@@ -4892,10 +4983,10 @@
                     if (homeBtn) homeBtn.style.display = 'none';
 
                     if (profileEl) {
-                        profileEl.scrollIntoView({ behavior: 'smooth' });
+                        profileEl.scrollIntoView({ behavior: 'auto' });
                     }
                 }
-            }
+            }, 1000);
         }
 
         // Handle asset loading state -> +2s delay -> enable PRESS START with seamless morphing
@@ -4978,7 +5069,37 @@
         </div>
     </div>
 
-    <!-- Fullscreen Multi-Layer Transition Wave Shutter -->
+    <!-- Fullscreen Expanding Circle Transition Shutter (For Profile <-> Other navigation) -->
+    <div id="transition-circle-container" class="fixed inset-0 w-screen h-screen pointer-events-none overflow-hidden" style="z-index: 99999;">
+        <!-- Expanding White Circle Layer (Pivot Center Above Screen) -->
+        <div id="circle-shutter-layer" class="fixed -top-[30vmax] left-1/2 w-[320vmax] h-[320vmax] rounded-full bg-white pointer-events-none overflow-hidden shadow-2xl" style="transform: translate(-50%, -50%) scale(0); will-change: transform;">
+            <!-- Grid Background Pattern Overlay inside white circle (Scrolling Top to Bottom) -->
+            <div class="absolute inset-0 bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] [background-size:36px_36px] animate-grid-down pointer-events-none"></div>
+        </div>
+
+        <!-- Central Bounce Text (Fixed viewport centered) -->
+        <div id="circle-center-content" class="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center text-[#0284c7] pointer-events-none transition-all duration-500 opacity-0 scale-90" style="z-index: 100000;">
+            <div class="bounce-wave-text text-[#0284c7] font-black text-base sm:text-xl md:text-2xl tracking-[0.5em] uppercase select-none flex items-center justify-center gap-[0.1em] drop-shadow-sm">
+                <span class="char-bounce" style="--i:10">♫</span>
+                <span class="inline-block w-3 sm:w-4"></span>
+                <span class="char-bounce" style="--i:0">P</span>
+                <span class="char-bounce" style="--i:1">l</span>
+                <span class="char-bounce" style="--i:2">e</span>
+                <span class="char-bounce" style="--i:3">a</span>
+                <span class="char-bounce" style="--i:4">s</span>
+                <span class="char-bounce" style="--i:5">e</span>
+                <span class="inline-block w-3 sm:w-4"></span>
+                <span class="char-bounce" style="--i:6">W</span>
+                <span class="char-bounce" style="--i:7">a</span>
+                <span class="char-bounce" style="--i:8">i</span>
+                <span class="char-bounce" style="--i:9">t</span>
+                <span class="inline-block w-3 sm:w-4"></span>
+                <span class="char-bounce" style="--i:10">♫</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Multi-Layer Transition Wave Shutter (For Intro -> Profile launch) -->
     <div id="transition-wave-container">
         <!-- Center Stylized Transition Badge (Fixed 100vh viewport centered) -->
         <div id="wave-center-content" class="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center text-white pointer-events-none transition-all duration-500 opacity-0 scale-90" style="z-index: 10;">
@@ -4988,6 +5109,8 @@
                 <span class="text-xl sm:text-2xl inline-block animate-spin text-white">✦</span>
             </div>
             <div class="bounce-wave-text text-white/90 font-extrabold text-xs sm:text-sm tracking-[0.4em] uppercase mt-4 select-none drop-shadow-sm flex items-center justify-center gap-[0.1em]">
+                <span class="char-bounce" style="--i:10">♫</span>
+                <span class="inline-block w-3 sm:w-4"></span>
                 <span class="char-bounce" style="--i:0">P</span>
                 <span class="char-bounce" style="--i:1">l</span>
                 <span class="char-bounce" style="--i:2">e</span>
