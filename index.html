@@ -238,15 +238,24 @@
             animation: bgLoopRightEdge 8.5s linear infinite;
         }
 
-        /* Disable heavy background pattern repaints on mobile / small devices */
+        /* Ultra-Lightweight High-Efficiency Performance Mode for Mobile Devices */
         @media (max-width: 768px) {
             .bg-loop-top,
             .bg-loop-top-right,
             .bg-loop-bottom,
             .bg-loop-bottom-right,
             .bg-loop-top-left,
-            .bg-loop-right-edge {
+            .bg-loop-right-edge,
+            .mograph-float-1,
+            .mograph-float-2 {
                 animation: none !important;
+            }
+            .backdrop-blur-md,
+            .backdrop-blur-xl,
+            .backdrop-blur-sm,
+            .backdrop-blur-xs {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
             }
         }
 
@@ -2700,7 +2709,7 @@
                         <!-- Avatar & Profile Info Row -->
                         <div class="flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-6 md:gap-7 relative z-10 text-center sm:text-left">
                             <div class="profile-avatar-circle">
-                                <img src="https://avatars.githubusercontent.com/u/126408995?v=4" alt="Myko" class="profile-avatar-img" draggable="false">
+                                <img src="https://avatars.githubusercontent.com/u/126408995?v=4" alt="Myko" class="profile-avatar-img" draggable="false" loading="lazy" decoding="async">
                             </div>
 
                             <div class="flex flex-col gap-0.5 sm:gap-1.5">
