@@ -420,22 +420,11 @@
         }
 
         /* Expanding Circle Shutter Animation (Profile <-> Other Section Navigation) */
-        /* Shrinking (Exit): Smooth & relaxed 1.4s ease-out shrink */
         #circle-shutter-layer {
-            transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-        /* Expanding (Opening): 1.2s ease-out burst */
-        #circle-shutter-layer.expand {
-            transform: translate(-50%, -50%) scale(1) !important;
             transition: transform 1.2s cubic-bezier(0.05, 0.95, 0.05, 1) !important;
         }
-        /* Continuous downward moving grid animation (Top -> Bottom) */
-        @keyframes gridMoveDown {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 36px; }
-        }
-        .animate-grid-down {
-            animation: gridMoveDown 1.5s linear infinite;
+        #circle-shutter-layer.expand {
+            transform: translate(-50%, -50%) scale(1) !important;
         }
 
         .shutter-top {
@@ -4898,7 +4887,7 @@
         }
 
         // Reusable function to trigger expanding circle transition (Profile <-> Other navigation)
-        function triggerCircleTransition(onCoverCallback, coverDurationMs = 2000) {
+        function triggerCircleTransition(onCoverCallback, coverDurationMs = 700) {
             const circleLayer = document.getElementById('circle-shutter-layer');
             const circleCenterContent = document.getElementById('circle-center-content');
 
@@ -4930,10 +4919,10 @@
                 setTimeout(() => {
                     circleCenterContent.classList.remove('opacity-100', 'scale-100');
                     circleCenterContent.classList.add('opacity-0', 'scale-90');
-                }, 1000 + Math.max(0, coverDurationMs - 300));
+                }, 1000 + Math.max(0, coverDurationMs - 250));
             }
 
-            // Step 4: Shrink circle back to top pivot after 2s hold duration
+            // Step 4: Shrink circle back to right edge with decelerating ease
             setTimeout(() => {
                 circleLayer.classList.remove('expand');
             }, 1000 + coverDurationMs);
@@ -4955,7 +4944,7 @@
                 triggerCircleTransition(() => {
                     targetEl.scrollIntoView({ behavior: 'auto' });
                     currentSectionId = targetId;
-                }, 2000); // 2s hold delay
+                }, 700); // 700ms hold delay for slightly slower, smoother transition
             } else {
                 // Native smooth scroll without transition overlay for other section navigation
                 targetEl.scrollIntoView({ behavior: 'smooth' });
@@ -5073,27 +5062,30 @@
     <div id="transition-circle-container" class="fixed inset-0 w-screen h-screen pointer-events-none overflow-hidden" style="z-index: 99999;">
         <!-- Expanding White Circle Layer (Pivot Center Above Screen) -->
         <div id="circle-shutter-layer" class="fixed -top-[30vmax] left-1/2 w-[320vmax] h-[320vmax] rounded-full bg-white pointer-events-none overflow-hidden shadow-2xl" style="transform: translate(-50%, -50%) scale(0); will-change: transform;">
-            <!-- Grid Background Pattern Overlay inside white circle (Scrolling Top to Bottom) -->
-            <div class="absolute inset-0 bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] [background-size:36px_36px] animate-grid-down pointer-events-none"></div>
+            <!-- Grid Background Pattern Overlay inside white circle -->
+            <div class="absolute inset-0 bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] [background-size:36px_36px] bg-loop-top pointer-events-none"></div>
         </div>
 
-        <!-- Central Bounce Text (Fixed viewport centered) -->
+        <!-- Central Badge & Bounce Text (Fixed viewport centered) -->
         <div id="circle-center-content" class="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center text-[#0284c7] pointer-events-none transition-all duration-500 opacity-0 scale-90" style="z-index: 100000;">
-            <div class="bounce-wave-text text-[#0284c7] font-black text-base sm:text-xl md:text-2xl tracking-[0.5em] uppercase select-none flex items-center justify-center gap-[0.1em] drop-shadow-sm">
-                <span class="char-bounce" style="--i:10">♫</span>
-                <span class="inline-block w-3 sm:w-4"></span>
+            <div class="flex items-center gap-3 bg-[#0284c7]/10 backdrop-blur-md px-8 py-3.5 rounded-full border-2 border-[#0284c7]/30 shadow-[0_10px_30px_rgba(2,132,199,0.15)]">
+                <span class="text-xl sm:text-2xl inline-block animate-spin text-[#0284c7]">✦</span>
+                <span class="font-black text-lg sm:text-2xl tracking-[0.3em] font-mono uppercase text-[#0284c7]">NOW ENTERING</span>
+                <span class="text-xl sm:text-2xl inline-block animate-spin text-[#0284c7]">✦</span>
+            </div>
+            <div class="bounce-wave-text text-[#0284c7]/90 font-extrabold text-xs sm:text-sm tracking-[0.4em] uppercase mt-4 select-none flex items-center justify-center gap-[0.1em]">
                 <span class="char-bounce" style="--i:0">P</span>
                 <span class="char-bounce" style="--i:1">l</span>
                 <span class="char-bounce" style="--i:2">e</span>
                 <span class="char-bounce" style="--i:3">a</span>
                 <span class="char-bounce" style="--i:4">s</span>
                 <span class="char-bounce" style="--i:5">e</span>
-                <span class="inline-block w-3 sm:w-4"></span>
+                <span class="inline-block w-2.5"></span>
                 <span class="char-bounce" style="--i:6">W</span>
                 <span class="char-bounce" style="--i:7">a</span>
                 <span class="char-bounce" style="--i:8">i</span>
                 <span class="char-bounce" style="--i:9">t</span>
-                <span class="inline-block w-3 sm:w-4"></span>
+                <span class="inline-block w-2.5"></span>
                 <span class="char-bounce" style="--i:10">♫</span>
             </div>
         </div>
@@ -5110,7 +5102,7 @@
             </div>
             <div class="bounce-wave-text text-white/90 font-extrabold text-xs sm:text-sm tracking-[0.4em] uppercase mt-4 select-none drop-shadow-sm flex items-center justify-center gap-[0.1em]">
                 <span class="char-bounce" style="--i:10">♫</span>
-                <span class="inline-block w-3 sm:w-4"></span>
+                <span class="inline-block w-2.5"></span>
                 <span class="char-bounce" style="--i:0">P</span>
                 <span class="char-bounce" style="--i:1">l</span>
                 <span class="char-bounce" style="--i:2">e</span>
