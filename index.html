@@ -1507,8 +1507,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(10, 18, 30, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(8, 14, 24, 0.95);
             padding: 2vh 2vw;
         }
         #blog-modal.open {
@@ -1881,8 +1880,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(10, 18, 30, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(8, 14, 24, 0.95);
             padding: 2vh 2vw;
         }
         #media-modal.open {
@@ -4648,7 +4646,11 @@
 
             start(imageUrl, depthUrl) {
                 if (!this.canvas) this.init();
-                if (!this.gl || !this.program) return;
+                if (!this.gl || !this.program) {
+                    const img = document.getElementById('preview-bg-img');
+                    if (img) { img.style.display = 'block'; img.src = imageUrl; }
+                    return;
+                }
 
                 this.isRunning = true;
                 this.canvas.style.display = 'block';
@@ -4758,10 +4760,10 @@
             // Show video or image based on file type
             const previewCanvas = document.getElementById('preview-webgl');
             
-            // On mobile (<= 768px), bypass WebGL depth shader to prevent GPU VRAM context switching and screen flickering
-            const isMobileDevice = window.innerWidth <= 768;
-            if (data.heroImageDepth && !isMobileDevice) {
-                // Use WebGL depth effect on desktop only
+            // On mobile (<= 768px) or low-spec PC hardware (<= 4 CPU threads), bypass WebGL depth shader to prevent GPU VRAM context switching and screen flickering
+            const isLowSpecHardware = window.innerWidth <= 768 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+            if (data.heroImageDepth && !isLowSpecHardware) {
+                // Use WebGL depth effect on mid/high-end desktop only
                 previewBgVideo.style.display = 'none';
                 previewBgImg.style.display = 'none';
                 WebGLDepth.start(data.heroImage, data.heroImageDepth);
