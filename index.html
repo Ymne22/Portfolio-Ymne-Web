@@ -238,8 +238,15 @@
             animation: bgLoopRightEdge 8.5s linear infinite;
         }
 
-        /* Ultra-Lightweight High-Efficiency Performance Mode for Mobile Devices */
+        /* ================================================================
+           MOBILE ZERO-FLICKER PERFORMANCE MODE
+           Completely reworks card rendering & modal presentation on mobile
+           to eliminate all GPU composition flickering on low-end hardware.
+           Desktop (>768px) is UNTOUCHED by these rules.
+           ================================================================ */
         @media (max-width: 768px) {
+
+            /* --- KILL ALL DECORATIVE ANIMATIONS --- */
             .bg-loop-top,
             .bg-loop-top-right,
             .bg-loop-bottom,
@@ -250,7 +257,8 @@
             .mograph-float-2 {
                 animation: none !important;
             }
-            /* Disable section wave dividers & hazard stripe lines on mobile (except intro #hero & transitions) */
+
+            /* --- HIDE SECTION WAVES & STRIPES (Except Intro & Transitions) --- */
             section:not(#hero) .mgrp-stripe-top,
             section:not(#hero) .mgrp-stripe-bottom,
             section:not(#hero) .wave-container,
@@ -259,17 +267,116 @@
                 display: none !important;
                 animation: none !important;
             }
-            .backdrop-blur-md,
-            .backdrop-blur-xl,
-            .backdrop-blur-sm,
-            .backdrop-blur-xs,
-            #media-modal,
-            .preview-meta-item,
-            .preview-close,
-            .media-window {
+
+            /* --- CARD RENDERING: SIMPLE FADE-IN (No scale/rotate/bounce) --- */
+            .masonry-item {
+                opacity: 0;
+                transform: none !important;
+                -webkit-mask-image: none !important;
+                mask-image: none !important;
+                transition: opacity 0.3s ease !important;
+            }
+            .masonry-item.in-view {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            /* --- KILL CARD HOVER TRANSFORMS (Touch devices don't hover) --- */
+            .masonry-item:hover,
+            .masonry-item.in-view:hover,
+            .masonry-item:active {
+                transform: none !important;
+                box-shadow: 0 12px 32px -5px rgba(10, 30, 60, 0.25), 0 0 12px rgba(255, 255, 255, 0.15) !important;
+            }
+            .masonry-item:hover img,
+            .masonry-item:hover video {
+                transform: none !important;
+            }
+            .masonry-item img,
+            .masonry-item video {
+                transition: none !important;
+            }
+
+            /* --- PROFILE CARD: FULL SCALE & SIMPLE FADE --- */
+            .profile-card-anim {
+                transform: none !important;
+                -webkit-mask-image: none !important;
+                mask-image: none !important;
+                opacity: 0;
+                width: 100% !important;
+            }
+            #profile.active-section .profile-card-anim {
+                animation: mobileFadeIn 0.4s ease forwards !important;
+                transform: none !important;
+                opacity: 1 !important;
+            }
+
+            /* --- NUKE ALL BACKDROP-FILTER EVERYWHERE --- */
+            * {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
             }
+
+            /* --- MODALS: INSTANT CUT (No scale/translate transitions) --- */
+            #media-modal {
+                background: rgba(5, 10, 18, 0.96) !important;
+                transition: opacity 0.2s ease !important;
+            }
+            .media-window {
+                transform: none !important;
+                transition: none !important;
+            }
+            #media-modal.open .media-window {
+                transform: none !important;
+            }
+
+            #preview-modal {
+                transition: opacity 0.2s ease !important;
+            }
+            .preview-content {
+                transform: none !important;
+                transition: opacity 0.25s ease !important;
+            }
+            #preview-modal.open .preview-content {
+                transform: none !important;
+            }
+            .preview-bg {
+                transform: none !important;
+                transition: opacity 0.3s ease !important;
+            }
+            #preview-modal.open .preview-bg {
+                transform: none !important;
+            }
+            .preview-vignette {
+                box-shadow: inset 0 0 80px 30px rgba(0, 0, 0, 0.6) !important;
+            }
+            .preview-meta-item {
+                background: rgba(255, 255, 255, 0.1) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                transition: none !important;
+            }
+            .preview-meta-item:hover {
+                transform: none !important;
+            }
+
+            #blog-modal {
+                background: rgba(5, 10, 18, 0.96) !important;
+                transition: opacity 0.2s ease !important;
+            }
+            .blog-window {
+                transform: none !important;
+                transition: none !important;
+            }
+            #blog-modal.open .blog-window {
+                transform: none !important;
+            }
+        }
+
+        /* Simple mobile-safe fade-in keyframe */
+        @keyframes mobileFadeIn {
+            from { opacity: 0; transform: none; }
+            to   { opacity: 1; transform: none; }
         }
 
         /* Next Page Arrow Pulse */
