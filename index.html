@@ -220,22 +220,34 @@
         }
 
         .bg-loop-top {
-            animation: bgLoopTop 5s linear infinite;
+            animation: bgLoopTop 8s linear infinite;
         }
         .bg-loop-top-right {
-            animation: bgLoopTopRight 6s linear infinite;
+            animation: bgLoopTopRight 9s linear infinite;
         }
         .bg-loop-bottom {
-            animation: bgLoopBottom 5s linear infinite;
+            animation: bgLoopBottom 8s linear infinite;
         }
         .bg-loop-bottom-right {
-            animation: bgLoopBottomRight 4.5s linear infinite;
+            animation: bgLoopBottomRight 7.5s linear infinite;
         }
         .bg-loop-top-left {
-            animation: bgLoopTopLeft 6.5s linear infinite;
+            animation: bgLoopTopLeft 9.5s linear infinite;
         }
         .bg-loop-right-edge {
-            animation: bgLoopRightEdge 5.5s linear infinite;
+            animation: bgLoopRightEdge 8.5s linear infinite;
+        }
+
+        /* Disable heavy background pattern repaints on mobile / small devices */
+        @media (max-width: 768px) {
+            .bg-loop-top,
+            .bg-loop-top-right,
+            .bg-loop-bottom,
+            .bg-loop-bottom-right,
+            .bg-loop-top-left,
+            .bg-loop-right-edge {
+                animation: none !important;
+            }
         }
 
         /* Next Page Arrow Pulse */
@@ -483,9 +495,9 @@
             transform-style: preserve-3d;
             isolation: isolate;
         }
-        /* Expand (enter) — fast burst, decelerates */
+        /* Expand (enter) — fast burst, decelerates (100% Full-Screen Coverage on Mobile & Ultrawide) */
         #circle-shutter-layer.expand {
-            transform: translate3d(-50%, -50%, 0) scale3d(1.15, 1.15, 1) !important;
+            transform: translate3d(-50%, -50%, 0) scale3d(1.25, 1.25, 1) !important;
             transition: transform 1.2s cubic-bezier(0.05, 0.95, 0.05, 1) !important;
         }
 
@@ -1571,8 +1583,6 @@
                 overflow-y: auto !important;
                 border-width: 6px !important;
                 border-radius: 2rem !important;
-                -webkit-mask-image: -webkit-radial-gradient(white, black);
-                mask-image: radial-gradient(white, black);
             }
         }
 
@@ -1603,8 +1613,6 @@
                 display: flex !important;
                 flex-direction: column !important;
                 overflow-y: auto !important;
-                -webkit-mask-image: -webkit-radial-gradient(white, black);
-                mask-image: radial-gradient(white, black);
             }
             /* Compact Header with Fluid Vertical Scaling */
             #profile .bg-\[\#38bdf8\] {
@@ -1692,7 +1700,6 @@
                 border-radius: 1.25rem;
                 border: 2px solid rgba(255, 255, 255, 0.55);
                 transform: translateZ(0);
-                -webkit-mask-image: -webkit-radial-gradient(white, black);
             }
             .masonry-item img,
             .masonry-item video {
@@ -2383,7 +2390,7 @@
             );
             background-size: 28px 28px;
             animation: stripeMoveRight 0.4s linear infinite;
-            z-index: 50;
+            z-index: 2;
             pointer-events: none;
             border: none;
         }
@@ -2454,14 +2461,20 @@
             display: inline-block;
             vertical-align: bottom;
         }
+        .wave {
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
         .wave-1 { animation: waveMove 8s linear infinite; opacity: 0.55; }
         .wave-2 { animation: waveMove 5s linear infinite reverse; opacity: 0.70; }
         .wave-3 { animation: waveMove 3s linear infinite; opacity: 0.85; }
         .wave-4 { animation: waveMove 2s linear infinite reverse; opacity: 0.95; }
 
         @keyframes waveMove {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
 
         .mograph-scale-in {
@@ -5151,8 +5164,8 @@
 
     <!-- Fullscreen Expanding Circle Transition Shutter (For Profile <-> Other navigation) -->
     <div id="transition-circle-container" class="fixed inset-0 w-screen h-screen pointer-events-none overflow-hidden" style="z-index: 99999;">
-        <!-- Expanding White Circle Layer (Pivot Center Above Screen - 100% GPU Accelerated 3D Composite Layer) -->
-        <div id="circle-shutter-layer" class="fixed -top-[50vmax] left-1/2 w-[220vmax] h-[220vmax] rounded-full bg-white pointer-events-none overflow-hidden shadow-xl">
+        <!-- Expanding White Circle Layer (Top Center Pivot - 100% Full Viewport Coverage on Mobile Portrait & Ultrawide) -->
+        <div id="circle-shutter-layer" class="fixed top-0 left-1/2 w-[320vmax] h-[320vmax] rounded-full bg-white pointer-events-none overflow-hidden shadow-xl">
             <!-- Crisp Vector Crossline Grid Overlay (Hardware Translated on GPU) -->
             <div class="absolute -top-[36px] -bottom-[36px] -left-[36px] -right-[36px] crossline-grid-pattern animate-grid-down pointer-events-none"></div>
         </div>
