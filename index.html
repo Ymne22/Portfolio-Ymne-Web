@@ -250,10 +250,23 @@
             .mograph-float-2 {
                 animation: none !important;
             }
+            /* Disable section wave dividers & hazard stripe lines on mobile (except intro #hero & transitions) */
+            section:not(#hero) .mgrp-stripe-top,
+            section:not(#hero) .mgrp-stripe-bottom,
+            section:not(#hero) .wave-container,
+            .profile-wave-fg,
+            .profile-wave-bg {
+                display: none !important;
+                animation: none !important;
+            }
             .backdrop-blur-md,
             .backdrop-blur-xl,
             .backdrop-blur-sm,
-            .backdrop-blur-xs {
+            .backdrop-blur-xs,
+            #media-modal,
+            .preview-meta-item,
+            .preview-close,
+            .media-window {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
             }
@@ -4713,40 +4726,36 @@
                 previewLinkBtn.style.display = 'none';
             }
             
-            // Reset background transform for animation - disable transitions first
+            // Reset background transform for smooth entrance animation
             previewBgImg.style.transition = 'none';
             previewBgVideo.style.transition = 'none';
             if (WebGLDepth.canvas) WebGLDepth.canvas.style.transition = 'none';
             
-            previewBgImg.style.transform = 'scale(1.25)';
-            previewBgVideo.style.transform = 'scale(1.25)';
-            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1.25)';
+            previewBgImg.style.transform = 'scale(1.15)';
+            previewBgVideo.style.transform = 'scale(1.15)';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1.15)';
             
-            previewBgImg.style.opacity = '0.3';
-            previewBgVideo.style.opacity = '0.3';
-            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '0.3';
+            previewBgImg.style.opacity = '0.4';
+            previewBgVideo.style.opacity = '0.4';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '0.4';
             
-            // Force reflow
-            void previewBgImg.offsetWidth;
-            void previewBgVideo.offsetWidth;
-            if (WebGLDepth.canvas) void WebGLDepth.canvas.offsetWidth;
-            
-            // Re-enable transitions and animate to final state
-            previewBgImg.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
-            previewBgVideo.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
-            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
-
-            previewBgImg.style.transform = 'scale(1)';
-            previewBgVideo.style.transform = 'scale(1)';
-            if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1)';
-
-            previewBgImg.style.opacity = '1';
-            previewBgVideo.style.opacity = '1';
-            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '1';
-            
-            // Open modal
+            // Open modal cleanly without forced layout thrashing
             previewModal.classList.add('open');
             document.body.style.overflow = 'hidden';
+
+            requestAnimationFrame(() => {
+                previewBgImg.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
+                previewBgVideo.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
+                if (WebGLDepth.canvas) WebGLDepth.canvas.style.transition = 'transform 12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out';
+
+                previewBgImg.style.transform = 'scale(1)';
+                previewBgVideo.style.transform = 'scale(1)';
+                if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1)';
+
+                previewBgImg.style.opacity = '1';
+                previewBgVideo.style.opacity = '1';
+                if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '1';
+            });
         }
 
         function closePreviewModal() {
