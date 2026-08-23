@@ -268,15 +268,22 @@
                 animation: none !important;
             }
 
-            /* --- CARD RENDERING: SIMPLE FADE-IN (No scale/rotate/bounce) --- */
-            .masonry-item {
-                opacity: 0;
+            /* --- INSTANT 100% VISIBLE CARDS (Zero JS Stagger Delays / Zero Flickering) --- */
+            .masonry-item,
+            .image-card,
+            .profile-card-anim,
+            .reveal-hidden {
+                opacity: 1 !important;
                 transform: none !important;
+                animation: none !important;
+                transition: none !important;
                 -webkit-mask-image: none !important;
                 mask-image: none !important;
-                transition: opacity 0.3s ease !important;
+                filter: none !important;
             }
-            .masonry-item.in-view {
+            .masonry-item.in-view,
+            .image-card.in-view,
+            .reveal-visible {
                 animation: none !important;
                 opacity: 1 !important;
                 transform: none !important;
@@ -285,31 +292,27 @@
             /* --- KILL CARD HOVER TRANSFORMS (Touch devices don't hover) --- */
             .masonry-item:hover,
             .masonry-item.in-view:hover,
-            .masonry-item:active {
+            .masonry-item:active,
+            .image-card:hover {
                 transform: none !important;
                 box-shadow: 0 12px 32px -5px rgba(10, 30, 60, 0.25), 0 0 12px rgba(255, 255, 255, 0.15) !important;
             }
             .masonry-item:hover img,
-            .masonry-item:hover video {
+            .masonry-item:hover video,
+            .image-card:hover img,
+            .image-card:hover video {
                 transform: none !important;
             }
             .masonry-item img,
-            .masonry-item video {
+            .masonry-item video,
+            .image-card img,
+            .image-card video {
                 transition: none !important;
             }
 
-            /* --- PROFILE CARD: FULL SCALE & SIMPLE FADE --- */
+            /* --- PROFILE CARD: FULL SCALE & INSTANT VISIBILITY --- */
             .profile-card-anim {
-                transform: none !important;
-                -webkit-mask-image: none !important;
-                mask-image: none !important;
-                opacity: 0;
                 width: 100% !important;
-            }
-            #profile.active-section .profile-card-anim {
-                animation: mobileFadeIn 0.4s ease forwards !important;
-                transform: none !important;
-                opacity: 1 !important;
             }
 
             /* --- NUKE ALL BACKDROP-FILTER EVERYWHERE --- */
