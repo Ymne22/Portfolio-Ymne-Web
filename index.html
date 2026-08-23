@@ -374,14 +374,30 @@
         }
         /* Per-character bouncing text animation */
         @keyframes charBounceWave {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-7px); }
+            0%, 100% {
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+            35% {
+                transform: translateY(-9px) scale(1.16) rotate(-4deg);
+            }
+            65% {
+                transform: translateY(-3px) scale(1.04) rotate(3deg);
+            }
+        }
+        .bounce-wave-text {
+            filter: drop-shadow(0 6px 20px rgba(2, 132, 199, 0.45));
         }
         .bounce-wave-text span.char-bounce {
             display: inline-block;
-            animation: charBounceWave 1.1s ease-in-out infinite;
-            animation-delay: calc(0.07s * var(--i, 0));
+            animation: charBounceWave 0.95s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+            animation-delay: calc(0.06s * var(--i, 0));
             will-change: transform;
+            text-shadow: 
+                2.5px 2.5px 0px #ffffff,
+                -2.5px -2.5px 0px #ffffff,
+                2.5px -2.5px 0px #ffffff,
+                -2.5px 2.5px 0px #ffffff,
+                0px 3px 8px rgba(0, 0, 0, 0.18);
         }
 
         /* Timings & Decelerating Curve (First fast, then slow) */
@@ -5078,7 +5094,8 @@
 
         <!-- Central Badge & Bounce Text (Fixed viewport centered) -->
         <div id="circle-center-content" class="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center text-[#0284c7] pointer-events-none transition-all duration-500 opacity-0 scale-90" style="z-index: 100000;">
-            <div class="bounce-wave-text text-[#0284c7]/90 font-extrabold text-xs sm:text-xl tracking-[0.4em] uppercase mt-4 select-none flex items-center justify-center gap-[0.1em]">
+
+            <div class="bounce-wave-text text-[#0284c7] font-extrabold text-xs sm:text-xl tracking-[0.4em] uppercase mt-4 select-none flex items-center justify-center gap-[0.1em]">
                 <span class="char-bounce" style="--i:10">♫</span>
                 <span class="inline-block w-2.5"></span>
                 <span class="char-bounce" style="--i:0">P</span>
@@ -5095,6 +5112,10 @@
                 <span class="inline-block w-2.5"></span>
                 <span class="char-bounce" style="--i:10">♫</span>
             </div>
+
+            <div class="text-[10px] sm:text-xs font-mono font-bold tracking-[0.45em] text-sky-600/90 uppercase mt-2.5 drop-shadow-xs bg-white/80 backdrop-blur-xs px-3.5 py-1 rounded-full border border-sky-300/50">
+                ✦ DATA SYNCHRONIZING ✦
+            </div>
         </div>
     </div>
 
@@ -5102,10 +5123,19 @@
     <div id="transition-wave-container">
         <!-- Center Stylized Transition Badge (Fixed 100vh viewport centered) -->
         <div id="wave-center-content" class="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center text-white pointer-events-none transition-all duration-500 opacity-0 scale-90" style="z-index: 10;">
-            <div class="flex items-center gap-3 bg-white/15 backdrop-blur-md px-8 py-3.5 rounded-full border-2 border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.15)]">
-                <span class="text-xl sm:text-2xl inline-block animate-spin text-white">✦</span>
-                <span class="font-black text-lg sm:text-2xl tracking-[0.3em] font-mono uppercase text-white drop-shadow-sm">NOW ENTERING</span>
-                <span class="text-xl sm:text-2xl inline-block animate-spin text-white">✦</span>
+            <!-- VTuber MoGraph Badge Container -->
+            <div class="flex flex-col items-center gap-2">
+                <div class="flex items-center gap-3 bg-white/20 backdrop-blur-xl px-8 py-3.5 rounded-full border-2 border-white/60 shadow-[0_12px_35px_rgba(0,0,0,0.2)] -skew-x-6 transform">
+                    <div class="skew-x-6 flex items-center gap-3">
+                        <span class="text-xl sm:text-2xl inline-block animate-spin text-white drop-shadow">✦</span>
+                        <span class="font-black text-lg sm:text-2xl tracking-[0.35em] font-mono uppercase text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">NOW ENTERING</span>
+                        <span class="text-xl sm:text-2xl inline-block animate-spin text-white drop-shadow">✦</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-[10px] sm:text-xs font-mono font-bold tracking-[0.45em] text-sky-600/90 uppercase mt-2.5 drop-shadow-xs bg-white/85 backdrop-blur-xs px-3.5 py-1 rounded-full border border-sky-300/50">
+                ✦ PLEASE WAIT ✦
             </div>
         </div>
 
