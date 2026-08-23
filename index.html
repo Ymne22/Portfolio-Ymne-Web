@@ -4265,26 +4265,25 @@
             });
         });
 
-        // --- LAZY VIDEO LOADING ---
-        // Only load and play videos when they're visible, pause+unload when off-screen
+        // --- LAZY VIDEO LOADING (GPU DECODER OPTIMIZED) ---
+        // Bound to #main-scroller so off-screen section videos NEVER play concurrently in background
         const lazyVideos = document.querySelectorAll('video[data-lazy-src]');
         const videoObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target;
                 if (entry.isIntersecting) {
-                    // Load and play
-                    if (!video.src || video.src === '') {
+                    // Load and play only when section is visible in scroller
+                    if (!video.src || video.src === '' || video.src === window.location.href) {
                         video.src = video.getAttribute('data-lazy-src');
                         video.load();
                     }
                     video.play().catch(() => {});
                 } else {
-                    // Pause and free memory
+                    // Immediately pause off-screen video streams to free GPU hardware decoders
                     video.pause();
-                    // Only unload if far enough away (rootMargin handles this)
                 }
             });
-        }, { root: null, rootMargin: '200px 0px', threshold: 0.1 });
+        }, { root: mainScroller, rootMargin: '50px 0px', threshold: 0.15 });
         
         lazyVideos.forEach(video => videoObserver.observe(video));
 
