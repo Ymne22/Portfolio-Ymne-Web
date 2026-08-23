@@ -26,19 +26,19 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Nunito', 'Outfit', 'sans-serif'],
                         mono: ['Space Grotesk', 'monospace'],
                     },
                     colors: {
-                        dark: '#050505',
-                        card: '#0A0A0A',
+                        dark: '#f0f8ff',
+                        card: '#ffffff',
                     },
                     height: {
                         'screen-dvh': '100dvh',
@@ -81,8 +81,154 @@
     </script>
 
     <style>
+        /* Profile Card Multi-Stage Momentum Bounce Animation (Empty ➔ BIG ➔ Smaller ➔ Normal) */
+        @keyframes cardMomentumPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.35) translateY(120px) rotate(-5deg);
+            }
+            52% {
+                opacity: 1;
+                transform: scale(1.08) translateY(-14px) rotate(1.5deg); /* 1. EMPTY ➔ BIG */
+            }
+            78% {
+                transform: scale(0.97) translateY(4px) rotate(-0.5deg); /* 2. TURN SMALLER */
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0px) rotate(0deg); /* 3. NORMAL SIZE */
+            }
+        }
+
+        .profile-card-anim {
+            opacity: 0;
+            transform: scale(0.35) translateY(120px);
+            transform-origin: center center;
+            will-change: transform, opacity;
+        }
+
+        #profile.active-section .profile-card-anim {
+            animation: cardMomentumPop 0.85s cubic-bezier(0.25, 1, 0.4, 1) forwards;
+        }
+
+        /* Avatar Matching Spring Momentum Drop */
+        @keyframes avatarMomentumDrop {
+            0% {
+                opacity: 0;
+                transform: scale(0.2) translateY(-50px) rotate(-20deg);
+            }
+            55% {
+                opacity: 1;
+                transform: scale(1.15) translateY(6px) rotate(4deg);
+            }
+            80% {
+                transform: scale(0.95) translateY(-2px) rotate(-1deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0px) rotate(0deg);
+            }
+        }
+
+        .profile-avatar-anim {
+            opacity: 0;
+            transform: scale(0.2);
+            will-change: transform, opacity;
+        }
+
+        #profile.active-section .profile-avatar-anim {
+            animation: avatarMomentumDrop 0.75s cubic-bezier(0.25, 1, 0.4, 1) 0.15s forwards;
+        }
+
+        /* Background Pattern Infinite Looping Animations (Unique Directions per Section) */
+        @keyframes bgLoopTopRight {
+            0% { background-position: 0 0; }
+            100% { background-position: 48px -48px; }
+        }
+        @keyframes bgLoopBottom {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 80px; }
+        }
+        @keyframes bgLoopBottomRight {
+            0% { background-position: 0 0; }
+            100% { background-position: 64px 64px; }
+        }
+        @keyframes bgLoopTopLeft {
+            0% { background-position: 0 0; }
+            100% { background-position: -56px -56px; }
+        }
+        @keyframes bgLoopRightEdge {
+            0% { background-position: 0 0; }
+            100% { background-position: 56px 0; }
+        }
+
+        .bg-loop-top-right {
+            animation: bgLoopTopRight 6s linear infinite;
+        }
+        .bg-loop-bottom {
+            animation: bgLoopBottom 5s linear infinite;
+        }
+        .bg-loop-bottom-right {
+            animation: bgLoopBottomRight 4.5s linear infinite;
+        }
+        .bg-loop-top-left {
+            animation: bgLoopTopLeft 6.5s linear infinite;
+        }
+        .bg-loop-right-edge {
+            animation: bgLoopRightEdge 5.5s linear infinite;
+        }
+
+        /* Next Page Arrow Pulse */
+        @keyframes arrowBounceX {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(9px) scale(1.25); }
+        }
+        .next-btn-anim .arrow-icon {
+            display: inline-block;
+            animation: arrowBounceX 1.6s ease-in-out infinite;
+        }
+
+        /* Floating Background Accents Keyframes */
+        @keyframes mographFloat1 {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-22px) rotate(16deg) scale(1.15); }
+        }
+        @keyframes mographFloat2 {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(20px) rotate(-18deg) scale(0.9); }
+        }
+        .mograph-float-1 { animation: mographFloat1 2.5s ease-in-out infinite; }
+        .mograph-float-2 { animation: mographFloat2 3.2s ease-in-out infinite; }
+
+        /* Profile Card Liquid Wave Animations */
+        @keyframes profileWaveScrollFg {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes profileWaveScrollBg {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        .profile-wave-fg {
+            animation: profileWaveScrollFg 5s linear infinite;
+        }
+        .profile-wave-bg {
+            animation: profileWaveScrollBg 7.5s linear infinite;
+        }
+
+        /* Intro Button Morphing & Elastic Pop Animation */
+        @keyframes introBtnReadyPop {
+            0% { transform: scale(0.92); }
+            55% { transform: scale(1.12); }
+            80% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+        .intro-btn-ready-pop {
+            animation: introBtnReadyPop 0.6s cubic-bezier(0.25, 1, 0.4, 1) forwards;
+        }
+
         html {
-            background-color: #050505;
+            background-color: #f0f8ff;
             width: 100%;
             height: 100%;
             overflow: hidden; 
@@ -91,8 +237,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #050505;
-            color: #ffffff;
+            background-color: #f0f8ff;
+            color: #1a2a3a;
             height: 100%;
             overflow: hidden; 
         }
@@ -113,7 +259,7 @@
             left: 0;
             width: 100%;
             height: 50%;
-            background-color: #050505;
+            background-color: #55c2f0;
             z-index: 1;
             transition: transform 1.2s cubic-bezier(0.87, 0, 0.13, 1);
         }
@@ -141,7 +287,7 @@
         .loader-bar-track {
             width: 120px;
             height: 2px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.3);
             overflow: hidden;
             position: relative;
         }
@@ -201,7 +347,7 @@
             inset: 0;
             z-index: 4;
             pointer-events: none;
-            box-shadow: inset 0 0 200px 80px rgba(0, 0, 0, 0.9);
+            box-shadow: none;
         }
 
         #main-scroller {
@@ -257,7 +403,7 @@
             height: 130%;
             z-index: 0; 
             overflow: hidden;
-            background: #050505;
+            background: #e8f4fd;
         }
         
         .parallax-img {
@@ -281,51 +427,44 @@
 
         .reveal-hidden {
             opacity: 0;
-            transform: translateY(20px);
-            filter: blur(10px);
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 1s cubic-bezier(0.16, 1, 0.3, 1), 
-                        filter 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(45px) scale(0.35);
+            filter: blur(8px);
+            will-change: transform, opacity;
         }
         .reveal-visible {
-            opacity: 1;
-            transform: translateY(0);
+            animation: cardMomentumPop 0.8s cubic-bezier(0.25, 1, 0.4, 1) forwards;
             filter: blur(0);
         }
 
-        .stagger-1 { transition-delay: 100ms; }
-        .stagger-2 { transition-delay: 200ms; }
-        .stagger-3 { transition-delay: 300ms; }
+        .stagger-1 { animation-delay: 80ms !important; }
+        .stagger-2 { animation-delay: 160ms !important; }
+        .stagger-3 { animation-delay: 240ms !important; }
 
         .image-card {
             position: relative;
             overflow: hidden;
-            background: #000;
+            background: #fff;
             flex-shrink: 0; 
             scroll-snap-align: start;
             aspect-ratio: 3/4;
             cursor: default; 
             opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-                        border-color 0.3s ease,
-                        box-shadow 0.3s ease;
+            transform: translateY(50px) scale(0.35);
+            will-change: transform, opacity;
             -webkit-user-drag: none;
             user-select: none;
-            border: 1px solid #1a1a1a;
+            border: 1px solid rgba(85, 194, 240, 0.3);
             
             -webkit-mask-image: -webkit-radial-gradient(white, black);
             mask-image: radial-gradient(white, black);
         }
         
         .image-card.in-view {
-            opacity: 1;
-            transform: translateY(0) scale(1);
+            animation: cardMomentumPop 0.8s cubic-bezier(0.25, 1, 0.4, 1) forwards;
         }
 
         .image-card:hover {
-            border-color: #666;
+            border-color: #55c2f0;
         }
         
         .image-card img, .image-card video {
@@ -347,7 +486,7 @@
         .image-card-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(255, 255, 255, 0.85);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -433,65 +572,72 @@
         .dock {
             background: transparent;
             border: none;
-            border-right: 2px solid rgba(255, 255, 255, 0.15);
-            box-shadow: none;
-            padding: 3rem 0; 
+            border-right: 3px solid rgba(255, 255, 255, 0.8);
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+            padding: 2rem 0; 
             display: flex;
             flex-direction: column;
-            gap: 3rem;
+            gap: 2.5rem;
             align-items: flex-end;
         }
         .dock-icon {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.85);
             position: relative;
             font-size: 1.25rem; 
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 56px;
-            height: 56px;
-            margin-right: -2px;
+            width: 48px;
+            height: 48px;
+            margin-right: -3px;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
         }
         .dock-icon::before {
             content: attr(data-label);
             position: absolute;
-            right: 64px;
+            right: 56px;
             font-family: 'Space Grotesk', monospace;
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.25em;
-            color: white;
+            letter-spacing: 0.15em;
+            color: #ffffff;
+            background: #1a3a5c;
+            padding: 6px 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
             opacity: 0;
-            transform: translateX(15px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             white-space: nowrap;
             pointer-events: none;
-            text-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
         .dock-icon:hover {
-            color: #fff;
-            transform: translateX(-5px);
+            color: #ffffff;
+            transform: translateX(-4px);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
         }
         .dock-icon:hover::before, .dock-icon.active::before {
             opacity: 1;
             transform: translateX(0);
         }
         .dock-icon.active {
-            color: #fff;
+            color: #ffffff;
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
         }
         .dock-icon::after {
             content: '';
             position: absolute;
-            right: 0; 
+            right: -3px; 
             top: 50%;
             transform: translateY(-50%) scaleY(0);
-            width: 3px;
-            height: 32px;
-            background: white;
+            width: 4px;
+            height: 36px;
+            background: #ffffff;
+            border-radius: 2px;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
         }
         .dock-icon.active::after {
             transform: translateY(-50%) scaleY(1);
@@ -520,8 +666,8 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(85, 194, 240, 0.2);
+            border: 1px solid rgba(85, 194, 240, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -538,7 +684,7 @@
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(85, 150, 200, 0.7);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, transform 0.3s ease;
@@ -550,14 +696,14 @@
         }
         
         .game-dot:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(85, 194, 240, 0.4);
             transform: scale(1.2);
         }
         
         .game-dot.active {
-            background: white;
-            border-color: white;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: #55c2f0;
+            border-color: #55c2f0;
+            box-shadow: 0 0 10px rgba(85, 194, 240, 0.5);
         }
         
         @media (max-width: 768px) {
@@ -599,8 +745,8 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(85, 194, 240, 0.2);
+            border: 1px solid rgba(85, 194, 240, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -617,7 +763,7 @@
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(85, 150, 200, 0.7);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, transform 0.3s ease;
@@ -629,14 +775,14 @@
         }
         
         .shader-dot:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(85, 194, 240, 0.4);
             transform: scale(1.2);
         }
         
         .shader-dot.active {
-            background: white;
-            border-color: white;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: #55c2f0;
+            border-color: #55c2f0;
+            box-shadow: 0 0 10px rgba(85, 194, 240, 0.5);
         }
 
         .art-pagination {
@@ -662,8 +808,8 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(85, 194, 240, 0.2);
+            border: 1px solid rgba(85, 194, 240, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -680,7 +826,7 @@
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(85, 150, 200, 0.7);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, transform 0.3s ease;
@@ -692,14 +838,14 @@
         }
         
         .art-dot:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(85, 194, 240, 0.4);
             transform: scale(1.2);
         }
         
         .art-dot.active {
-            background: white;
-            border-color: white;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: #55c2f0;
+            border-color: #55c2f0;
+            box-shadow: 0 0 10px rgba(85, 194, 240, 0.5);
         }
         
         @media (max-width: 768px) {
@@ -721,52 +867,62 @@
         .masonry-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            grid-auto-rows: 180px;
-            gap: 4px;
+            grid-auto-rows: 210px;
+            gap: 16px;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem 4rem 1.5rem;
         }
 
         .masonry-item {
             position: relative;
             overflow: hidden;
-            background: #000;
+            background: #ffffff;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.5rem;
+            border: 2px solid #ffffff;
+            box-shadow: 0 12px 32px -5px rgba(10, 30, 60, 0.25), 0 0 16px rgba(255, 255, 255, 0.4);
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-                        border-color 0.4s ease;
+            transform: translateY(60px) scale(0.35);
+            will-change: transform, opacity;
         }
 
         .masonry-item.in-view {
-            opacity: 1;
-            transform: translateY(0);
+            animation: cardMomentumPop 0.8s cubic-bezier(0.25, 1, 0.4, 1) forwards;
         }
 
         .masonry-item::after {
             content: '';
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 4px;
-            height: 4px;
-            background: white;
-            opacity: 0.2;
+            top: 14px;
+            right: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ffffff;
+            opacity: 0.8;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
             transition: opacity 0.3s ease;
             z-index: 20;
         }
 
         .masonry-item.in-view:hover {
             z-index: 10;
-            border-color: rgba(255,255,255,0.6);
+            transform: translateY(-8px) scale(1.02);
+            border-color: #ffffff;
+            box-shadow: 0 22px 45px -8px rgba(10, 30, 60, 0.35), 0 0 25px rgba(255, 255, 255, 0.9);
+            transition: transform 0.4s cubic-bezier(0.34, 1.5, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+
+        .masonry-item:active {
+            transform: translateY(-4px) scale(0.98);
+            transition: transform 0.1s ease;
         }
 
         .masonry-item.in-view:hover::after {
             opacity: 1;
+            background: #ffffff;
         }
 
         .masonry-item img,
@@ -774,53 +930,55 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            opacity: 0.8;
+            border-radius: 1.25rem;
+            transition: transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.4s ease;
+            opacity: 1;
         }
 
         .masonry-item:hover img,
         .masonry-item:hover video {
-            transform: scale(1.05);
+            transform: scale(1.06);
             opacity: 1;
         }
 
         .masonry-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
+            background: linear-gradient(to top, rgba(10, 25, 45, 0.92) 0%, rgba(10, 25, 45, 0.5) 45%, transparent 80%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 1.5rem;
+            padding: 1.25rem;
             opacity: 1;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
             z-index: 15;
+            border-radius: 1.25rem;
         }
 
         .masonry-item:hover .masonry-overlay {
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+            background: linear-gradient(to top, rgba(10, 25, 45, 0.96) 0%, rgba(10, 25, 45, 0.65) 55%, transparent 85%);
         }
 
-
-
         .masonry-overlay h4 {
-            font-size: 1.1rem;
-            font-weight: 800;
+            font-size: 1.15rem;
+            font-weight: 900;
             text-transform: uppercase;
-            color: white;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
             margin-bottom: 0.25rem;
             letter-spacing: -0.02em;
-            line-height: 1;
+            line-height: 1.1;
         }
 
         .masonry-overlay span {
             font-size: 10px;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: rgba(255,255,255,0.5);
-            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
         }
 
         .masonry-overlay .masonry-info {
@@ -828,32 +986,41 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            margin-top: 0.5rem;
         }
 
         .masonry-overlay .view-btn {
-            background: white;
-            color: black;
+            background: #38bdf8;
+            color: white;
             font-size: 9px;
             font-weight: 800;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
             letter-spacing: 0.15em;
-            padding: 0.4rem 1rem;
+            padding: 0.45rem 1.1rem;
             border: none;
+            border-radius: 9999px;
             cursor: pointer;
             pointer-events: auto;
-            transition: background 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.3s ease;
         }
 
         .masonry-item:hover .masonry-overlay .view-btn {
             opacity: 1;
+            transform: scale(1.08);
+            background: #0284c7;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5);
         }
 
         .masonry-overlay .view-btn:hover {
-            background: #e0e0e0;
+            background: #0284c7;
+        }
+
+        .masonry-overlay .view-btn:active {
+            transform: scale(0.92);
         }
 
         @media (max-width: 768px) {
@@ -872,7 +1039,7 @@
         /* Featured item with special styling */
         .masonry-featured .masonry-overlay {
             opacity: 1;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
+            background: linear-gradient(to top, rgba(10, 25, 45, 0.92) 0%, rgba(10, 25, 45, 0.5) 45%, transparent 80%);
         }
 
         .masonry-featured .masonry-overlay h4 {
@@ -925,7 +1092,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.7);
+            background: rgba(10, 18, 30, 0.85);
+            backdrop-filter: blur(8px);
             padding: 2vh 2vw;
         }
         #blog-modal.open {
@@ -933,8 +1101,9 @@
             pointer-events: auto;
         }
         .blog-window {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #ffffff;
+            border: 1px solid rgba(85,194,240,0.3);
+            border-radius: 1rem;
             width: 100%;
             height: 100%;
             max-width: 1100px;
@@ -944,7 +1113,7 @@
             flex-direction: column;
             transform: translateY(20px) scale(0.97);
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 40px 120px rgba(0,0,0,0.9);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.5);
             overflow: hidden;
         }
         #blog-modal.open .blog-window {
@@ -953,13 +1122,46 @@
         .blog-window-bar {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            gap: 12px;
+            padding: 12px 18px;
+            background: #102438;
+            border-bottom: 1px solid rgba(85, 194, 240, 0.25);
             flex-shrink: 0;
         }
         .blog-window-bar-title {
+            margin-left: 4px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .blog-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #ffffff;
+            background: #38bdf8;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+            transition: all 0.2s ease;
+        }
+        .blog-back-btn:hover {
+            background: #0284c7;
+            transform: translateY(-1px);
         }
         .blog-open-tab-btn {
             display: inline-flex;
@@ -970,67 +1172,38 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.35);
-            background: none;
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 5px 12px;
+            color: #ffffff;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 6px;
+            padding: 6px 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             margin-left: auto;
             white-space: nowrap;
         }
         .blog-open-tab-btn:hover {
+            background: rgba(255,255,255,0.25);
             color: white;
-            border-color: rgba(255,255,255,0.3);
-        }
-        .blog-window-bar-title {
-            margin-left: 4px;
-            font-family: 'Space Grotesk', monospace;
-            font-size: 11px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.35);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            flex: 1;
-        }
-        .blog-back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Space Grotesk', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.45);
-            background: none;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 5px 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .blog-back-btn:hover {
-            color: white;
-            border-color: rgba(255,255,255,0.3);
         }
         .blog-window-iframe {
             flex: 1;
             width: 100%;
             border: none;
-            background: #050505;
+            background: #ffffff;
         }
 
         /* Blog loading overlay */
         .blog-window-loading {
             position: absolute;
             inset: 0;
-            top: 36px;
+            top: 48px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 16px;
-            background: #0A0A0A;
+            background: #ffffff;
             z-index: 5;
             transition: opacity 0.3s ease;
         }
@@ -1040,36 +1213,36 @@
         }
         .blog-loading-text {
             font-family: 'Space Grotesk', monospace;
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.15em;
-            color: rgba(255,255,255,0.4);
+            color: #102438;
             animation: pulse-fade 1.5s ease-in-out infinite;
         }
         .blog-loading-retry {
             display: none;
             font-family: 'Space Grotesk', monospace;
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            color: rgba(255,255,255,0.5);
-            background: none;
-            border: 1px solid rgba(255,255,255,0.15);
+            color: #ffffff;
+            background: #38bdf8;
+            border: none;
+            border-radius: 6px;
             padding: 8px 20px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
         .blog-loading-retry:hover {
-            color: white;
-            border-color: rgba(255,255,255,0.4);
+            background: #0284c7;
         }
         .blog-loading-retry.visible {
             display: inline-block;
         }
         @keyframes pulse-fade {
-            0%, 100% { opacity: 0.15; }
+            0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
 
@@ -1092,22 +1265,39 @@
         @media (max-width: 768px) {
             .masonry-grid {
                 grid-template-columns: repeat(2, 1fr);
-                grid-auto-rows: 140px;
-                gap: 3px;
+                grid-auto-rows: 150px;
+                gap: 12px;
+                padding: 0 1rem 3rem 1rem;
             }
             .masonry-2x1, .masonry-3x2 { grid-column: span 2; }
             .masonry-2x2 { grid-column: span 2; grid-row: span 2; }
             .masonry-1x2 { grid-column: span 1; grid-row: span 2; }
             
+            .masonry-item {
+                border-radius: 1.25rem;
+                border: 3px solid #ffffff;
+                transform: translateZ(0);
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+            }
+            .masonry-item img,
+            .masonry-item video {
+                border-radius: 1rem;
+            }
             .masonry-overlay {
                 opacity: 1;
-                padding: 0.75rem;
+                padding: 0.85rem 1rem;
+                border-radius: 1rem;
             }
             .masonry-overlay h4 {
-                font-size: 0.85rem;
+                font-size: 0.95rem;
+                line-height: 1.15;
             }
             .masonry-featured .masonry-overlay h4 {
-                font-size: 1.1rem;
+                font-size: 1.15rem;
+            }
+            .masonry-overlay .view-btn {
+                padding: 0.35rem 0.85rem;
+                font-size: 8.5px;
             }
         }
 
@@ -1116,11 +1306,12 @@
         }
         
         .roadmap-box {
-            transition: border-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .roadmap-box:hover {
-            border-color: rgba(255,255,255,0.5);
-            transform: translateX(5px);
+            border-color: rgba(255,255,255,0.8);
+            transform: translateX(8px) scale(1.01);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
         }
 
         #media-modal {
@@ -1133,9 +1324,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.7);
+            background: rgba(10, 18, 30, 0.85);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             padding: 2vh 2vw;
         }
         #media-modal.open {
@@ -1143,8 +1333,9 @@
             pointer-events: auto;
         }
         .media-window {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #ffffff;
+            border: 1px solid rgba(85,194,240,0.3);
+            border-radius: 1rem;
             width: 100%;
             height: 100%;
             max-width: 1100px;
@@ -1154,7 +1345,7 @@
             flex-direction: column;
             transform: translateY(20px) scale(0.97);
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 40px 120px rgba(0,0,0,0.9);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.5);
             overflow: hidden;
         }
         #media-modal.open .media-window {
@@ -1163,26 +1354,30 @@
         .media-window-bar {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            gap: 12px;
+            padding: 12px 18px;
+            background: #102438;
+            border-bottom: 1px solid rgba(85, 194, 240, 0.25);
             flex-shrink: 0;
         }
         .media-window-bar-title {
             margin-left: 4px;
             font-family: 'Space Grotesk', monospace;
             font-size: 11px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.35);
+            font-weight: 700;
+            color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .lightbox-content {
             flex: 1;
             position: relative;
             overflow: hidden;
-            background: #050505;
+            background: #080d14;
             min-height: 0;
         }
         .lightbox-content video,
@@ -1194,7 +1389,7 @@
             object-fit: contain;
         }
 
-        /* Console-Style Preview Modal */
+        /* Console / Mograph Style Preview Modal */
         #preview-modal {
             position: fixed;
             inset: 0;
@@ -1202,7 +1397,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
-            background: #050505;
+            background: #08080c;
         }
         #preview-modal.open {
             opacity: 1;
@@ -1214,158 +1409,158 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.3;
+            opacity: 0.4;
             transform: scale(1.25);
             transition: transform 15s ease-out, opacity 0.8s ease;
         }
         #preview-modal.open .preview-bg {
             transform: scale(1);
-            opacity: 0.75;
-        }
-
-        #preview-modal::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        #preview-modal.open::before {
             opacity: 1;
         }
+
         .preview-gradient {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.8) 30%, rgba(5,5,5,0.3) 60%, rgba(5,5,5,0.1) 100%),
-                        linear-gradient(to right, rgba(5,5,5,0.9) 0%, transparent 50%);
+            background: linear-gradient(to top, rgba(8, 8, 12, 0.95) 0%, rgba(8, 8, 12, 0.7) 45%, transparent 85%),
+                        linear-gradient(to right, rgba(8, 8, 12, 0.85) 0%, transparent 60%);
             pointer-events: none;
         }
 
         .preview-vignette {
             position: absolute;
             inset: 0;
-            box-shadow: inset 0 0 200px 80px rgba(0,0,0,0.7);
+            box-shadow: inset 0 0 160px 50px rgba(0, 0, 0, 0.6);
             pointer-events: none;
         }
 
-        .preview-grain {
-            position: absolute;
-            inset: 0;
-            opacity: 0.08;
-            pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        .preview-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        #preview-modal.loading .preview-loader {
-            opacity: 1;
-        }
-        @keyframes spin {
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
         .preview-content {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             padding: 3rem 4rem;
-            max-width: 900px;
+            max-width: 950px;
             transform: translateY(30px);
             opacity: 0;
             transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s, opacity 0.5s ease 0.1s;
+            z-index: 10;
         }
         #preview-modal.open .preview-content {
             transform: translateY(0);
             opacity: 1;
         }
         .preview-logo {
-            max-height: 300px;
+            max-height: 180px;
             max-width: 400px;
             width: auto;
             height: auto;
             object-fit: contain;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6));
         }
         .preview-title {
             font-size: 3rem;
             font-weight: 900;
+            font-family: 'Outfit', 'Nunito', sans-serif;
             text-transform: uppercase;
             letter-spacing: -0.02em;
-            line-height: 1;
+            line-height: 1.05;
             margin-bottom: 1rem;
-            color: white;
+            color: #ffffff;
+            text-shadow: 0 4px 16px rgba(0,0,0,0.5);
         }
         .preview-desc {
-            font-size: 1rem;
-            color: #a1a1aa;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            max-width: 600px;
+            font-size: 1.05rem;
+            color: #e0f2fe;
+            line-height: 1.65;
+            margin-bottom: 1.75rem;
+            max-width: 680px;
+            font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
         .preview-meta {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem 2rem;
+            gap: 1.15rem;
             margin-bottom: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1.25rem;
+            border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+        }
+        .preview-meta-item {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 1rem;
+            padding: 0.85rem 1.15rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+        .preview-meta-item:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-2px);
         }
         .preview-meta-item h5 {
             font-size: 10px;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
             letter-spacing: 0.15em;
-            color: #71717a;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 0.35rem;
+            font-weight: 800;
         }
         .preview-meta-item p {
             font-size: 0.95rem;
-            color: white;
-            font-weight: 600;
+            color: #ffffff;
+            font-weight: 700;
         }
         .preview-meta-item .platform-icons {
             display: flex;
             gap: 0.75rem;
-            font-size: 1.25rem;
-            color: white;
+            font-size: 1.35rem;
+            color: #ffffff;
+            align-items: center;
         }
         .preview-actions {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
         .preview-btn-primary {
-            background: white;
-            color: black;
-            padding: 1rem 2rem;
-            font-size: 11px;
-            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            background: #0284c7;
+            color: #ffffff;
+            padding: 0.85rem 2.25rem;
+            font-size: 0.95rem;
+            font-weight: 800;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            border: none;
+            border: 2px solid rgba(186, 230, 253, 0.4);
+            border-radius: 9999px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.45);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
         }
         .preview-btn-primary:hover {
-            background: #e4e4e7;
-            transform: translateY(-2px);
+            background: #0369a1;
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 12px 30px rgba(2, 132, 199, 0.6);
+            border-color: #ffffff;
+        }
+        .preview-btn-primary:active {
+            transform: translateY(0) scale(0.97);
+        }
+        .preview-btn-primary .arrow-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .preview-btn-primary:hover .arrow-icon {
+            transform: translateX(4px);
         }
         .preview-close {
             position: absolute;
@@ -1375,42 +1570,50 @@
             align-items: center;
             gap: 8px;
             font-family: 'Space Grotesk', monospace;
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: white;
-            background: rgba(255,255,255,0.1);
+            letter-spacing: 0.12em;
+            color: #ffffff;
+            background: rgba(2, 132, 199, 0.85);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 9999px;
+            padding: 10px 22px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 410;
         }
         .preview-close:hover {
-            background: white;
-            color: black;
+            background: #0284c7;
+            border-color: #ffffff;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
         }
         .preview-status {
-            display: inline-block;
-            font-size: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
             font-family: 'Space Grotesk', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 0.25rem 0.75rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
+            letter-spacing: 0.15em;
+            padding: 0.35rem 1rem;
+            margin-bottom: 1.25rem;
+            font-weight: 800;
+            border-radius: 9999px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
         }
         .preview-status.released {
-            color: #4ade80;
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            background: rgba(74, 222, 128, 0.1);
+            color: #ffffff;
+            background: #059669;
+            border: 1.5px solid #34d399;
         }
         .preview-status.in-production {
-            color: #facc15;
-            border: 1px solid rgba(250, 204, 21, 0.3);
-            background: rgba(250, 204, 21, 0.1);
+            color: #ffffff;
+            background: #d97706;
+            border: 1.5px solid #fbbf24;
         }
 
         @media (max-width: 768px) {
@@ -1478,45 +1681,52 @@
         .dock-container {
             right: auto !important;
             left: 50% !important;
-            bottom: 24px !important;
+            bottom: 20px !important;
             top: auto !important;
             transform: translateX(-50%) !important;
+            z-index: 300 !important;
         }
 
         .dock {
             flex-direction: row !important;
-            gap: 1.5rem !important; 
-            padding: 0.75rem 1.5rem !important;
+            gap: 0.75rem !important; 
+            padding: 0.4rem 0.85rem !important;
             border-right: none !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(8px);
+            border: 3px solid #ffffff !important;
+            border-radius: 9999px !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 10px 30px rgba(10, 40, 75, 0.25) !important;
         }
 
         .dock-icon {
-            font-size: 1.1rem !important;
-            width: 36px !important;
-            height: 36px !important;
+            font-size: 1.15rem !important;
+            width: 42px !important;
+            height: 42px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #102438 !important;
+            opacity: 0.55 !important;
+            border-radius: 14px !important;
             margin-right: 0 !important;
-            margin-bottom: -1px !important;
+            margin-bottom: 0 !important;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
 
-        .dock-icon::before {
-            display: none !important; 
+        .dock-icon.active {
+            color: #ffffff !important;
+            opacity: 1 !important;
+            background: #0284c7 !important;
+            border-radius: 14px !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45) !important;
+            transform: scale(1.05) !important;
         }
 
+        .dock-icon::before,
         .dock-icon::after {
-            width: 16px !important;
-            height: 2px !important;
-            bottom: 0 !important;
-            right: auto !important;
-            top: auto !important;
-            left: 50% !important;
-            transform: translateX(-50%) scaleX(0) !important;
-        }
-
-        .dock-icon.active::after {
-            transform: translateX(-50%) scaleX(1) !important;
+            display: none !important; 
         }
 
         section.fixed-section:has(.grid) .content-layer {
@@ -1723,42 +1933,121 @@
         }
         .glitch-text-wrapper::before {
             left: 2px;
-            text-shadow: -2px 0 red;
+            text-shadow: -2px 0 #ff6b9d;
             animation: text-glitch-1 2s infinite linear alternate-reverse;
         }
         .glitch-text-wrapper::after {
             left: -2px;
-            text-shadow: -2px 0 cyan;
+            text-shadow: -2px 0 #55c2f0;
             animation: text-glitch-2 3s infinite linear alternate-reverse;
         }
         
 
 
-        /* --- MONOGATARI CINEMATIC BARS --- */
-        .monogatari-cinematic {
+        /* --- VTUBER MGRP STRIPE BARS --- */
+        .mgrp-section {
             position: relative;
-            background-color: #050505;
+            background-color: #e8f4fd;
         }
-        .monogatari-cinematic::before,
-        .monogatari-cinematic::after {
+        .mgrp-stripe-top,
+        .mgrp-stripe-bottom {
             content: '';
             position: absolute;
             left: 0;
             right: 0;
-            height: 12.5vh;
-            background-color: #000;
-            z-index: 100;
+            height: 24px;
+            background-image: linear-gradient(
+                -45deg,
+                #ffffff 25%,
+                transparent 25%,
+                transparent 50%,
+                #ffffff 50%,
+                #ffffff 75%,
+                transparent 75%,
+                transparent 100%
+            );
+            background-size: 28px 28px;
+            animation: stripeMoveRight 0.4s linear infinite;
+            z-index: 50;
             pointer-events: none;
-            box-shadow: inset 0 0 10px rgba(0,0,0,1);
+            border: none;
+        }
+        .mgrp-stripe-top {
+            top: 16px;
+        }
+        .mgrp-stripe-bottom {
+            bottom: 16px;
         }
         @media (max-width: 768px) {
-            .monogatari-cinematic::before,
-            .monogatari-cinematic::after {
-                display: none;
+            .mgrp-stripe-top,
+            .mgrp-stripe-bottom {
+                height: 16px;
+                background-size: 20px 20px;
+                animation-duration: 0.3s;
+            }
+            .mgrp-stripe-top {
+                top: 8px;
+            }
+            .mgrp-stripe-bottom {
+                bottom: 8px;
             }
         }
-        .monogatari-cinematic::before { top: 0; }
-        .monogatari-cinematic::after { bottom: 0; }
+
+        @keyframes stripeMoveRight {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 28px 0;
+            }
+        }
+
+        /* --- ANIMATED WAVES --- */
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .wave-container.wave-top {
+            bottom: auto;
+            top: 0;
+            height: 150px;
+        }
+        .wave-top .wave {
+            bottom: auto;
+            top: 0;
+        }
+        .wave-top .wave svg {
+            vertical-align: top;
+        }
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            z-index: 1;
+        }
+        .wave svg {
+            width: 50%;
+            height: 100%;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+        .wave-1 { animation: waveMove 8s linear infinite; opacity: 0.55; }
+        .wave-2 { animation: waveMove 5s linear infinite reverse; opacity: 0.70; }
+        .wave-3 { animation: waveMove 3s linear infinite; opacity: 0.85; }
+        .wave-4 { animation: waveMove 2s linear infinite reverse; opacity: 0.95; }
+
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
 
         .mograph-scale-in {
             animation: mographScale 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1766,23 +2055,33 @@
         }
         @keyframes mographScale {
             0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        /* --- VTUBER FLOATING DECORATIONS --- */
+        @keyframes floatBounce {
+            0%, 100% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        @keyframes floatSway {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(10px); }
         }
     </style>
     
-<body class="antialiased selection:bg-white selection:text-black">
+<body class="antialiased selection:bg-[#55c2f0] selection:text-white">
 
 
 
     <!-- LINK MODAL -->
-    <div id="link-modal" class="fixed inset-0 z-[500] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm bg-black/60">
-        <div class="bg-[#0A0A0A] border border-zinc-800 p-8 max-w-sm w-full transform scale-95 transition-transform duration-300 shadow-2xl relative">
-            <div class="absolute top-0 left-0 w-full h-0.5 bg-white"></div>
-            <h3 class="text-xl font-bold text-white mb-2 font-mono uppercase tracking-widest">External Link</h3>
-            <p class="text-zinc-400 text-sm mb-8 leading-relaxed">You are leaving the portfolio. Proceed to destination?</p>
+    <div id="link-modal" class="fixed inset-0 z-[500] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm bg-white/60">
+        <div class="bg-white border border-[#55c2f0]/20 p-8 max-w-sm w-full transform scale-95 transition-transform duration-300 shadow-2xl relative rounded-2xl">
+            <div class="absolute top-0 left-0 w-full h-1 bg-[#55c2f0] rounded-t-2xl"></div>
+            <h3 class="text-xl font-bold text-[#1a3a5c] mb-2 font-mono uppercase tracking-widest">External Link</h3>
+            <p class="text-[#5a7a9c] text-sm mb-8 leading-relaxed">You are leaving the portfolio. Proceed to destination?</p>
             <div class="flex gap-4 justify-end">
-                <button onclick="closeModal()" class="text-xs font-bold font-mono text-zinc-500 hover:text-white uppercase tracking-widest px-4 py-2 transition-colors">Cancel</button>
-                <button id="proceed-btn" class="bg-white text-black px-6 py-3 text-xs font-bold font-mono uppercase tracking-widest hover:bg-zinc-200 transition-colors">Proceed</button>
+                <button onclick="closeModal()" class="text-xs font-bold font-mono text-[#7dafc9] hover:text-[#1a3a5c] uppercase tracking-widest px-4 py-2 transition-colors">Cancel</button>
+                <button id="proceed-btn" class="bg-[#55c2f0] text-white px-6 py-3 text-xs font-bold font-mono uppercase tracking-widest hover:bg-[#3daee0] transition-colors rounded-lg">Proceed</button>
             </div>
         </div>
     </div>
@@ -1806,14 +2105,13 @@
         <button class="preview-close" onclick="closePreviewModal()">
             <i class="fa-solid fa-arrow-left"></i> Back
         </button>
-        
-        
 
         <img id="preview-bg-img" class="preview-bg" src="" alt="" style="display: none;">
         <video id="preview-bg-video" class="preview-bg" src="" autoplay loop muted playsinline style="display: none;"></video>
         <canvas id="preview-webgl" class="preview-bg" style="display: none;"></canvas>
-        <div class="preview-gradient"></div>
         
+        <div class="preview-gradient"></div>
+        <div class="preview-vignette"></div>
 
         <div class="preview-content">
             <span id="preview-status" class="preview-status released">Released</span>
@@ -1827,7 +2125,8 @@
             
             <div class="preview-actions">
                 <button id="preview-link-btn" class="preview-btn-primary" onclick="">
-                    View Page
+                    <span>View Page</span>
+                    <span class="arrow-icon">➔</span>
                 </button>
             </div>
         </div>
@@ -1863,262 +2162,393 @@
     <main id="main-scroller" class="horizontal-mode">
 
         <!-- HERO -->
-        <section id="hero" class="fixed-section flex items-center justify-center bg-[#050505] relative overflow-hidden monogatari-cinematic" data-index="0">
-            <div class="absolute inset-0 bg-radial-gradient from-white/5 to-transparent opacity-30"></div>
+        <section id="hero" class="fixed-section flex items-center justify-center relative overflow-hidden mgrp-section" style="background: linear-gradient(180deg, #55c2f0 0%, #7dd4f5 100%);" data-index="0">
+            <div class="mgrp-stripe-top"></div>
             
-            <div class="content-layer max-w-7xl w-full px-6 flex flex-col items-center justify-center text-center h-full mx-auto relative z-10 pointer-events-none">
+            <!-- Background Decorative Mograph Layer (Hero Theme: Welcome & Stars) -->
+            <div class="sticky top-0 h-screen w-full pointer-events-none z-0 overflow-hidden -mb-[100vh]">
+                <!-- Large Vertical Typography Watermarks -->
+                <div class="absolute top-[10vh] left-[4%] text-[10vh] md:text-[16vh] font-black text-white/15 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">歓迎</div>
+                <div class="absolute bottom-[12vh] right-[4%] text-[8vh] md:text-[14vh] font-black text-white/10 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">始動</div>
+
+                <!-- Floating Mograph Accents -->
+                <div class="absolute top-[18%] right-[10%] text-white/30 text-4xl md:text-6xl animate-pulse font-sans mograph-float-1">✦</div>
+                <div class="absolute top-[30%] left-[12%] text-white/25 text-3xl md:text-5xl font-sans mograph-float-2">✧</div>
+                <div class="absolute bottom-[25%] right-[15%] text-white/20 text-4xl md:text-6xl font-black font-mono mograph-float-1">❖</div>
+                <div class="absolute bottom-[35%] left-[8%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">✦</div>
+                <div class="absolute top-[50%] right-[5%] w-16 h-16 md:w-24 md:h-24 rounded-full border-4 border-white/20 mograph-float-1"></div>
+                <div class="absolute bottom-[45%] left-[5%] w-10 h-10 md:w-14 md:h-14 rounded-full border-2 border-white/20 mograph-float-2"></div>
+
+                <!-- Crosshair Dot Grid Pattern Overlay -->
+                <div class="absolute inset-0 bg-[radial-gradient(#ffffff_2px,transparent_2px)] [background-size:30px_30px] opacity-20"></div>
+            </div>
+
+            <div class="content-layer max-w-7xl w-full px-6 flex flex-col items-center justify-center text-center h-full mx-auto relative z-10">
                 <div class="flex items-center gap-12 md:gap-20 mt-0">
                     <!-- Japanese Main -->
-                    <h1 class="text-white font-black text-[12vh] tracking-[0.3em] uppercase mograph-scale-in select-none" style="writing-mode: vertical-rl; text-orientation: upright; font-family: 'Noto Serif JP', 'Times New Roman', serif;">歓迎</h1>
+                    <h1 class="text-white font-black text-[12vh] tracking-[0.3em] uppercase mograph-scale-in select-none" style="writing-mode: vertical-rl; text-orientation: upright; font-family: 'Nunito', sans-serif; text-shadow: 2px 4px 0px rgba(0,0,0,0.1);">歓迎</h1>
                     
                     <!-- Divider Line -->
-                    <div class="h-[25vh] w-px bg-white/20 reveal-hidden stagger-1"></div>
+                    <div class="h-[25vh] w-1 bg-white/40 rounded-full reveal-hidden stagger-1"></div>
                     
                     <!-- English Secondary -->
                     <div class="flex flex-col items-center reveal-hidden stagger-2">
-                        <span class="text-zinc-500 font-bold text-[3vh] md:text-[4vh] tracking-[0.5em] uppercase select-none" style="writing-mode: vertical-rl; text-orientation: upri font-family: 'Space Grotesk', sans-serif;">WELCOME</span>
+                        <span class="text-white/70 font-bold text-[3vh] md:text-[4vh] tracking-[0.5em] uppercase select-none" style="writing-mode: vertical-rl; text-orientation: upright; font-family: 'Nunito', sans-serif;">WELCOME</span>
                     </div>
+                </div>
+
+                <!-- Arcade Start Launch Button (Initial: NOW LOADING -> Converts to PRESS START after assets + 2s) -->
+                <div class="mt-8 md:mt-12 pointer-events-auto">
+                    <button id="intro-launch-btn" onclick="launchPortfolio()" disabled class="group relative inline-flex items-center gap-3 bg-white/80 text-sky-500/80 font-black text-base sm:text-xl md:text-2xl px-8 sm:px-12 py-4 sm:py-5 rounded-full shadow-[0_8px_25px_rgba(2,132,199,0.2)] border-4 border-white/80 cursor-wait select-none transition-all duration-500">
+                        <span id="intro-launch-text" class="tracking-widest uppercase font-mono animate-pulse">NOW LOADING... • 準備中</span>
+                        <span id="intro-launch-icon" class="text-xl sm:text-2xl inline-block animate-spin">✦</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Waves at bottom -->
+            <div class="wave-container">
+                <div class="wave wave-1">
+                    <svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,60 Q360,180 720,60 T1440,60 L1440,280 L0,280 Z" fill="#0284c7"/></svg><svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,60 Q360,180 720,60 T1440,60 L1440,280 L0,280 Z" fill="#0284c7"/></svg>
+                </div>
+                <div class="wave wave-2">
+                    <svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,115 Q360,40 720,115 T1440,115 L1440,280 L0,280 Z" fill="#0ea5e9"/></svg><svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,115 Q360,40 720,115 T1440,115 L1440,280 L0,280 Z" fill="#0ea5e9"/></svg>
+                </div>
+                <div class="wave wave-3">
+                    <svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,165 Q360,220 720,165 T1440,165 L1440,280 L0,280 Z" fill="#38bdf8"/></svg><svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,165 Q360,220 720,165 T1440,165 L1440,280 L0,280 Z" fill="#38bdf8"/></svg>
+                </div>
+                <div class="wave wave-4">
+                    <svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,210 Q360,160 720,210 T1440,210 L1440,280 L0,280 Z" fill="#e0f2fe"/></svg><svg viewBox="0 0 1440 280" preserveAspectRatio="none"><path d="M0,210 Q360,160 720,210 T1440,210 L1440,280 L0,280 Z" fill="#e0f2fe"/></svg>
                 </div>
             </div>
         </section>
 
         <!-- PROFILE -->
-        <section id="profile" class="fixed-section flex items-center justify-center bg-[#0d0d0d] relative overflow-hidden monogatari-cinematic" data-index="1">
-            <div class="absolute inset-0 pointer-events-none z-0">
+        <section id="profile" class="fixed-section min-h-screen flex items-center justify-center relative overflow-hidden mgrp-section" style="background: linear-gradient(180deg, #55c2f0 0%, #38bdf8 100%);" data-index="1">
+            <div class="mgrp-stripe-top"></div>
+            
+            <!-- Background Decorative Mograph Layer (Filling empty background space) -->
+            <div class="sticky top-0 h-screen w-full pointer-events-none z-0 overflow-hidden -mb-[100vh]">
+                <!-- Large Vertical Typography Watermarks (Static, Non-Looping) -->
+                <div class="absolute top-[12vh] right-[3%] md:right-[6%] text-[8vh] sm:text-[10vh] md:text-[16vh] font-black text-white/15 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">略歴</div>
 
-                <div class="absolute inset-0 bg-[#0d0d0d]"></div>
-                
-                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">略歴</div>
+                <!-- Floating Mograph Accents -->
+                <div class="absolute top-[15%] left-[8%] text-white/30 text-2xl sm:text-3xl md:text-5xl font-sans mograph-float-1">✦</div>
+                <div class="absolute top-[25%] right-[12%] text-white/25 text-xl sm:text-2xl md:text-4xl font-sans mograph-float-2">✧</div>
+                <div class="absolute bottom-[20%] left-[12%] text-white/20 text-3xl sm:text-4xl md:text-6xl font-black font-mono mograph-float-2">+</div>
+                <div class="absolute bottom-[30%] right-[8%] text-white/25 text-2xl sm:text-3xl md:text-5xl font-mono mograph-float-1">✦</div>
+                <div class="absolute top-[45%] left-[4%] w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full border-4 border-white/20 mograph-float-2"></div>
+                <div class="absolute bottom-[40%] right-[5%] w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 rounded-full border-2 border-white/20 mograph-float-1"></div>
+
+                <!-- Subtle Dot Grid Overlay (Looping Top-Right) -->
+                <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-15 bg-loop-top-right"></div>
             </div>
 
-            <div class="content-layer profile-inner relative z-10 w-full h-full flex flex-col items-center justify-center py-12 lg:py-0">
+            <div class="content-layer profile-inner relative z-10 w-full min-h-screen flex flex-col items-center justify-center py-4 sm:py-6 md:py-12 px-3 sm:px-6 lg:px-12 overflow-y-auto">
                 
-                <div class="w-full px-6 md:px-16 xl:px-32 mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-16 lg:gap-24">
+                <!-- Fullscreen Responsive VTuber Card Frame (Mobile Compact & Touch Optimized with Exaggerated Pop-In Launch) -->
+                <div class="profile-card-anim w-full max-w-4xl lg:max-w-5xl mx-auto rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3.5rem] border-[4px] sm:border-[6px] md:border-[10px] border-white/80 shadow-[0_20px_60px_rgba(14,165,233,0.35)] overflow-hidden bg-white/95 backdrop-blur-md my-auto">
                     
-                    <div class="flex flex-col items-center lg:order-1 flex-shrink-0">
-                        <div class="avatar-wrap reveal-hidden relative group mb-6 md:mb-8">
-                            <div class="absolute inset-[-10px] lg:inset-[-20px] rounded-full border border-white/20 scale-90 group-hover:scale-100 transition-transform duration-700 ease-out"></div>
+                    <!-- HEADER SECTION (Sky Blue + Avatar + Wave Divider) -->
+                    <div class="bg-[#38bdf8] p-4 sm:p-6 md:p-10 lg:p-12 text-white relative">
+                        
+                        <!-- Avatar & Profile Info Row -->
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:gap-8 relative z-10 text-center sm:text-left">
+                            <div class="relative flex-shrink-0 profile-avatar-anim">
+                                <div class="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full border-3 sm:border-4 border-white shadow-xl overflow-hidden bg-white hover:scale-110 transition-transform duration-300">
+                                    <img src="https://avatars.githubusercontent.com/u/126408995?v=4" alt="Myko" class="w-full h-full object-cover" draggable="false">
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-1 sm:gap-2 pt-0 sm:pt-1 md:pt-3">
+                                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
+                                    <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none" style="font-family: 'Nunito', sans-serif;">
+                                        Myko <span class="text-base sm:text-2xl md:text-3xl font-normal opacity-90">(YMNE)</span>
+                                    </h2>
+                                    <!-- Cute Profile Badge Button -->
+                                    <div class="flex items-center gap-1 bg-white text-sky-500 font-extrabold text-xs sm:text-sm md:text-base px-3 sm:px-4 py-0.5 sm:py-1 rounded-full shadow-md border border-sky-100">
+                                        <span>Profile</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs sm:text-base md:text-lg text-sky-100 font-bold font-mono tracking-wide">
+                                    美優ミーコ • Artist & Programmer
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Seamless Animated Dual Liquid Wave Divider -->
+                        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 transform translate-y-[1px] h-6 sm:h-10 lg:h-16">
+                            <!-- Depth Background Wave -->
+                            <div class="absolute inset-0 w-[200%] h-full opacity-40 profile-wave-bg">
+                                <svg viewBox="0 0 2880 90" preserveAspectRatio="none" class="w-full h-full block fill-white">
+                                    <path d="M0,40 Q360,10 720,40 T1440,40 Q1800,10 2160,40 T2880,40 L2880,90 L0,90 Z"></path>
+                                </svg>
+                            </div>
+                            <!-- Foreground Main Wave -->
+                            <div class="absolute inset-0 w-[200%] h-full profile-wave-fg">
+                                <svg viewBox="0 0 2880 90" preserveAspectRatio="none" class="w-full h-full block fill-white">
+                                    <path d="M0,45 Q360,90 720,45 T1440,45 Q1800,90 2160,45 T2880,45 L2880,90 L0,90 Z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BODY SECTION (White Card with Bio Callout + Bottom Controls) -->
+                    <div class="bg-white p-4 sm:p-6 md:p-10 lg:p-12 pt-2 sm:pt-4 md:pt-6 flex flex-col items-center">
+                        
+                        <!-- Bio Callout Box -->
+                        <div class="w-full bg-[#f0f9ff] border-2 border-[#e0f2fe] p-4 sm:p-6 md:p-8 lg:p-10 rounded-xl sm:rounded-2xl md:rounded-3xl mb-4 sm:mb-6 md:mb-8 text-slate-700 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed sm:leading-loose font-medium">
+                            <p class="mb-2 sm:mb-4">
+                                Myko here! (I'm using "Ymne" as pen-name), I do art mostly on <span class="font-black text-[#0284c7] bg-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl shadow-sm border border-sky-100 inline-block my-0.5">2D Art and Animation</span>, sometimes do <span class="font-black text-[#0284c7] bg-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl shadow-sm border border-sky-100 inline-block my-0.5">3D Art and Animation</span>. But mostly work as <span class="font-bold text-[#0284c7]">Graphics Programmer</span> and <span class="font-bold text-[#0284c7]">Technical Artist</span>.
+                            </p>
+                            <div class="flex flex-wrap items-center gap-2 pt-1 sm:pt-2 text-xs sm:text-base md:text-lg font-mono font-bold">
+                                <span class="text-slate-400">Engines:</span>
+                                <span class="bg-[#bae6fd] text-[#0369a1] px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl">Unity Engine</span>
+                                <span class="bg-[#bae6fd] text-[#0369a1] px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl">Unreal Engine</span>
+                                <span class="bg-[#bae6fd] text-[#0369a1] px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl">Godot Engine</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 pt-1 sm:pt-2 text-xs sm:text-base md:text-lg font-mono font-bold">
+                                <span class="text-slate-400">Tools:</span>
+                                <span class="bg-[#bae6fd] text-[#0369a1] px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl">Blender</span>
+                                <span class="bg-[#bae6fd] text-[#0369a1] px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl">Adobe Creative Apps</span>
+                                <span class="bg-[#bae6fd] text-[#0369a1] px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl">Clip Studio Paint</span>
+                            </div>
+                        </div>
+
+                        <!-- BOTTOM CONTROLS: Social Links + Next Page Button -->
+                        <div class="w-full flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-6 pt-1 sm:pt-2">
                             
-                            <div class="w-32 h-32 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 border-[#0d0d0d] relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-                                <img src="https://avatars.githubusercontent.com/u/126408995?v=4"
-                                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                                    alt="Profile" draggable="false">
-                            </div>
-                        </div>
-
-
-                        <div class="flex items-center justify-center gap-6 reveal-hidden stagger-2 relative z-20">
-                            <a href="https://github.com/Ymne22" target="_blank" class="text-zinc-400 hover:text-white transition-colors text-xl md:text-2xl" title="GitHub">
-                                <i class="fa-brands fa-github"></i>
-                            </a>
-                            <a href="https://ymne22.itch.io/" target="_blank" class="text-zinc-400 hover:text-white transition-colors text-xl md:text-2xl" title="Itch.io">
-                                <i class="fa-brands fa-itch-io"></i>
-                            </a>
-                            <a href="https://x.com/ymne22" target="_blank" class="text-zinc-400 hover:text-white transition-colors w-5 h-5 md:w-6 md:h-6 flex items-center justify-center" title="X (Twitter)">
-                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-3xl lg:order-2 flex-1 relative mt-4 lg:mt-0">
-                        <div class="reveal-hidden stagger-1 flex items-center gap-3 mb-4 lg:mb-6">
-                            <span class="font-mono text-white text-xs md:text-sm uppercase tracking-[0.3em] font-bold">
-                                プロフィール
-                            </span>
-                            <div class="h-[1px] w-12 bg-white hidden lg:block"></div>
-                        </div>
-
-                        <h2 class="hero-name reveal-hidden stagger-2 text-4xl md:text-5xl lg:text-[5.5rem] font-black mb-6 lg:mb-8 leading-none uppercase text-white tracking-tighter">
-                            YMNE <span class="font-light text-white tracking-[0.1em] text-xl pl-5">[MYKO | 美優ミーコ]</span>
-                        </h2>
-
-
-                        <div class="reveal-hidden stagger-3 w-full relative">
-                            <div class="hero-bio pr-4 lg:pr-0 space-y-6 lg:space-y-8 text-left relative z-0 pb-12 lg:pb-0 w-full pointer-events-auto">
-
-                                <p class="text-zinc-300 text-sm md:text-base lg:text-lg leading-[1.8] font-sans">
-                                    I do art, mostly <span class="text-white font-bold">2D, 3D art and animation</span>. On the more technical side, I’m into <span class="text-white font-medium">graphics programming</span>, mainly lighting and performance. I also mess around with <span class="text-white font-medium">technical artist</span> role for content creation.
-                                </p>
+                            <!-- Social Icons Pill -->
+                            <div class="bg-[#1e1b4b] p-2.5 sm:p-3.5 rounded-full flex items-center justify-center gap-3 sm:gap-5 text-white border-2 border-indigo-400/30 shadow-lg">
                                 
-                                <p class="text-zinc-300 text-sm md:text-base lg:text-lg leading-[1.8] font-sans">
-                                    I’ve worked with <span class="text-white font-bold">Unity, Unreal,</span> and <span class="text-white font-bold">Godot</span>
-                                </p>
+                                <!-- GitHub Icon Button -->
+                                <a href="https://github.com/Ymne22" target="_blank" title="GitHub" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-sky-400 hover:text-white flex items-center justify-center text-lg sm:text-xl transition-all duration-300 hover:scale-110 shadow-md group relative">
+                                    <i class="fa-brands fa-github"></i>
+                                    <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-pink-500 border-2 border-[#1e1b4b]"></span>
+                                </a>
+
+                                <!-- Itch.io Icon Button -->
+                                <a href="https://ymne22.itch.io/" target="_blank" title="Itch.io" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-sky-400 hover:text-white flex items-center justify-center text-lg sm:text-xl transition-all duration-300 hover:scale-110 shadow-md group relative">
+                                    <i class="fa-brands fa-itch-io"></i>
+                                    <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-pink-500 border-2 border-[#1e1b4b]"></span>
+                                </a>
+
+                                <!-- Twitter Icon Button -->
+                                <a href="https://x.com/ymne22" target="_blank" title="Twitter / X" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-sky-400 hover:text-white flex items-center justify-center text-base sm:text-lg transition-all duration-300 hover:scale-110 shadow-md group relative">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 sm:w-5 sm:h-5"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                    <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-pink-500 border-2 border-[#1e1b4b]"></span>
+                                </a>
 
                             </div>
+
+                            <!-- Prominent Next Page Button (Exaggerated Animation & Touch Optimized) -->
+                            <button onclick="scrollToSection('roadmap')" class="next-btn-anim group w-full sm:w-auto flex items-center justify-center gap-2.5 bg-[#0284c7] hover:bg-[#0369a1] text-white font-extrabold text-sm sm:text-base md:text-lg px-6 sm:px-8 py-3 sm:py-3.5 rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-sky-300/40 touch-manipulation cursor-pointer select-none">
+                                <span>Next Page</span>
+                                <span class="arrow-icon text-base sm:text-xl transition-transform group-hover:translate-x-2">➔</span>
+                            </button>
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+            <div class="mgrp-stripe-bottom"></div>
         </section>
 
-
         <!-- ROADMAP -->
-        <section id="roadmap" class="long-section bg-[#42445a] relative overflow-hidden" data-index="2">
-            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
+        <section id="roadmap" class="long-section relative overflow-hidden mgrp-section bg-[linear-gradient(to_right,#ffffff18_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)] [background-size:40px_40px] bg-loop-bottom" style="background-color: #38bdf8;" data-index="2">
 
-                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">制作実績</div>
+            <!-- Background Decorative Mograph Layer (Roadmap Theme: Milestones & Mesh Grid) -->
+            <div class="sticky top-0 h-screen w-full pointer-events-none z-0 overflow-hidden -mb-[100vh]">
+                <!-- Large Vertical Typography Watermarks -->
+                <div class="absolute top-[10vh] left-[2%] md:left-[4%] text-[10vh] md:text-[16vh] font-black text-white/15 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">実績</div>
+                <div class="absolute bottom-[10vh] right-[2%] md:right-[4%] text-[8vh] md:text-[14vh] font-black text-white/10 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">年表</div>
+
+                <!-- Floating Mograph Geometric Accents -->
+                <div class="absolute top-[20%] right-[8%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-1">◆</div>
+                <div class="absolute top-[35%] left-[6%] text-white/30 text-4xl md:text-6xl font-mono mograph-float-2">◇</div>
+                <div class="absolute bottom-[15%] left-[8%] text-white/20 text-3xl md:text-5xl font-mono mograph-float-1">✦</div>
+                <div class="absolute bottom-[30%] right-[6%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">❖</div>
+                <div class="absolute top-[55%] right-[4%] w-14 h-14 md:w-20 md:h-20 border-4 border-white/20 rotate-45 mograph-float-1"></div>
+                <div class="absolute bottom-[45%] left-[3%] w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-white/20 mograph-float-2"></div>
+            </div>
+
+            <div class="wave-container wave-top">
+                <div class="wave wave-1">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg>
+                </div>
+                <div class="wave wave-2">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg>
+                </div>
+                <div class="wave wave-3">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg>
+                </div>
+                <div class="wave wave-4">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg>
+                </div>
             </div>
             
             <div class="content-layer max-w-5xl w-full mx-auto px-6 flex flex-col items-center relative z-10 pt-8 lg:pt-16">
                 <div class="mb-16 text-center">
                     <h2 class="reveal-hidden text-5xl md:text-6xl font-black uppercase text-white mb-2 tracking-tighter" style="font-family: 'Noto Serif JP', serif;">制作実績</h2>
-                    <p class="reveal-hidden stagger-1 text-zinc-300 font-mono text-xs uppercase tracking-[0.3em] font-bold">Portfolio Roadmap</p>
+                    <p class="reveal-hidden stagger-1 text-white/90 font-mono text-xs uppercase tracking-[0.3em] font-bold">Portfolio Roadmap</p>
                 </div>
 
                 <div class="relative w-full max-w-4xl mx-auto pl-4 md:pl-0">
-                    <div class="absolute left-[0px] md:left-[100px] top-0 bottom-0 w-[1px] bg-white/20 h-full z-0">
+                    <div class="absolute left-[0px] md:left-[100px] top-0 bottom-0 w-[2px] bg-white/30 h-full z-0">
                         <div class="roadmap-spine-fill absolute top-0 left-0 w-full bg-white h-0"></div>
                     </div>
 
                     <div class="reveal-hidden stagger-1 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white z-20 shadow-[0_0_10px_white]"></div>
-                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em]">2024</span>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white z-20 shadow-[0_0_15px_rgba(255,255,255,0.9)] rounded-sm"></div>
+                        <div class="absolute left-8 md:left-0 top-4 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em] bg-white/20 px-2.5 py-1 rounded-md shadow-sm">2024</span>
                         </div>
-                        <div class="flex flex-col gap-10 max-w-2xl">
+                        <div class="flex flex-col gap-6 max-w-2xl">
                         
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Kanna and Lia the Witch</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Kanna and Lia the Witch</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A self-development project produced for a game jam and released exclusively for the event.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A self-development project produced for a game jam and released exclusively for the event.</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Holo-Attack (Demo)</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Holo-Attack (Demo)</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A self-development fan game created based on Hololive Myth. A fast-paced combo-stacking game where you demolish landmarks and buildings.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A self-development fan game created based on Hololive Myth. A fast-paced combo-stacking game where you demolish landmarks and buildings.</p>
                             </div>
                             
                         </div>  
                     </div>
 
                     <div class="reveal-hidden stagger-2 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white z-20 shadow-[0_0_10px_white]"></div>
-                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em]">2025</span>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white z-20 shadow-[0_0_15px_rgba(255,255,255,0.9)] rounded-sm"></div>
+                        <div class="absolute left-8 md:left-0 top-4 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em] bg-white/20 px-2.5 py-1 rounded-md shadow-sm">2025</span>
                         </div>
-                        <div class="flex flex-col gap-10 max-w-2xl">
+                        <div class="flex flex-col gap-6 max-w-2xl">
                         
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Tormented Souls II</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Tormented Souls II</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A single-player horror experience built on classic horror gameplay mechanics. Work as Technical Artist, Graphics Programmer, and Additional Sequence Animator. Developed by Dual Effect, Published by PQube.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A single-player horror experience built on classic horror gameplay mechanics. Work as Technical Artist, Graphics Programmer, and Additional Sequence Animator. Developed by Dual Effect, Published by PQube.</p>
                             </div>
                             
                         </div>  
                     </div>
 
                     <div class="reveal-hidden stagger-2 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white z-20 shadow-[0_0_10px_white]"></div>
-                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em]">2026</span>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white z-20 shadow-[0_0_15px_rgba(255,255,255,0.9)] rounded-sm"></div>
+                        <div class="absolute left-8 md:left-0 top-4 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-white font-bold tracking-[0.2em] bg-white/20 px-2.5 py-1 rounded-md shadow-sm">2026</span>
                         </div>
-                        <div class="flex flex-col gap-10 max-w-2xl">
+                        <div class="flex flex-col gap-6 max-w-2xl">
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Loan Shark Console Edition</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Loan Shark Console Edition</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A short story-driven game, Work as Technical Artist and Graphics Programmer. Developed by Studio Ortica, Published by Dark Product.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A short story-driven game, Work as Technical Artist and Graphics Programmer. Developed by Studio Ortica, Published by Dark Product.</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Maid of Sker VR</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Maid of Sker VR</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A VR game title, Work as Technical Artist. Developed and Published by Wales Interactive, Co-developed by Agate International.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A VR game title, Work as Technical Artist. Developed and Published by Wales Interactive, Co-developed by Agate International.</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">GigaBash Mobile</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">GigaBash Mobile</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">An ultimate kaiju fighting game, now available on mobile. Work as Technical Artist, Developed and published by Passion Republic Games, Co-Developed by Agate International.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">An ultimate kaiju fighting game, now available on mobile. Work as Technical Artist, Developed and published by Passion Republic Games, Co-Developed by Agate International.</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Birds Watching Console Edition</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Released</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Birds Watching Console Edition</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#55c2f0] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Released</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A short story-driven game, Work as Graphics Programmer. Developed by Studio Ortica, Published by Dark Product.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A short story-driven game, Work as Graphics Programmer. Developed by Studio Ortica, Published by Dark Product.</p>
                             </div>
                             
                         </div>  
                     </div>
 
                     <div class="reveal-hidden stagger-3 relative mb-16 pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-white shadow-[0_0_15px_white] z-20 animate-pulse"></div>
-                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-black font-bold tracking-[0.2em] bg-white px-2 py-1">CURRENT</span>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white shadow-[0_0_15px_rgba(255,255,255,0.9)] z-20 animate-pulse rounded-sm"></div>
+                        <div class="absolute left-8 md:left-0 top-4 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-[#1a3a5c] font-bold tracking-[0.2em] bg-white px-2.5 py-1 rounded-md shadow-md">CURRENT</span>
                         </div>
-                        <div class="flex flex-col gap-10 max-w-2xl">
+                        <div class="flex flex-col gap-6 max-w-2xl">
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Port of Jumanah</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Post-Production</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Port of Jumanah</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#38bdf8] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Post-Production</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">Action 2.5D Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Developed by Agate International and Red Dunes Games, Published by Red Dunes Games.</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">Action 2.5D Game with Rogue-lite elements, Charming Visual, and Snappy Combat. Developed by Agate International and Red Dunes Games, Published by Red Dunes Games.</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">They Are Here: Alien Abduction Horror</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Post-Production</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">They Are Here</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#38bdf8] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Post-Production</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">A first-person alien abduction horror game inspired by cult sci-fi thrillers. In this cinematic, story-driven experience. Developed by DEKLAZON. Published by PQube</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">A first-person alien abduction horror game inspired by cult sci-fi thrillers. In this cinematic, story-driven experience. Developed by DEKLAZON. Published by PQube</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Project : 🐚</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">Post-Production</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Project : 🐚</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#38bdf8] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Post-Production</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">To be revealed soon...</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Project : 🥕</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">In-Production</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Project : 🥕</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#38bdf8] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">In-Production</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">To be revealed soon...</p>
                             </div>
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white tracking-tight uppercase">Project : 🍜</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white border border-white/30 px-2 py-0.5 tracking-widest bg-white/5">In-Production</span>
+                            <div class="roadmap-box flex flex-col bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border-4 border-white/90 hover:shadow-2xl transition-all duration-300">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase">Project : 🍜</h4>
+                                    <span class="text-[10px] font-mono uppercase text-white bg-[#38bdf8] px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">In-Production</span>
                                 </div>
-                                <p class="text-zinc-300 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium">To be revealed soon...</p>
                             </div>
   
                         </div>
                     </div>
 
                     <div class="reveal-hidden stagger-3 relative pl-8 md:pl-[140px] z-10">
-                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[11px] h-[11px] bg-transparent border border-white/50 z-20"></div>
-                        <div class="absolute left-8 md:left-0 top-5 md:text-right md:w-[80px]">
-                            <span class="font-mono text-xs text-white/50 font-bold tracking-[0.2em]">FUTURE</span>
+                        <div class="absolute left-[-5px] md:left-[95px] top-6 w-[12px] h-[12px] bg-white/40 border border-white z-20 rounded-sm"></div>
+                        <div class="absolute left-8 md:left-0 top-4 md:text-right md:w-[80px]">
+                            <span class="font-mono text-xs text-white/90 font-bold tracking-[0.2em] bg-white/20 px-2.5 py-1 rounded-md">FUTURE</span>
                         </div>
-                         <div class="flex flex-col gap-10 max-w-2xl">
+                         <div class="flex flex-col gap-6 max-w-2xl">
 
-                            <div class="roadmap-box flex flex-col">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <h4 class="text-2xl font-black text-white/50 tracking-tight uppercase">Project : 🌙</h4>
-                                    <span class="text-[10px] font-mono uppercase text-white/50 border border-white/20 px-2 py-0.5 tracking-widest">Pre-Production</span>
+                            <div class="roadmap-box flex flex-col bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/40">
+                                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                    <h4 class="text-xl md:text-2xl font-black text-[#1a3a5c] tracking-tight uppercase opacity-80">Project : 🌙</h4>
+                                    <span class="text-[10px] font-mono uppercase text-[#1a3a5c] bg-white px-2.5 py-1 rounded-full tracking-widest font-bold shadow-sm">Pre-Production</span>
                                 </div>
-                                <p class="text-zinc-500 text-sm md:text-base leading-[1.8] font-sans">To be revealed soon...</p>
+                                <p class="text-[#3a5a7c] text-sm md:text-base leading-[1.8] font-sans font-medium opacity-80">To be revealed soon...</p>
                             </div>
                             
                         </div>
@@ -2128,14 +2558,41 @@
         </section>
 
         <!-- MASONRY GRID: GAME ARCHIVE -->
-        <section id="games-start" class="long-section bg-[#1a1c2c] relative overflow-hidden" data-index="3">
-            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
-                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">開発作品</div>
+        <section id="games-start" class="long-section relative overflow-hidden mgrp-section bg-[linear-gradient(135deg,#ffffff12_25%,transparent_25%,transparent_50%,#ffffff12_50%,#ffffff12_75%,transparent_75%,transparent)] [background-size:32px_32px] bg-loop-bottom-right" style="background-color: #38bdf8;" data-index="3">
+
+            <!-- Background Decorative Mograph Layer (Games Theme: Controller Shapes & Diagonal Hatch) -->
+            <div class="sticky top-0 h-screen w-full pointer-events-none z-0 overflow-hidden -mb-[100vh]">
+                <!-- Large Vertical Typography Watermarks -->
+                <div class="absolute top-[10vh] right-[2%] md:right-[4%] text-[10vh] md:text-[16vh] font-black text-white/15 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">開発</div>
+                <div class="absolute bottom-[10vh] left-[2%] md:left-[4%] text-[8vh] md:text-[14vh] font-black text-white/10 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">作品</div>
+
+                <!-- Floating Gaming Mograph Accents -->
+                <div class="absolute top-[15%] left-[5%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-1">▲</div>
+                <div class="absolute top-[30%] right-[7%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">●</div>
+                <div class="absolute bottom-[25%] left-[6%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-1">■</div>
+                <div class="absolute bottom-[40%] right-[5%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">✖</div>
+                <div class="absolute top-[50%] left-[3%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-1">❖</div>
+                <div class="absolute bottom-[15%] right-[8%] text-white/20 text-3xl md:text-5xl font-mono mograph-float-2">✦</div>
+            </div>
+
+            <div class="wave-container wave-top">
+                <div class="wave wave-1">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg>
+                </div>
+                <div class="wave wave-2">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg>
+                </div>
+                <div class="wave wave-3">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg>
+                </div>
+                <div class="wave wave-4">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg>
+                </div>
             </div>
 
             <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
                 <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">開発作品</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-400 font-mono text-xs uppercase tracking-[0.3em] font-bold">Commercial & Professional Works</p>
+                <p class="reveal-hidden stagger-1 text-white/90 font-mono text-xs uppercase tracking-[0.3em] font-bold">Commercial & Professional Works</p>
             </div>
             
             <div class="content-layer masonry-grid relative z-10">
@@ -2286,7 +2743,7 @@
                 </div>
 
                 <!-- Birds Watching Console Edition -->
-                <div class="masonry-item masonry-2x2" data-preview-id="loan-shark">
+                <div class="masonry-item masonry-3x2" data-preview-id="loan-shark">
                     <script type="application/json" data-for="loan-shark">
                     {
                         "title": "Birds Watching Console Edition",
@@ -2309,45 +2766,6 @@
                         <h4>Birds Watching Console Edition</h4>
                         <div class="masonry-info">
                             <span>Released • Graphics Programmer</span>
-                            <button class="view-btn">View</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kanna & Lia -->
-                <div class="masonry-item masonry-1x2" data-href="https://ymne22.itch.io/kanna-and-lia-the-witch">
-                    <video data-lazy-src="Assets/Video/Game/Kanna_Hero.webm" loop muted playsinline preload="none"></video>
-                    <div class="masonry-overlay">
-                        <h4>Kanna and Lia the Witch</h4>
-                        <div class="masonry-info">
-                            <span>Game Jam • Self Development</span>
-                            <button class="view-btn">View</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Holo-Attack -->
-                <div class="masonry-item masonry-1x2" data-preview-id="holo-attack">
-                    <script type="application/json" data-for="holo-attack">
-                    {
-                        "title": "HOLO-ATTACK (DEMO)",
-                        "status": "Released",
-                        "description": "HoloAttack! is a fast-paced combo-stacking game where you demolish landmarks and buildings using unique skills on each holo-myth characters. Note: Canceled since Gura has already graduated and Ame is now just affiliated.",
-                        "heroImage": "Assets/Images/Game/HoloAttack_Hero.webp",
-                        "heroImageDepth": "Assets/Images/Game/HoloAttack_Hero_Depth.webp",
-                        "platforms": ["itch"],
-                        "engine": "Unity Engine 6.0 HDRP",
-                        "publisher": "Ymne Game",
-                        "developer": "Ymne Game",
-                        "role": "Main Developer",
-                        "link": "https://ymne22.itch.io/project-hl-atk"
-                    }
-                    </script>
-                    <img src="Assets/Images/Game/HoloAttack_Hero.webp" alt="Holo-Attack (Demo)" draggable="false" loading="lazy">
-                    <div class="masonry-overlay">
-                        <h4>Holo-Attack (Demo)</h4>
-                        <div class="masonry-info">
-                            <span>Released • Self Development</span>
                             <button class="view-btn">View</button>
                         </div>
                     </div>
@@ -2382,19 +2800,84 @@
                     </div>
                 </div>
 
+                <!-- Kanna & Lia -->
+                <div class="masonry-item masonry-1x1" data-href="https://ymne22.itch.io/kanna-and-lia-the-witch">
+                    <video data-lazy-src="Assets/Video/Game/Kanna_Hero.webm" loop muted playsinline preload="none"></video>
+                    <div class="masonry-overlay">
+                        <h4>Kanna and Lia the Witch</h4>
+                        <div class="masonry-info">
+                            <span>Game Jam • Self Development</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holo-Attack -->
+                <div class="masonry-item masonry-1x1" data-preview-id="holo-attack">
+                    <script type="application/json" data-for="holo-attack">
+                    {
+                        "title": "HOLO-ATTACK (DEMO)",
+                        "status": "Released",
+                        "description": "HoloAttack! is a fast-paced combo-stacking game where you demolish landmarks and buildings using unique skills on each holo-myth characters. Note: Canceled since Gura has already graduated and Ame is now just affiliated.",
+                        "heroImage": "Assets/Images/Game/HoloAttack_Hero.webp",
+                        "heroImageDepth": "Assets/Images/Game/HoloAttack_Hero_Depth.webp",
+                        "platforms": ["itch"],
+                        "engine": "Unity Engine 6.0 HDRP",
+                        "publisher": "Ymne Game",
+                        "developer": "Ymne Game",
+                        "role": "Main Developer",
+                        "link": "https://ymne22.itch.io/project-hl-atk"
+                    }
+                    </script>
+                    <img src="Assets/Images/Game/HoloAttack_Hero.webp" alt="Holo-Attack (Demo)" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Holo-Attack (Demo)</h4>
+                        <div class="masonry-info">
+                            <span>Released • Self Development</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
         <!-- MASONRY GRID: LAB EXPERIMENTS -->
-        <section id="tech-start" class="long-section bg-[#0f0f12] relative overflow-hidden" data-index="4">
-            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
-                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">技術</div>
+        <section id="tech-start" class="long-section relative overflow-hidden mgrp-section bg-[radial-gradient(rgba(255,255,255,0.18)_1.5px,transparent_1.5px)] [background-size:28px_28px] bg-loop-top-left" style="background-color: #38bdf8;" data-index="4">
+
+            <!-- Background Decorative Mograph Layer (Tech Theme: Cyber Matrix & Code Accents) -->
+            <div class="sticky top-0 h-screen w-full pointer-events-none z-0 overflow-hidden -mb-[100vh]">
+                <!-- Large Vertical Typography Watermarks -->
+                <div class="absolute top-[10vh] right-[2%] md:right-[4%] text-[10vh] md:text-[16vh] font-black text-white/15 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">技術</div>
+                <div class="absolute bottom-[10vh] left-[2%] md:left-[4%] text-[8vh] md:text-[14vh] font-black text-white/10 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">実験</div>
+
+                <!-- Floating Tech Mograph Accents -->
+                <div class="absolute top-[18%] left-[5%] text-white/30 text-4xl md:text-6xl font-mono mograph-float-1">{ }</div>
+                <div class="absolute top-[32%] right-[6%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">✦</div>
+                <div class="absolute bottom-[20%] right-[7%] text-white/20 text-3xl md:text-5xl font-mono mograph-float-1">❖</div>
+                <div class="absolute bottom-[35%] left-[6%] text-white/25 text-3xl md:text-5xl font-mono font-black mograph-float-2">+</div>
+                <div class="absolute top-[55%] right-[3%] w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-dashed border-white/25 animate-spin" style="animation-duration: 25s;"></div>
+            </div>
+
+            <div class="wave-container wave-top">
+                <div class="wave wave-1">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg>
+                </div>
+                <div class="wave wave-2">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg>
+                </div>
+                <div class="wave wave-3">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg>
+                </div>
+                <div class="wave wave-4">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg>
+                </div>
             </div>
 
             <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
-                <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-zinc-200 uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">技術</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-200 font-mono text-s uppercase tracking-[0.3em] font-bold">Technical Works [Shaders, Script, and Tutorials]</p>
-                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em] font-bold">All assets here are under MIT license</p>
+                <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">技術</h3>
+                <p class="reveal-hidden stagger-1 text-white/90 font-mono text-sm uppercase tracking-[0.3em] font-bold">Technical Works [Shaders, Script, and Tutorials]</p>
+                <p class="reveal-hidden stagger-1 text-white/70 font-mono text-xs uppercase tracking-[0.3em] font-bold mt-1">All assets here are under MIT license</p>
             </div>
             
             <div class="content-layer masonry-grid relative z-10">
@@ -2642,14 +3125,40 @@
         </section>
 
         <!-- MASONRY GRID: VISUAL ARTS -->
-        <section id="art-showcase" class="long-section bg-[#050505] relative overflow-hidden" data-index="5">
-            <div class="sticky top-0 left-0 w-full h-screen-dvh pointer-events-none z-0" style="margin-bottom: -100dvh">
-                <div class="absolute top-[15vh] right-[4%] md:right-[10%] text-[8vh] md:text-[12vh] lg:text-[12vh] font-black text-white opacity-5 select-none font-mono" style="writing-mode: vertical-rl; text-orientation: upright;">作品集</div>
+        <section id="art-showcase" class="long-section relative overflow-hidden mgrp-section bg-[radial-gradient(rgba(255,255,255,0.15)_1.5px,transparent_1.5px)] [background-size:28px_28px] bg-loop-right-edge" style="background-color: #38bdf8;" data-index="5">
+
+            <!-- Background Decorative Mograph Layer (Art Theme: Palette & Creative Sparkles) -->
+            <div class="sticky top-0 h-screen w-full pointer-events-none z-0 overflow-hidden -mb-[100vh]">
+                <!-- Large Vertical Typography Watermarks -->
+                <div class="absolute top-[10vh] left-[2%] md:left-[4%] text-[10vh] md:text-[16vh] font-black text-white/15 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">画集</div>
+                <div class="absolute bottom-[10vh] right-[2%] md:right-[4%] text-[8vh] md:text-[14vh] font-black text-white/10 select-none font-mono tracking-widest" style="writing-mode: vertical-rl; text-orientation: upright;">芸術</div>
+
+                <!-- Floating Art Mograph Accents -->
+                <div class="absolute top-[15%] right-[6%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-1">✦</div>
+                <div class="absolute top-[35%] left-[5%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">✧</div>
+                <div class="absolute bottom-[20%] left-[7%] text-white/30 text-4xl md:text-6xl animate-bounce font-sans mograph-float-1">✦</div>
+                <div class="absolute bottom-[35%] right-[5%] text-white/25 text-3xl md:text-5xl font-mono mograph-float-2">✧</div>
+                <div class="absolute top-[50%] left-[3%] w-14 h-14 md:w-20 md:h-20 rounded-full border-4 border-white/20 mograph-float-1"></div>
+            </div>
+
+            <div class="wave-container wave-top">
+                <div class="wave wave-1">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,210 Q1080,240 720,210 T0,210 Z" fill="#0284c7"/></svg>
+                </div>
+                <div class="wave wave-2">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,160 Q1080,90 720,160 T0,160 Z" fill="#0ea5e9"/></svg>
+                </div>
+                <div class="wave wave-3">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,115 Q1080,180 720,115 T0,115 Z" fill="#38bdf8"/></svg>
+                </div>
+                <div class="wave wave-4">
+                    <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,70 Q1080,120 720,70 T0,70 Z" fill="#e0f2fe"/></svg>
+                </div>
             </div>
 
             <div class="content-layer max-w-7xl w-full mx-auto px-6 mb-12 text-center relative z-10 pt-16">
                 <h3 class="reveal-hidden text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2" style="font-family: 'Noto Serif JP', serif;">作品集</h3>
-                <p class="reveal-hidden stagger-1 text-zinc-500 font-mono text-xs uppercase tracking-[0.3em] font-bold">Art & Animation Highlights</p>
+                <p class="reveal-hidden stagger-1 text-white/90 font-mono text-xs uppercase tracking-[0.3em] font-bold">Art & Animation Highlights</p>
             </div>
             
             <div class="content-layer masonry-grid relative z-10">
@@ -2945,8 +3454,6 @@
             </div>
         </section>
 
-        </section>
-
     </main>
 
     <script>
@@ -3052,15 +3559,9 @@
 
         window.addEventListener('load', () => {
             const mainScroller = document.getElementById('main-scroller');
-            const dockNav = document.getElementById('dock-nav');
-
-            // Immediately show the main scroller with the hero as loading screen
-            mainScroller.classList.add('loaded');
-
-            // Auto-launch to profile
-            setTimeout(() => {
-                launchPortfolio();
-            }, 1500);
+            if (mainScroller) {
+                mainScroller.classList.add('loaded');
+            }
         });
 
         const mainScroller = document.getElementById('main-scroller');
@@ -3091,14 +3592,12 @@
             isNavigating = true;
             horizScrollCooldown = true;
 
-            // Use native smooth sliding instead of curtain transition
             el.scrollIntoView({ behavior: 'smooth' });
             
-            // Release navigation lock after typical scroll duration
             setTimeout(() => {
                 isNavigating = false;
                 horizScrollCooldown = false;
-            }, 1000);
+            }, 800);
         }
 
         const observerOptions = {
@@ -3147,7 +3646,7 @@
                     }
 
                     if (dockContainer) {
-                        if (navId === 'hero') {
+                        if (navId === 'hero' || navId === 'profile') {
                             dockContainer.classList.remove('visible');
                         } else {
                             dockContainer.classList.add('visible');
@@ -3724,9 +4223,9 @@
             previewBgVideo.style.transform = 'scale(1)';
             if (WebGLDepth.canvas) WebGLDepth.canvas.style.transform = 'scale(1)';
 
-            previewBgImg.style.opacity = '0.75';
-            previewBgVideo.style.opacity = '0.75';
-            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '0.75';
+            previewBgImg.style.opacity = '1';
+            previewBgVideo.style.opacity = '1';
+            if (WebGLDepth.canvas) WebGLDepth.canvas.style.opacity = '1';
             
             // Open modal
             previewModal.classList.add('open');
@@ -3931,34 +4430,76 @@
             if (window.hasLaunched) return;
             window.hasLaunched = true;
 
-            const hero = document.getElementById('hero');
             const scroller = document.getElementById('main-scroller');
+            const profileEl = document.getElementById('profile');
             
-            if(hero) {
-
-                hero.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-                hero.style.opacity = '0';
+            if (scroller) {
+                scroller.classList.add('unlocked');
+                scroller.style.overflowY = 'hidden'; 
+                scroller.style.overflowX = 'auto';
                 
+                const homeBtn = document.querySelector('.dock-icon[data-target="hero"]');
+                if (homeBtn) homeBtn.style.display = 'none';
 
-                const heroTextLayer = hero.querySelector('.content-layer');
-                if (heroTextLayer) {
-                    heroTextLayer.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-                    heroTextLayer.style.transform = 'scale(1.05)';
+                if (profileEl) {
+                    profileEl.scrollIntoView({ behavior: 'smooth' });
                 }
-                
-                setTimeout(() => {
-                    hero.style.display = 'none';
-                    scroller.classList.add('unlocked');
-                    scroller.style.overflowY = 'hidden'; 
-                    scroller.style.overflowX = 'auto';
-                    
-                    const homeBtn = document.querySelector('.dock-icon[data-target="hero"]');
-                    if(homeBtn) homeBtn.style.display = 'none';
-
-                    scroller.scrollTop = 0;
-                }, 800);
             }
         }
+
+        // Handle asset loading state -> +2s delay -> enable PRESS START with seamless morphing
+        window.addEventListener('DOMContentLoaded', () => {
+            const launchBtn = document.getElementById('intro-launch-btn');
+            const launchText = document.getElementById('intro-launch-text');
+            const launchIcon = document.getElementById('intro-launch-icon');
+
+            function enablePressStart() {
+                if (!launchBtn || launchBtn.dataset.ready === "true") return;
+                launchBtn.dataset.ready = "true";
+
+                // +2 Seconds delay after asset loading completes
+                setTimeout(() => {
+                    if (!launchBtn) return;
+
+                    // Stage 1: Seamlessly fade & scale down "NOW LOADING..." content
+                    if (launchText) {
+                        launchText.style.opacity = '0';
+                        launchText.style.transform = 'scale(0.85)';
+                    }
+                    if (launchIcon) {
+                        launchIcon.style.opacity = '0';
+                        launchIcon.style.transform = 'scale(0.5) rotate(180deg)';
+                    }
+
+                    // Stage 2: Swap content mid-fade (after 250ms), pop in "PRESS START" button
+                    setTimeout(() => {
+                        launchBtn.removeAttribute('disabled');
+                        launchBtn.classList.remove('bg-white/80', 'text-sky-500/80', 'border-white/80', 'cursor-wait');
+                        launchBtn.classList.add('bg-white', 'text-sky-600', 'hover:bg-sky-50', 'border-sky-100', 'cursor-pointer', 'shadow-[0_12px_35px_rgba(2,132,199,0.35)]', 'hover:shadow-[0_18px_45px_rgba(2,132,199,0.5)]', 'hover:scale-110', 'active:scale-95', 'intro-btn-ready-pop');
+
+                        if (launchText) {
+                            launchText.classList.remove('animate-pulse');
+                            launchText.textContent = 'PRESS START • 始動';
+                            launchText.style.opacity = '1';
+                            launchText.style.transform = 'scale(1)';
+                        }
+                        if (launchIcon) {
+                            launchIcon.classList.remove('animate-spin');
+                            launchIcon.textContent = '➔';
+                            launchIcon.className = 'text-xl sm:text-2xl transition-transform duration-300 group-hover:translate-x-2';
+                            launchIcon.style.opacity = '1';
+                            launchIcon.style.transform = 'scale(1)';
+                        }
+                    }, 250);
+                }, 2000);
+            }
+
+            if (document.readyState === 'complete') {
+                enablePressStart();
+            } else {
+                window.addEventListener('load', enablePressStart);
+            }
+        });
     </script>
 </body>
 </html>
