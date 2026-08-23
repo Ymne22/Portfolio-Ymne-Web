@@ -105,10 +105,40 @@
             transform: scale(0.35) translateY(120px);
             transform-origin: center center;
             will-change: transform, opacity;
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            mask-image: radial-gradient(white, black);
+            isolation: isolate;
         }
 
         #profile.active-section .profile-card-anim {
             animation: cardMomentumPop 0.85s cubic-bezier(0.25, 1, 0.4, 1) forwards;
+        }
+
+        /* Profile Top & Bottom Decorative Hazard Stripes */
+        .mgrp-stripe-top,
+        .mgrp-stripe-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 14px;
+            z-index: 25;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                -45deg,
+                #ffffff,
+                #ffffff 12px,
+                #38bdf8 12px,
+                #38bdf8 24px
+            );
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+        }
+        .mgrp-stripe-top {
+            top: 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+        }
+        .mgrp-stripe-bottom {
+            bottom: 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.9);
         }
 
         /* Avatar Matching Spring Momentum Drop */
@@ -1281,6 +1311,131 @@
                 grid-auto-rows: 160px;
             }
             .masonry-3x2 { grid-column: span 2; }
+
+            /* Tablet Profile Container & Card Optimization */
+            #profile .profile-inner {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            .profile-card-anim {
+                max-height: calc(100dvh - 3.5rem) !important;
+                overflow-y: auto !important;
+                border-width: 6px !important;
+                border-radius: 2rem !important;
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+                mask-image: radial-gradient(white, black);
+            }
+        }
+
+        /* Ultra-Compact Landscape Phone & Short Viewport Profile Card */
+        @media (max-height: 550px) {
+            section#profile {
+                height: 100dvh !important;
+                min-height: 100dvh !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+                overflow: hidden !important;
+            }
+            #profile .profile-inner {
+                min-height: 100dvh !important;
+                height: 100dvh !important;
+                padding: 10px 1rem !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+            .profile-card-anim {
+                max-height: calc(100dvh - 20px) !important;
+                width: 100% !important;
+                max-width: 620px !important;
+                margin: auto !important;
+                border-width: 3px !important;
+                border-radius: 1rem !important;
+                overflow: hidden !important;
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+                mask-image: radial-gradient(white, black);
+            }
+            /* Super compact header */
+            #profile .bg-\[\#38bdf8\] {
+                padding: 0.4rem 0.75rem !important;
+            }
+            #profile .flex.flex-col.sm\:flex-row {
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                text-align: left !important;
+            }
+            #profile .profile-avatar-anim {
+                display: inline-block !important;
+            }
+            #profile .profile-avatar-anim .w-16,
+            #profile .profile-avatar-anim div {
+                width: 2.25rem !important;
+                height: 2.25rem !important;
+                border-width: 2px !important;
+            }
+            #profile h2 {
+                font-size: 1rem !important;
+                line-height: 1 !important;
+            }
+            #profile h2 span {
+                font-size: 0.75rem !important;
+            }
+            #profile p.text-sky-100 {
+                font-size: 0.65rem !important;
+                margin-top: 2px !important;
+            }
+            #profile .bg-\[\#38bdf8\] .absolute.bottom-0 {
+                height: 0.5rem !important;
+            }
+            /* Super compact body */
+            #profile .bg-white {
+                padding: 0.4rem 0.75rem !important;
+            }
+            #profile .bg-\[\#f0f9ff\] {
+                padding: 0.4rem 0.65rem !important;
+                margin-bottom: 0.35rem !important;
+                font-size: 0.7rem !important;
+                line-height: 1.25 !important;
+                border-radius: 0.65rem !important;
+            }
+            #profile .bg-\[\#f0f9ff\] p {
+                margin-bottom: 0.25rem !important;
+            }
+            #profile .bg-\[\#f0f9ff\] div {
+                font-size: 0.65rem !important;
+                gap: 0.25rem !important;
+                padding-top: 0 !important;
+            }
+            #profile .bg-\[\#f0f9ff\] span {
+                padding: 0.1rem 0.35rem !important;
+                border-radius: 0.35rem !important;
+            }
+            /* Super compact bottom controls */
+            #profile .w-full.flex.flex-col.sm\:flex-row {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                padding-top: 0 !important;
+            }
+            #profile .bg-\[\#1e1b4b\] {
+                padding: 0.2rem 0.5rem !important;
+                gap: 0.35rem !important;
+            }
+            #profile .bg-\[\#1e1b4b\] a {
+                width: 1.65rem !important;
+                height: 1.65rem !important;
+                font-size: 0.7rem !important;
+            }
+            #profile .next-btn-anim {
+                padding: 0.35rem 1rem !important;
+                font-size: 0.75rem !important;
+                border-radius: 9999px !important;
+                width: auto !important;
+            }
         }
 
         @media (max-width: 768px) {
@@ -2265,23 +2420,23 @@
                 <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-15 bg-loop-top-right"></div>
             </div>
 
-            <div class="content-layer profile-inner relative z-10 w-full min-h-screen flex flex-col items-center justify-center py-4 sm:py-6 md:py-12 px-3 sm:px-6 lg:px-12 overflow-y-auto">
+            <div class="content-layer profile-inner relative z-10 w-full min-h-screen flex flex-col items-center justify-center py-3 sm:py-4 md:py-6 lg:py-8 px-3 sm:px-6 lg:px-12 overflow-y-auto">
                 
-                <!-- Fullscreen Responsive VTuber Card Frame (Mobile Compact & Touch Optimized with Exaggerated Pop-In Launch) -->
-                <div class="profile-card-anim w-full max-w-4xl lg:max-w-5xl mx-auto rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3.5rem] border-[4px] sm:border-[6px] md:border-[10px] border-white/80 shadow-[0_20px_60px_rgba(14,165,233,0.35)] overflow-hidden bg-white/95 backdrop-blur-md my-auto">
+                <!-- Fullscreen Responsive VTuber Card Frame (Tablet & Mobile Optimized with WebKit Anti-Bleed Masking) -->
+                <div class="profile-card-anim w-full max-w-4xl lg:max-w-5xl mx-auto rounded-[1.75rem] sm:rounded-[2.25rem] md:rounded-[3rem] border-[4px] sm:border-[6px] md:border-[8px] border-white/80 shadow-[0_20px_60px_rgba(14,165,233,0.35)] overflow-hidden bg-white/95 backdrop-blur-md my-auto">
                     
                     <!-- HEADER SECTION (Sky Blue + Avatar + Wave Divider) -->
-                    <div class="bg-[#38bdf8] p-4 sm:p-6 md:p-10 lg:p-12 text-white relative">
+                    <div class="bg-[#38bdf8] p-4 sm:p-5 md:p-6 lg:p-10 text-white relative">
                         
                         <!-- Avatar & Profile Info Row -->
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-6 md:gap-8 relative z-10 text-center sm:text-left">
                             <div class="relative flex-shrink-0 profile-avatar-anim">
-                                <div class="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full border-3 sm:border-4 border-white shadow-xl overflow-hidden bg-white hover:scale-110 transition-transform duration-300">
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-3 sm:border-4 border-white shadow-xl overflow-hidden bg-white hover:scale-110 transition-transform duration-300">
                                     <img src="https://avatars.githubusercontent.com/u/126408995?v=4" alt="Myko" class="w-full h-full object-cover" draggable="false">
                                 </div>
                             </div>
 
-                            <div class="flex flex-col gap-1 sm:gap-2 pt-0 sm:pt-1 md:pt-3">
+                            <div class="flex flex-col gap-1 sm:gap-2 pt-0 sm:pt-1 md:pt-2">
                                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
                                     <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none" style="font-family: 'Nunito', sans-serif;">
                                         Myko <span class="text-base sm:text-2xl md:text-3xl font-normal opacity-90">(YMNE)</span>
@@ -2315,10 +2470,10 @@
                     </div>
 
                     <!-- BODY SECTION (White Card with Bio Callout + Bottom Controls) -->
-                    <div class="bg-white p-4 sm:p-6 md:p-10 lg:p-12 pt-2 sm:pt-4 md:pt-6 flex flex-col items-center">
+                    <div class="bg-white p-4 sm:p-5 md:p-6 lg:p-10 pt-2 sm:pt-3 md:pt-4 flex flex-col items-center">
                         
                         <!-- Bio Callout Box -->
-                        <div class="w-full bg-[#f0f9ff] border-2 border-[#e0f2fe] p-4 sm:p-6 md:p-8 lg:p-10 rounded-xl sm:rounded-2xl md:rounded-3xl mb-4 sm:mb-6 md:mb-8 text-slate-700 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed sm:leading-loose font-medium">
+                        <div class="w-full bg-[#f0f9ff] border-2 border-[#e0f2fe] p-3.5 sm:p-5 md:p-6 lg:p-8 rounded-xl sm:rounded-2xl md:rounded-3xl mb-3 sm:mb-4 md:mb-6 text-slate-700 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed sm:leading-loose font-medium">
                             <p class="mb-2 sm:mb-4">
                                 Myko here! (I'm using "Ymne" as pen-name), I do art mostly on <span class="font-black text-[#0284c7] bg-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl shadow-sm border border-sky-100 inline-block my-0.5">2D Art and Animation</span>, sometimes do <span class="font-black text-[#0284c7] bg-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl shadow-sm border border-sky-100 inline-block my-0.5">3D Art and Animation</span>. But mostly work as <span class="font-bold text-[#0284c7]">Graphics Programmer</span> and <span class="font-bold text-[#0284c7]">Technical Artist</span>.
                             </p>
