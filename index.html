@@ -162,6 +162,17 @@
             100% { background-position: 56px 0; }
         }
 
+        .bg-loop-top-right,
+        .bg-loop-bottom,
+        .bg-loop-bottom-right,
+        .bg-loop-top-left,
+        .bg-loop-right-edge {
+            will-change: background-position, transform;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
         .bg-loop-top-right {
             animation: bgLoopTopRight 6s linear infinite;
         }
@@ -180,34 +191,44 @@
 
         /* Next Page Arrow Pulse */
         @keyframes arrowBounceX {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(9px) scale(1.25); }
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            50% { transform: translate3d(9px, 0, 0) scale(1.25); }
         }
         .next-btn-anim .arrow-icon {
             display: inline-block;
             animation: arrowBounceX 1.6s ease-in-out infinite;
+            will-change: transform;
         }
 
-        /* Floating Background Accents Keyframes */
+        /* Floating Background Accents Keyframes (GPU Accelerated) */
         @keyframes mographFloat1 {
-            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-            50% { transform: translateY(-22px) rotate(16deg) scale(1.15); }
+            0%, 100% { transform: translate3d(0, 0px, 0) rotate(0deg) scale(1); }
+            50% { transform: translate3d(0, -22px, 0) rotate(16deg) scale(1.15); }
         }
         @keyframes mographFloat2 {
-            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-            50% { transform: translateY(20px) rotate(-18deg) scale(0.9); }
+            0%, 100% { transform: translate3d(0, 0px, 0) rotate(0deg) scale(1); }
+            50% { transform: translate3d(0, 20px, 0) rotate(-18deg) scale(0.9); }
         }
-        .mograph-float-1 { animation: mographFloat1 2.5s ease-in-out infinite; }
-        .mograph-float-2 { animation: mographFloat2 3.2s ease-in-out infinite; }
+        .mograph-float-1 { animation: mographFloat1 2.5s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
+        .mograph-float-2 { animation: mographFloat2 3.2s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
 
-        /* Profile Card Liquid Wave Animations */
+        /* Profile Card Liquid Wave Animations (Jitter-Free GPU 3D Layers) */
         @keyframes profileWaveScrollFg {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
         @keyframes profileWaveScrollBg {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
+            0% { transform: translate3d(-50%, 0, 0); }
+            100% { transform: translate3d(0, 0, 0); }
+        }
+        .profile-wave-fg,
+        .profile-wave-bg {
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
         }
         .profile-wave-fg {
             animation: profileWaveScrollFg 5s linear infinite;
@@ -3271,6 +3292,18 @@
                     </div>
                 </div>
 
+                <!-- Kanade -->
+                <div class="masonry-item masonry-1x2" data-media="image" data-src="Assets/Images/Art/Kanade.jpg" data-title="Urara">
+                    <img src="Assets/Images/Art/Kanade.jpg" alt="Haru Urara" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Otonose Kanade (Fanart)</h4>
+                        <div class="masonry-info">
+                            <span>Drawing</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Mei -->
                 <div class="masonry-item masonry-2x2" data-media="image" data-src="Assets/Images/Art/Mei.jpg" data-title="Mei Kinosaki">
                     <img src="Assets/Images/Art/Mei.jpg" alt="Mei Kinosaki" draggable="false" loading="lazy">
@@ -3283,8 +3316,20 @@
                     </div>
                 </div>
 
+                <!-- Ollie -->
+                <div class="masonry-item masonry-2x2" data-media="image" data-src="Assets/Images/Art/Ollie.jpg" data-title="Kureji Ollie">
+                    <img src="Assets/Images/Art/Ollie.jpg" alt="Kureji Ollie" draggable="false" loading="lazy">
+                    <div class="masonry-overlay">
+                        <h4>Kureji Ollie (Fanart)</h4>
+                        <div class="masonry-info">
+                            <span>Drawing</span>
+                            <button class="view-btn">View</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- HL-ATK Sprite -->
-                <div class="masonry-item masonry-3x2" data-media="image" data-src="Assets/Images/Art/HL-ATK-Sprite.jpg" data-title="Holo-Attack Character Sprite">
+                <div class="masonry-item masonry-2x2" data-media="image" data-src="Assets/Images/Art/HL-ATK-Sprite.jpg" data-title="Holo-Attack Character Sprite">
                     <img src="Assets/Images/Art/HL-ATK-Sprite.jpg" alt="Holo-Attack Character Sprite" draggable="false" loading="lazy">
                     <div class="masonry-overlay">
                         <h4>Holo-Attack Sprites</h4>
@@ -3296,7 +3341,7 @@
                 </div>
 
                 <!-- HL-ATK Concept 1 -->
-                <div class="masonry-item masonry-3x2" data-media="image" data-src="Assets/Images/Art/HL-ATK-Concept1.jpg" data-title="Holo-Attack Concept">
+                <div class="masonry-item masonry-2x2" data-media="image" data-src="Assets/Images/Art/HL-ATK-Concept1.jpg" data-title="Holo-Attack Concept">
                     <img src="Assets/Images/Art/HL-ATK-Concept1.jpg" alt="Holo-Attack Concept" draggable="false" loading="lazy">
                     <div class="masonry-overlay">
                         <h4>HL-ATK Concept 1</h4>
@@ -3308,7 +3353,7 @@
                 </div>
 
                 <!-- HL-ATK Concept 2 -->
-                <div class="masonry-item masonry-3x2" data-media="image" data-src="Assets/Images/Art/HL-ATK-Concept2.jpg" data-title="Holo-Attack Concept">
+                <div class="masonry-item masonry-2x2" data-media="image" data-src="Assets/Images/Art/HL-ATK-Concept2.jpg" data-title="Holo-Attack Concept">
                     <img src="Assets/Images/Art/HL-ATK-Concept2.jpg" alt="Holo-Attack Concept" draggable="false" loading="lazy">
                     <div class="masonry-overlay">
                         <h4>HL-ATK Concept 2</h4>
