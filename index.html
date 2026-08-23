@@ -81,22 +81,15 @@
     </script>
 
     <style>
-        /* Profile Card Multi-Stage Momentum Bounce Animation (Empty ➔ BIG ➔ Smaller ➔ Normal) */
+        /* Smooth, GPU-friendly entrance animation (Zero VRAM thrashing on low-end hardware) */
         @keyframes cardMomentumPop {
             0% {
                 opacity: 0;
-                transform: scale(0.35) translateY(120px) rotate(-5deg);
-            }
-            52% {
-                opacity: 1;
-                transform: scale(1.08) translateY(-14px) rotate(1.5deg); /* 1. EMPTY ➔ BIG */
-            }
-            78% {
-                transform: scale(0.97) translateY(4px) rotate(-0.5deg); /* 2. TURN SMALLER */
+                transform: translate3d(0, 24px, 0);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) translateY(0px) rotate(0deg); /* 3. NORMAL SIZE */
+                transform: translate3d(0, 0, 0);
             }
         }
 
@@ -1297,9 +1290,8 @@
             border: 2px solid rgba(255, 255, 255, 0.45);
             box-shadow: 0 12px 32px -5px rgba(10, 30, 60, 0.25), 0 0 12px rgba(255, 255, 255, 0.15);
             opacity: 0;
-            transform: translateY(60px) scale(0.35);
-            -webkit-mask-image: -webkit-radial-gradient(white, black);
-            mask-image: radial-gradient(white, black);
+            transform: translate3d(0, 24px, 0);
+            content-visibility: auto;
             transition: border-color 0.35s ease, box-shadow 0.35s ease;
         }
 
@@ -1348,6 +1340,7 @@
             border-radius: 1.25rem;
             transition: transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.4s ease;
             opacity: 1;
+            content-visibility: auto;
         }
 
         .masonry-item:hover img,
@@ -5218,6 +5211,11 @@
 
         // Handle asset loading state -> +2s delay -> enable PRESS START with seamless morphing
         window.addEventListener('DOMContentLoaded', () => {
+            // Enforce async image decoding on all images to keep UI thread 60 FPS while assets download
+            document.querySelectorAll('img').forEach(img => {
+                img.decoding = 'async';
+            });
+
             const launchBtn = document.getElementById('intro-launch-btn');
             const launchText = document.getElementById('intro-launch-text');
             const launchIcon = document.getElementById('intro-launch-icon');
