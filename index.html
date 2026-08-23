@@ -613,14 +613,14 @@
 
         .dock-container {
             position: fixed;
-            right: 32px; 
+            right: 24px; 
             top: 50%;
-            transform: translateY(-50%) translateX(20px);
+            transform: translateY(-50%) translateX(30px);
             z-index: 100; 
             width: auto;
             opacity: 0; 
             pointer-events: none;
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .dock-container.visible {
             opacity: 1;
@@ -629,77 +629,107 @@
         }
 
         .dock {
-            background: transparent;
-            border: none;
-            border-right: 3px solid rgba(255, 255, 255, 0.8);
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
-            padding: 2rem 0; 
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2.5px solid rgba(255, 255, 255, 0.95);
+            border-radius: 9999px;
+            box-shadow: 0 16px 35px -5px rgba(2, 132, 199, 0.22), 0 0 25px rgba(255, 255, 255, 0.8);
+            padding: 12px 8px; 
             display: flex;
             flex-direction: column;
-            gap: 2.5rem;
-            align-items: flex-end;
-        }
-        .dock-icon {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            color: rgba(255, 255, 255, 0.85);
+            gap: 16px;
+            align-items: center;
             position: relative;
-            font-size: 1.25rem; 
+        }
+
+        .dock-icon {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: #0369a1;
+            position: relative;
+            font-size: 1.15rem; 
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
-            margin-right: -3px;
-            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+            width: 44px;
+            height: 44px;
+            border-radius: 9999px;
+            background: transparent;
+            border: 1.5px solid transparent;
+            cursor: pointer;
         }
+
         .dock-icon::before {
             content: attr(data-label);
             position: absolute;
-            right: 56px;
+            right: 58px;
             font-family: 'Space Grotesk', monospace;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: #ffffff;
-            background: #1a3a5c;
-            padding: 6px 12px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            letter-spacing: 0.12em;
+            color: #0284c7;
+            background: #ffffff;
+            border: 2px solid #bae6fd;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            box-shadow: 0 10px 25px -4px rgba(2, 132, 199, 0.25), 0 0 15px rgba(255, 255, 255, 0.8);
             opacity: 0;
-            transform: translateX(10px);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(12px) scale(0.9);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             white-space: nowrap;
             pointer-events: none;
         }
+
         .dock-icon:hover {
-            color: #ffffff;
-            transform: translateX(-4px);
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            color: #0284c7;
+            background: #e0f2fe;
+            border-color: #bae6fd;
+            transform: scale(1.12);
         }
-        .dock-icon:hover::before, .dock-icon.active::before {
+
+        .dock-icon:hover::before {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
+
         .dock-icon.active {
             color: #ffffff;
-            filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
+            background: #0284c7;
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 0 6px 20px rgba(2, 132, 199, 0.4);
+            transform: scale(1.15);
         }
+
+        .dock-icon.active::before {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 10px 25px -4px rgba(2, 132, 199, 0.4);
+        }
+
         .dock-icon::after {
-            content: '';
-            position: absolute;
-            right: -3px; 
-            top: 50%;
-            transform: translateY(-50%) scaleY(0);
-            width: 4px;
-            height: 36px;
-            background: #ffffff;
-            border-radius: 2px;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+            display: none;
         }
-        .dock-icon.active::after {
-            transform: translateY(-50%) scaleY(1);
+
+        @media (max-width: 640px) {
+            .dock-container {
+                right: 10px;
+            }
+            .dock {
+                padding: 8px 4px;
+                gap: 10px;
+            }
+            .dock-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.95rem;
+            }
+            .dock-icon::before {
+                display: none;
+            }
         }
 
         .game-pagination {
@@ -1338,114 +1368,117 @@
             }
         }
 
-        /* Ultra-Compact Landscape Phone & Short Viewport Profile Card */
-        @media (max-height: 550px) {
+        /* Height-Fit Responsiveness for Landscape & Short Viewports (max-height: 750px) */
+        @media (max-height: 750px) {
             section#profile {
                 height: 100dvh !important;
                 min-height: 100dvh !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                padding-top: 10px !important;
-                padding-bottom: 10px !important;
                 overflow: hidden !important;
             }
             #profile .profile-inner {
                 min-height: 100dvh !important;
                 height: 100dvh !important;
-                padding: 10px 1rem !important;
+                padding: 0.5rem 1rem !important;
                 justify-content: center !important;
                 align-items: center !important;
             }
             .profile-card-anim {
-                max-height: calc(100dvh - 20px) !important;
+                max-height: calc(100dvh - 1rem) !important;
                 width: 100% !important;
-                max-width: 620px !important;
+                max-width: 820px !important;
                 margin: auto !important;
-                border-width: 3px !important;
-                border-radius: 1rem !important;
-                overflow: hidden !important;
+                border-width: 4px !important;
+                border-radius: 1.5rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow-y: auto !important;
                 -webkit-mask-image: -webkit-radial-gradient(white, black);
                 mask-image: radial-gradient(white, black);
             }
-            /* Super compact header */
+            /* Compact Header */
             #profile .bg-\[\#38bdf8\] {
-                padding: 0.4rem 0.75rem !important;
+                padding: 0.6rem 1.25rem !important;
+                padding-bottom: 1.5rem !important;
             }
             #profile .flex.flex-col.sm\:flex-row {
                 flex-direction: row !important;
                 align-items: center !important;
-                gap: 0.5rem !important;
+                gap: 0.75rem !important;
                 text-align: left !important;
             }
             #profile .profile-avatar-anim {
-                display: inline-block !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: none !important;
+                background: transparent !important;
             }
-            #profile .profile-avatar-anim .w-16,
-            #profile .profile-avatar-anim div {
-                width: 2.25rem !important;
-                height: 2.25rem !important;
-                border-width: 2px !important;
+            #profile .profile-avatar-anim > div {
+                width: 4.25rem !important;
+                height: 4.25rem !important;
+                border: 3px solid #ffffff !important;
+                border-radius: 9999px !important;
+                overflow: hidden !important;
+            }
+            #profile .profile-avatar-anim img {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                border-radius: 9999px !important;
             }
             #profile h2 {
-                font-size: 1rem !important;
-                line-height: 1 !important;
+                font-size: 1.35rem !important;
+                line-height: 1.1 !important;
             }
             #profile h2 span {
-                font-size: 0.75rem !important;
+                font-size: 0.85rem !important;
             }
             #profile p.text-sky-100 {
-                font-size: 0.65rem !important;
-                margin-top: 2px !important;
+                font-size: 0.75rem !important;
+                margin-top: 1px !important;
             }
             #profile .bg-\[\#38bdf8\] .absolute.bottom-0 {
-                height: 0.5rem !important;
+                height: 1.25rem !important;
             }
-            /* Super compact body */
+            /* Compact Body */
             #profile .bg-white {
-                padding: 0.4rem 0.75rem !important;
+                padding: 0.6rem 1.25rem !important;
             }
             #profile .bg-\[\#f0f9ff\] {
-                padding: 0.4rem 0.65rem !important;
-                margin-bottom: 0.35rem !important;
-                font-size: 0.7rem !important;
-                line-height: 1.25 !important;
-                border-radius: 0.65rem !important;
+                padding: 0.6rem 1rem !important;
+                margin-bottom: 0.5rem !important;
+                font-size: 0.825rem !important;
+                line-height: 1.4 !important;
+                border-radius: 0.85rem !important;
             }
             #profile .bg-\[\#f0f9ff\] p {
-                margin-bottom: 0.25rem !important;
+                margin-bottom: 0.35rem !important;
+                font-size: 0.825rem !important;
+            }
+            #profile .bg-\[\#f0f9ff\] p.text-sm,
+            #profile .bg-\[\#f0f9ff\] p.text-lg,
+            #profile .bg-\[\#f0f9ff\] p.text-xl {
+                font-size: 0.95rem !important;
             }
             #profile .bg-\[\#f0f9ff\] div {
-                font-size: 0.65rem !important;
-                gap: 0.25rem !important;
-                padding-top: 0 !important;
+                font-size: 0.8rem !important;
+                gap: 0.4rem !important;
+                padding-top: 0.3rem !important;
+            }
+            #profile .grid.grid-cols-1.md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 0.5rem !important;
+                padding-top: 0.35rem !important;
+            }
+            #profile .grid.grid-cols-1.md\:grid-cols-2 span {
+                font-size: 0.75rem !important;
             }
             #profile .bg-\[\#f0f9ff\] span {
-                padding: 0.1rem 0.35rem !important;
+                padding: 0.15rem 0.4rem !important;
                 border-radius: 0.35rem !important;
-            }
-            /* Super compact bottom controls */
-            #profile .w-full.flex.flex-col.sm\:flex-row {
-                flex-direction: row !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                gap: 0.5rem !important;
-                padding-top: 0 !important;
-            }
-            #profile .bg-\[\#1e1b4b\] {
-                padding: 0.2rem 0.5rem !important;
-                gap: 0.35rem !important;
-            }
-            #profile .bg-\[\#1e1b4b\] a {
-                width: 1.65rem !important;
-                height: 1.65rem !important;
-                font-size: 0.7rem !important;
-            }
-            #profile .next-btn-anim {
-                padding: 0.35rem 1rem !important;
-                font-size: 0.75rem !important;
-                border-radius: 9999px !important;
-                width: auto !important;
             }
         }
 
@@ -2384,7 +2417,7 @@
                     </div>
                 </div>
 
-                <!-- Arcade Start Launch Button (Initial: NOW LOADING -> Converts to PRESS START after assets + 2s) -->
+                <!-- Arcade Start Launch Button-->
                 <div class="mt-8 md:mt-12 pointer-events-auto">
                     <button id="intro-launch-btn" onclick="launchPortfolio()" disabled class="group relative inline-flex items-center gap-3 bg-white/80 text-sky-500/80 font-black text-base sm:text-xl md:text-2xl px-8 sm:px-12 py-4 sm:py-5 rounded-full shadow-[0_8px_25px_rgba(2,132,199,0.2)] border-4 border-white/80 cursor-wait select-none transition-all duration-500">
                         <span id="intro-launch-text" class="tracking-widest uppercase font-mono animate-pulse">NOW LOADING... • 準備中</span>
@@ -2509,7 +2542,7 @@
                             </button>
 
                             <!-- Desktop Fun Fact Inline Callout Box (Screen >= 640px) -->
-                            <div class="hidden sm:flex bg-white/85 border border-sky-200/80 p-3 rounded-2xl shadow-xs text-sm text-slate-700 items-start gap-3 my-1">
+                            <div class="hidden sm:flex bg-white/85 border border-sky-200/80 p-3 rounded-2xl shadow-xs text-sm text-slate-700 items-center gap-3 my-1">
                                 <span class="bg-sky-100 text-[#0284c7] font-extrabold text-xs px-2.5 py-0.5 rounded-full font-mono flex-shrink-0 flex items-center gap-1 shadow-2xs">
                                     <span>💡 Fun Fact</span>
                                 </span>
