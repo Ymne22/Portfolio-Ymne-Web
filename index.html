@@ -315,10 +315,12 @@
                 width: 100% !important;
             }
 
-            /* --- NUKE ALL BACKDROP-FILTER EVERYWHERE --- */
+            /* --- NUKE ALL BACKDROP-FILTER & GPU LAYER EXHAUSTION --- */
             * {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
+                will-change: auto !important;
+                transform-style: flat !important;
             }
 
             /* --- MODALS: INSTANT CUT (No scale/translate transitions) --- */
@@ -4390,15 +4392,17 @@
         });
 
         // --- LAZY VIDEO LOADING ---
-        // Bound to #main-scroller so off-screen section videos NEVER play concurrently in background
+        // Bound to viewport on mobile, mainScroller on desktop
         const lazyVideos = document.querySelectorAll('video[data-lazy-src]');
+        const isMobileScreen = window.innerWidth <= 768;
         const videoObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target;
                 if (entry.isIntersecting) {
-                    // Load and play only when section is visible in scroller
-                    if (!video.src || video.src === '' || video.src === window.location.href) {
-                        video.src = video.getAttribute('data-lazy-src');
+                    // Load and play only once when section is visible
+                    const lazySrc = video.getAttribute('data-lazy-src');
+                    if (lazySrc && video.getAttribute('src') !== lazySrc) {
+                        video.setAttribute('src', lazySrc);
                         video.load();
                     }
                     video.play().catch(() => {});
@@ -4407,7 +4411,7 @@
                     video.pause();
                 }
             });
-        }, { root: mainScroller, rootMargin: '50px 0px', threshold: 0.15 });
+        }, { root: isMobileScreen ? null : mainScroller, rootMargin: '150px 0px', threshold: 0.05 });
         
         lazyVideos.forEach(video => videoObserver.observe(video));
 
@@ -4754,12 +4758,12 @@
             // Show video or image based on file type
             const previewCanvas = document.getElementById('preview-webgl');
             
-            // Show video or image based on file type
-            if (data.heroImageDepth) {
-                // Use WebGL depth effect
+            // On mobile (<= 768px), bypass WebGL depth shader to prevent GPU VRAM context switching and screen flickering
+            const isMobileDevice = window.innerWidth <= 768;
+            if (data.heroImageDepth && !isMobileDevice) {
+                // Use WebGL depth effect on desktop only
                 previewBgVideo.style.display = 'none';
                 previewBgImg.style.display = 'none';
-                // Start WebGL
                 WebGLDepth.start(data.heroImage, data.heroImageDepth);
             } else if (isVideo) {
                 previewBgVideo.src = heroSrc;
