@@ -29,6 +29,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
+        (function() {
+            var ua = navigator.userAgent || navigator.vendor || window.opera;
+            var isAndroid = /android/i.test(ua);
+            var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            var isMobileOrTablet = isAndroid || isIOS || window.matchMedia("(pointer: coarse)").matches;
+            if (isMobileOrTablet) {
+                document.documentElement.classList.add('is-mobile-device');
+            }
+        })();
+    </script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -237,8 +248,34 @@
            to eliminate all GPU composition flickering on low-end hardware.
            Desktop (>768px) is UNTOUCHED by these rules.
            ================================================================ */
-        @media (max-width: 768px) {
+        /* Apply to screen widths <= 1024px, touch screen devices, or detected iOS / Android devices */
+        @media (max-width: 1024px), (pointer: coarse) {
+            /* Handled via CSS query */
+        }
 
+        html.is-mobile-device .bg-loop-top,
+        html.is-mobile-device .bg-loop-top-right,
+        html.is-mobile-device .bg-loop-bottom,
+        html.is-mobile-device .bg-loop-bottom-right,
+        html.is-mobile-device .bg-loop-top-left,
+        html.is-mobile-device .bg-loop-right-edge,
+        html.is-mobile-device .mograph-float-1,
+        html.is-mobile-device .mograph-float-2 { animation: none !important; }
+
+        html.is-mobile-device section:not(#hero) .mgrp-stripe-top,
+        html.is-mobile-device section:not(#hero) .mgrp-stripe-bottom,
+        html.is-mobile-device section:not(#hero) .wave-container,
+        html.is-mobile-device .profile-wave-fg,
+        html.is-mobile-device .profile-wave-bg { display: none !important; animation: none !important; }
+
+        html.is-mobile-device .masonry-item,
+        html.is-mobile-device .image-card,
+        html.is-mobile-device .profile-card-anim,
+        html.is-mobile-device .reveal-hidden { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; -webkit-mask-image: none !important; mask-image: none !important; filter: none !important; }
+
+        html.is-mobile-device * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; will-change: auto !important; transform-style: flat !important; }
+
+        @media (max-width: 1024px), (pointer: coarse) {
             /* --- KILL ALL DECORATIVE ANIMATIONS --- */
             .bg-loop-top,
             .bg-loop-top-right,
@@ -2874,11 +2911,8 @@
                             </p>
 
                             <p>
-                                I’m a person who enjoys making things, mostly <span class="font-bold text-[#0284c7]">art creation, animation, and whatever interesting idea happens to come to mind</span>
-                            </p>
-
-                            <p>
-                                My work often sits somewhere between <span class="font-bold text-[#0284c7]">game programming</span>, <span class="font-bold text-[#0284c7]">graphics programming</span>, and <span class="font-bold text-[#0284c7]">technical artist</span>, where I get to work with both the creative and technical sides of things.
+                                I’m a person who enjoys making things, mostly art creation, animation, and whatever interesting idea happens to come to mind
+                                My work often sits somewhere between game programming, graphics programming, and technical artist, where I get to work with both the creative and technical sides of things.
                             </p>
 
                             <!-- Mobile Fun Fact Trigger Button (Screen < 640px) -->
