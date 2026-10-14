@@ -1942,6 +1942,7 @@
         }
 
         #games-start .game-track {
+            counter-increment: game-rank;
             display: flex;
             align-items: center;
             gap: 0.7rem;
@@ -1964,6 +1965,7 @@
         }
 
         .game-playlist {
+            counter-reset: game-rank;
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
@@ -2024,6 +2026,10 @@
             align-items: center;
             justify-content: center;
             border: 2px solid #bae6fd;
+        }
+
+        .game-track-rank::before {
+            content: counter(game-rank, decimal-leading-zero);
         }
 
         #games-start .game-track.active .game-track-rank {
@@ -2141,20 +2147,15 @@
 
             #main-scroller.horizontal-mode>section#games-start,
             #games-start {
-                height: 100vh !important;
                 height: 100dvh !important;
-                min-height: 100vh !important;
                 min-height: 100dvh !important;
-                max-height: 100vh !important;
-                max-height: 100dvh !important;
+                max-height: none !important;
                 overflow-x: hidden !important;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch;
-                overscroll-behavior-y: contain;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                padding-top: 96px !important;
+                overscroll-behavior-y: auto;
+                display: block !important;
+                padding-top: 84px !important;
                 padding-bottom: 110px !important;
             }
 
@@ -2162,15 +2163,17 @@
                 font-size: 2rem !important;
             }
 
-            /* (.game-jukebox / .content-layer flex-shrink is handled globally above) */
             .game-jukebox {
                 grid-template-columns: 1fr;
                 flex: none;
                 min-height: 0;
+                display: flex !important;
+                flex-direction: column !important;
             }
 
             .game-stage {
                 min-height: 0;
+                flex: none !important;
             }
 
             .game-stage-hero {
@@ -2179,12 +2182,11 @@
                 flex: none;
             }
 
-            /* Mobile scroll model = the SECTION scrolls (same as Roadmap / Lab / Art).
-               The playlist itself must NOT create a second, nested scroller, and it
-               must not restrict touch-action or horizontal section swipes get blocked. */
             .game-playlist {
-                overflow: visible;
-                max-height: none;
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+                flex: none !important;
                 overscroll-behavior: auto;
                 touch-action: pan-x pan-y;
             }
@@ -2194,20 +2196,20 @@
 
             #main-scroller.horizontal-mode>section#games-start,
             #games-start {
-                padding-top: 88px !important;
-                padding-bottom: 104px !important;
+                padding-top: 76px !important;
+                padding-bottom: 120px !important;
             }
 
             #games-start .games-header {
-                margin-bottom: 1rem !important;
+                margin-bottom: 0.85rem !important;
             }
 
             #games-start .games-header h3 {
-                font-size: 1.9rem !important;
+                font-size: 1.85rem !important;
             }
 
             .game-jukebox {
-                padding: 0 1rem 1rem 1rem !important;
+                padding: 0 1rem 1.5rem 1rem !important;
                 gap: 0.85rem !important;
             }
 
@@ -2232,7 +2234,6 @@
                 padding: 0.35rem 0.75rem;
             }
 
-            /* Mobile-only affordance hint (zero added height) */
             .game-stage-jp::after {
                 content: ' TAP TO PREVIEW';
                 letter-spacing: 0.12em;
@@ -2275,11 +2276,10 @@
                 display: none;
             }
 
-            /* Comfortable touch rows — the section scrolls, so favour readability */
             .game-playlist {
                 gap: 0.7rem !important;
                 margin: 0 !important;
-                padding: 0 !important;
+                padding: 0 0 1rem 0 !important;
             }
 
             #games-start .game-track {
@@ -2319,15 +2319,16 @@
 
             #main-scroller.horizontal-mode>section#games-start,
             #games-start {
-                padding-top: 84px !important;
+                padding-top: 72px !important;
+                padding-bottom: 120px !important;
             }
 
             #games-start .games-header h3 {
-                font-size: 1.7rem !important;
+                font-size: 1.65rem !important;
             }
 
             .game-stage-hero {
-                aspect-ratio: 4 / 3;
+                aspect-ratio: 16 / 10;
             }
 
             .game-playlist {
@@ -4451,7 +4452,7 @@
                         "link": "https://passionrepublicgames.com/gigabash-mobile/"
                     }
                     </script>
-                        <span class="game-track-rank">01</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/GigaBash_Hero.webp"
                                 alt="GigaBash Mobile" draggable="false" loading="lazy"></span>
                         <span class="game-track-body"><span class="game-track-title">GigaBash Mobile</span><span
@@ -4473,16 +4474,17 @@
                         "engine": "Unreal Engine 5.5 and Unreal Engine 5.6 (Switch 2)",
                         "publisher": "PQube",
                         "developer": "Dual Effect",
-                        "role": "Technical Artist, Graphics Programmer (Switch 2), Additional Sequence Animator (Switch 2)",
+                        "role": "Technical Artist, Graphics Programmer, Additional Sequence Animator",
                         "releaseDate": "23 Oct 2025",
                         "link": "https://pqube.co.uk/games/tormented-souls-2/"
                     }
                     </script>
-                        <span class="game-track-rank">02</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/TormentedSouls2_Hero.webp"
                                 alt="Tormented Souls II" draggable="false" loading="lazy"></span>
                         <span class="game-track-body"><span class="game-track-title">Tormented Souls II</span><span
-                                class="game-track-sub">Released • Technical Artist</span></span>
+                                class="game-track-sub">Released • Technical Artist, Graphics Programmer, Additional
+                                Sequence Animator</span></span>
                         <span class="game-track-play">▶</span>
                     </button>
 
@@ -4505,7 +4507,7 @@
                         "link": "https://www.walesinteractive.com/maidofskervr"
                     }
                     </script>
-                        <span class="game-track-rank">04</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/MaidOfSkerVR_Hero.webp"
                                 alt="Maid of Sker VR" draggable="false" loading="lazy"></span>
                         <span class="game-track-body"><span class="game-track-title">Maid of Sker VR</span><span
@@ -4532,7 +4534,7 @@
                         "link": "https://pqube.co.uk/games/theyarehere/"
                     }
                     </script>
-                        <span class="game-track-rank">05</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/TheyAreHere_Hero.webp"
                                 alt="They Are Here" draggable="false" loading="lazy"></span>
                         <span class="game-track-body"><span class="game-track-title">They Are Here</span><span
@@ -4546,7 +4548,7 @@
                     {
                         "title": "Sniper Dan Console Edition",
                         "status": "Released",
-                        "description": "Explore the decaying remains of the secluded Villa Hess, use improvised weapons to confront terrifying creatures, and bend the fabric of reality to save your sister from a twisted cult.",
+                        "description": "Sniper Dan is a delightfully funny, family-friendly 3D Hidden Object game with a big twist. Use a sniper rifle to solve hundreds of low-stakes jobs across six packed locations, discover surprising secrets, snap hilarious photo ops, and unlock costumes, upgrades, office décor, collectables and more!",
                         "heroImage": "Assets/Images/Game/SniperDan_Hero.webp",
                         "heroImageDepth": "Assets/Images/Game/SniperDan_Hero_Depth.webp",
                         "logoImage": "Assets/Images/Game/SniperDan_Logo.webp",
@@ -4559,11 +4561,11 @@
                         "link": "https://pqube.co.uk/games/sniper-dan/"
                     }
                     </script>
-                        <span class="game-track-rank">02</span>
-                        <span class="game-track-thumb"><img src="Assets/Images/Game/SniperDan_Hero.webp"
-                                alt="SniperDan" draggable="false" loading="lazy"></span>
-                        <span class="game-track-body"><span class="game-track-title">Sniper Dan Console Edition</span><span
-                                class="game-track-sub">Released • Graphics Programmer</span></span>
+                        <span class="game-track-rank"></span>
+                        <span class="game-track-thumb"><img src="Assets/Images/Game/SniperDan_Hero.webp" alt="SniperDan"
+                                draggable="false" loading="lazy"></span>
+                        <span class="game-track-body"><span class="game-track-title">Sniper Dan Console
+                                Edition</span><span class="game-track-sub">Released • Graphics Programmer</span></span>
                         <span class="game-track-play">▶</span>
                     </button>
 
@@ -4586,7 +4588,7 @@
                         "link": "https://portofjumanah.agate.id/"
                     }
                     </script>
-                        <span class="game-track-rank">03</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/PortofJumanah_Hero.webp"
                                 alt="Port of Jumanah" draggable="false" loading="lazy"></span>
                         <span class="game-track-body"><span class="game-track-title">Port of Jumanah</span><span
@@ -4613,11 +4615,12 @@
                         "link": "https://www.darkproduct.com/post/birds-watching"
                     }
                     </script>
-                        <span class="game-track-rank">06</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/BirdsWatching_Hero.webp"
                                 alt="Birds Watching" draggable="false" loading="lazy"></span>
-                        <span class="game-track-body"><span class="game-track-title">Birds Watching Console Edition</span><span
-                                class="game-track-sub">Released • Graphics Programmer & 2D Artist</span></span>
+                        <span class="game-track-body"><span class="game-track-title">Birds Watching Console
+                                Edition</span><span class="game-track-sub">Released • Graphics Programmer & 2D
+                                Artist</span></span>
                         <span class="game-track-play">▶</span>
                     </button>
 
@@ -4640,11 +4643,12 @@
                         "link": "https://www.darkproduct.com/post/loan-shark"
                     }
                     </script>
-                        <span class="game-track-rank">07</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/LoanShark_Hero.webp"
                                 alt="Loan Shark" draggable="false" loading="lazy"></span>
-                        <span class="game-track-body"><span class="game-track-title">Loan Shark Console Edition</span><span
-                                class="game-track-sub">Released • Technical Artist & Graphics Programmer</span></span>
+                        <span class="game-track-body"><span class="game-track-title">Loan Shark Console
+                                Edition</span><span class="game-track-sub">Released • Technical Artist & Graphics
+                                Programmer</span></span>
                         <span class="game-track-play">▶</span>
                     </button>
 
@@ -4665,7 +4669,7 @@
                         "link": "https://ymne22.itch.io/project-hl-atk"
                     }
                     </script>
-                        <span class="game-track-rank">09</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><img src="Assets/Images/Game/HoloAttack_Hero.webp"
                                 alt="Holo-Attack" draggable="false" loading="lazy"></span>
                         <span class="game-track-body"><span class="game-track-title">Holo-Attack (Demo)</span><span
@@ -4676,7 +4680,7 @@
                     <!-- Kanna & Lia -->
                     <button type="button" class="game-track masonry-item"
                         data-href="https://ymne22.itch.io/kanna-and-lia-the-witch">
-                        <span class="game-track-rank">08</span>
+                        <span class="game-track-rank"></span>
                         <span class="game-track-thumb"><video data-lazy-src="Assets/Video/Game/Kanna_Hero.webm" loop
                                 muted playsinline preload="none"></video></span>
                         <span class="game-track-body"><span class="game-track-title">Kanna and Lia the Witch</span><span
