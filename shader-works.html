@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADERWORKS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { display: ['"Plus Jakarta Sans"', 'sans-serif'], body: ['Inter', 'sans-serif'] } } }
+    }
+  </script>
+  <style>
+    :root {
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      --wipe: cubic-bezier(.76, 0, .24, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #050505;
+      color: #e5e5e5;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Live shader backdrop */
+    #gl {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      image-rendering: pixelated;
+      pointer-events: none;
+    }
+
+    #shade {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(120% 90% at 50% 0%, transparent 30%, rgba(5, 5, 5, .75));
+    }
+
+    main,
+    footer {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Header */
+    #header {
+      transition: transform .6s var(--ease), background .4s, backdrop-filter .4s;
+    }
+
+    #header.hide {
+      transform: translateY(-100%);
+    }
+
+    #header.solid {
+      background: rgba(5, 5, 5, .6);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-link {
+      position: relative;
+      opacity: .55;
+      transition: opacity .3s;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      height: 1px;
+      width: 100%;
+      background: #fff;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .5s var(--ease);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      opacity: 1;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      transform: scaleX(1);
+    }
+
+    .tag {
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 999px;
+      padding: .25rem .75rem;
+      font-size: .7rem;
+      color: rgba(255, 255, 255, .7);
+    }
+
+    /* Entry */
+    .entry {
+      transition: opacity .6s var(--ease), transform .6s var(--ease);
+    }
+
+    .entry.gone {
+      display: none;
+    }
+
+    .rail {
+      position: relative;
+    }
+
+    @media (min-width: 768px) {
+      .rail {
+        border-right: 1px solid rgba(255, 255, 255, .15);
+        padding-right: 2rem;
+      }
+
+      .rail::after {
+        content: '';
+        position: absolute;
+        right: -4px;
+        top: .7rem;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, .12);
+      }
+    }
+
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .7rem 1.4rem;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 999px;
+      font-size: .75rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: all .5s var(--ease);
+      background: rgba(0, 0, 0, .35);
+    }
+
+    .btn img {
+      height: 16px;
+      width: 16px;
+      transition: filter .4s;
+    }
+
+    .btn:hover {
+      background: #fff;
+      color: #050505;
+      border-color: #fff;
+    }
+
+    .btn:hover img {
+      filter: invert(1);
+    }
+
+    .title-link {
+      background: linear-gradient(#fff, #fff) 0 100% / 0 1px no-repeat;
+      transition: background-size .6s var(--ease);
+      cursor: pointer;
+    }
+
+    .title-link:hover {
+      background-size: 100% 1px;
+    }
+
+    /* Modal Overlay */
+    .blog-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, .85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s var(--ease);
+    }
+
+    .blog-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .blog-window {
+      width: 100%;
+      max-width: 1100px;
+      height: 90vh;
+      background: #0d0d0f;
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .7);
+      transform: scale(.97);
+      transition: transform .3s var(--ease);
+    }
+
+    .blog-modal.open .blog-window {
+      transform: scale(1);
+    }
+
+    .blog-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .75rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+      background: rgba(18, 18, 22, .9);
+    }
+
+    .blog-bar-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .45rem .85rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      background: rgba(255, 255, 255, .05);
+      color: #fff;
+      transition: background .2s, border-color .2s;
+      cursor: pointer;
+    }
+
+    .blog-bar-btn:hover {
+      background: rgba(255, 255, 255, .15);
+      border-color: rgba(255, 255, 255, .3);
+    }
+
+    .blog-iframe-wrap {
+      flex: 1;
+      position: relative;
+      background: #000;
+    }
+
+    .blog-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .blog-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d0f;
+      gap: 1rem;
+      transition: opacity .2s;
+    }
+
+    .blog-loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .blog-spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 2px solid rgba(255, 255, 255, .15);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Scroll reveal: left-to-right wipe matching game-works */
+    .reveal {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path .35s var(--wipe);
+    }
+
+    .reveal.show {
+      clip-path: inset(0 0 0 0);
+      transition: clip-path .7s var(--wipe) var(--d, 0ms);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="gl"></canvas>
+  <div id="shade"></div>
+
+  <!-- Header -->
+  <header id="header" class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-14 py-5">
+    <nav class="hidden md:flex items-center gap-10 text-xs tracking-[.18em] uppercase font-medium">
+      <a href="index.html" class="nav-link">Main</a>
+      <a href="game-works.html" class="nav-link">Game Works</a>
+      <a href="shader-works.html" class="nav-link active">Shader Works</a>
+      <a href="artworks.html" class="nav-link">Artworks</a>
+    </nav>
+    <button id="menuBtn" class="md:hidden material-symbols-outlined text-3xl" aria-label="Menu">menu</button>
+  </header>
+  <div id="mobileMenu"
+    class="hidden fixed inset-0 z-40 bg-black/95 backdrop-blur flex-col items-center justify-center gap-8 font-display text-3xl font-semibold">
+    <a href="index.html">Main</a><a href="game-works.html">Game Works</a><a href="shader-works.html">Shader Works</a><a
+      href="artworks.html">Artworks</a>
+  </div>
+
+  <main class="px-5 md:px-14 max-w-6xl mx-auto">
+    <section class="pt-32 md:pt-40 pb-14">
+      <p class="reveal text-xs tracking-[.3em] uppercase text-white/60 mb-4 font-medium">Graphics Programming & Visual
+        Effects</p>
+      <h1 class="reveal font-display text-5xl md:text-7xl font-extrabold tracking-tight text-white">SHADERWORKS</h1>
+      <span id="count" class="reveal inline-block mt-6 text-xs text-white/40"></span>
+    </section>
+
+    <div id="feed" class="space-y-16 md:space-y-24 pb-32"></div>
+  </main>
+
+  <footer class="px-5 md:px-14 py-12 border-t border-white/10">
+    <div class="max-w-6xl mx-auto flex items-center justify-between text-xs text-white/40">
+      <p class="mt-8 text-base text-white/60">© 2026 YMNE. All rights reserved.
+        the
+        property of their respective owners.</p>
+      <p class="mt-2 text-xs text-white/35">All trademarks, logos, and brand names are the property of their respective
+        owners. Use of these marks does not imply endorsement or affiliation.</p>
+    </div>
+  </footer>
+
+  <!-- Blog Modal Overlay -->
+  <div id="blogModal" class="blog-modal" aria-hidden="true">
+    <div class="blog-window">
+      <div class="blog-bar">
+        <button class="blog-bar-btn" id="blogCloseBtn"><span
+            class="material-symbols-outlined text-base">arrow_back</span>Back</button>
+        <span class="text-xs font-semibold tracking-wide text-white/80 truncate max-w-md" id="blogTitle"></span>
+        <button class="blog-bar-btn" id="blogExternalBtn" title="Open in new tab"><span
+            class="material-symbols-outlined text-base">open_in_new</span>Open in Tab</button>
+      </div>
+      <div class="blog-iframe-wrap">
+        <iframe id="blogIframe" class="blog-iframe" src="about:blank" title="Article"></iframe>
+        <div id="blogLoading" class="blog-loading">
+          <div class="blog-spinner"></div>
+          <span class="text-xs text-white/50 tracking-wider uppercase">Loading Article...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
+    const OLD = 'https://ymne22.github.io/Portfolio-Ymne-Web/';
+
+    const ENTRIES = [
+      {
+        id: 1, title: 'Ymne LightingStack (URP)', tags: ['Unity', 'URP', 'SSGI', 'SSAO'], status: 'WIP',
+        desc: 'SSGI and SSAO bundled into a single drop-in renderer feature.',
+        video: 'Assets/Video/Shader/YmneLightingStackURP.webm'
+      },
+      {
+        id: 2, title: 'Ymne Procedural Clouds (URP)', tags: ['Unity', 'URP', 'Volumetrics'], status: 'WIP',
+        desc: 'Raymarched volumetric clouds with density shaping and temporal accumulation.',
+        video: 'Assets/Video/Shader/YmneProceduralCloudsURP.webm'
+      },
+      {
+        id: 3, title: 'Ymne-PBR (URP)', tags: ['Unity', 'URP', 'PBR'], status: 'WIP',
+        desc: 'Ground-up physically based shading, GGX specular, energy conservation, full IBL.',
+        video: 'Assets/Video/Shader/YmnePBRURP.webm'
+      },
+      {
+        id: 4, title: 'Ymne LightingFX (BRP)', tags: ['Unity', 'BRP', 'SSGI', 'SSR', 'Voxel'], status: 'Released',
+        desc: 'SSGI, SSAO, SSR, volumetric atmosphere and voxel volumetric lighting, one stack.',
+        video: 'Assets/Video/Shader/YmneLightingFXUnity.webm',
+        blog: 'Blog/Shaders/YmneLightingFX/index.html'
+      },
+      {
+        id: 5, title: 'Procedural Texture Generator', tags: ['Unity', 'BRP', 'Procedural'], status: 'Released',
+        desc: 'Brick, stone, dirt, sand and wood generated in-shader with parallax depth.',
+        video: 'Assets/Video/Shader/ProceduralTextureGenerator.webm',
+        blog: 'Blog/Shaders/ProceduralTextureGen/index.html'
+      },
+      {
+        id: 6, title: 'Volumetric Cloud Shadow (BRP)', tags: ['Unity', 'BRP', 'Shadows'], status: 'Released',
+        desc: 'Depth-reconstructed cloud shadows projected from object space, cheap on dynamic scenes.',
+        video: 'Assets/Video/Shader/VolumetricCloudShadow.webm',
+        blog: 'Blog/Shaders/VolumetricCloudShader/index.html'
+      },
+      {
+        id: 7, title: 'Impostor Mesh Generator', tags: ['Unity', 'URP', 'Editor', 'Optimisation'], status: 'Editor Tool',
+        desc: 'Bake meshes into octahedral impostors with bilinear frame blending, LOD savings without the LOD chain.',
+        video: 'Assets/Video/Shader/ImpostorMeshGenerator.webm',
+        blog: 'Blog/Shaders/ImpostorGenerator/index.html'
+      },
+      {
+        id: 8, title: 'Grass Shell Generator (BRP)', tags: ['Unity', 'BRP', 'Shell Texturing'], status: 'Released',
+        desc: 'Shell-textured grass blades with parallax refinement, dense fields, few polygons.',
+        video: 'Assets/Video/Shader/ProceduralGrassShell.webm',
+        blog: 'Blog/Shaders/ProceduralGrassShellGen/index.html'
+      },
+      {
+        id: 9, title: 'Cel Shading', tags: ['Unity', 'Godot', 'Toon', 'SSS'], status: 'Released',
+        desc: 'Anime-ready toon lighting, hard shadow bands, SSS approximation, rim light, double-sided.',
+        video: 'Assets/Video/Shader/ToonUnity.webm',
+        blog: 'Blog/Shaders/CelShading/index.html'
+      },
+      {
+        id: 10, title: 'Procedural Skybox', tags: ['Godot 4', 'Sky', 'Volumetrics'], status: 'Released',
+        desc: 'Dynamic atmospheric scattering with day/night cycle and raymarched cloud layers.',
+        video: 'Assets/Video/Shader/ProceduralCloudSkyGodot.webm',
+        blog: 'Blog/Shaders/ProceduralSkybox/index.html'
+      },
+      {
+        id: 11, title: 'Software Raytracing (BRP)', tags: ['Unity', 'BRP', 'Compute', 'BVH'], status: 'Released',
+        desc: 'Compute-shader ray tracer with BVH acceleration, recursive reflections and temporal denoising.',
+        video: 'Assets/Video/Shader/SRTUnity.webm',
+        blog: 'Blog/Shaders/SoftwareRaytracing/index.html'
+      },
+      {
+        id: 12, title: 'Fake Light (BRP)', tags: ['Unity', 'BRP', 'Screen Space'], status: 'Released',
+        desc: 'Screen-space raymarched shadow volumes and volumetric halos, localised lighting with zero realtime lights.',
+        video: 'Assets/Video/Shader/FakeLight.webm',
+        blog: 'Blog/Shaders/FakeLight/index.html'
+      },
+      {
+        id: 13, title: 'Stylized Water Shader (BRP)', tags: ['Unity', 'BRP', 'SSR', 'Toon'], status: 'Released',
+        desc: 'SSR, procedural waves, toon shading and anime-style sparkles for cinematic oceans.',
+        video: 'Assets/Video/Shader/StylizedWater.webm',
+        blog: 'Blog/Shaders/StylizedWaterShader/index.html'
+      },
+      {
+        id: 14, title: 'Texture Bulk Editor', tags: ['Unity', 'Editor', 'Pipeline'], status: 'Editor Tool',
+        desc: 'Batch-edit import settings across thousands of textures, platform overrides, selective toggles.',
+        image: 'Assets/Images/Shader/TextureBulkEditor.webp',
+        blog: 'Blog/Shaders/TextureBulkEditor/index.html'
+      },
+      {
+        id: 15, title: 'Mesh LOD Generator', tags: ['Unity', 'Editor', 'Optimisation'], status: 'Editor Tool',
+        desc: 'Automatic LOD chain generation with intelligent decimation and quality-preserving simplification.',
+        video: 'Assets/Video/Shader/MeshLODGenerator.webm',
+        blog: 'Blog/Shaders/MeshLODGenerator/index.html'
+      },
+      {
+        id: 16, title: 'SSGI (BRP), Deprecated', tags: ['Unity', 'BRP', 'SSGI'], status: 'Legacy',
+        desc: 'Early screen-space global illumination. Superseded by the LightingStack, kept for reference.',
+        video: 'Assets/Video/Shader/OLD_YmneSSGIUnity.webm',
+        href: 'https://github.com/Ymne22/Screen-Space-Global-Illumination-SSGI-for-Unity-Built-in-RP'
+      },
+      {
+        id: 17, title: 'Procedural Water (BRP)', tags: ['Unity', 'BRP', 'Gerstner'], status: 'Released',
+        desc: 'Gerstner wave simulation with depth-based absorption and screen-space refraction.',
+        video: 'Assets/Video/Shader/WaterUnity.webm',
+        blog: 'Blog/Shaders/ProceduralWater/index.html'
+      },
+      {
+        id: 18, title: 'Custom PBR (BRP), Deprecated', tags: ['Unity', 'BRP', 'PBR'], status: 'Legacy',
+        desc: 'Hand-written GGX physically based shader. Superseded by the URP rewrite.',
+        video: 'Assets/Video/Shader/OLD_YmnePBRUnity.webm',
+        href: 'https://github.com/Ymne22/Custom-GGX-PBR-Shader-for-Unity-BRP'
+      },
+      {
+        id: 19, title: 'PSX Shader Pack', tags: ['Unity', 'Godot', 'Retro', 'Dither'], status: 'Released',
+        desc: 'Vertex snapping, affine texture warping, colour quantization and dithered transparency.',
+        video: 'Assets/Video/Shader/PSXUnity.webm',
+        blog: 'Blog/Shaders/PSX/index.html'
+      }
+    ];
+
+    const feed = document.getElementById('feed');
+    document.getElementById('count').textContent = ENTRIES.length + ' projects';
+
+    const blogModal = document.getElementById('blogModal');
+    const blogIframe = document.getElementById('blogIframe');
+    const blogTitle = document.getElementById('blogTitle');
+    const blogLoading = document.getElementById('blogLoading');
+    const blogCloseBtn = document.getElementById('blogCloseBtn');
+    const blogExternalBtn = document.getElementById('blogExternalBtn');
+
+    let currentBlogUrl = '';
+
+    function openBlog(url, title) {
+      currentBlogUrl = url;
+      blogTitle.textContent = title;
+      blogLoading.classList.remove('hidden');
+      blogIframe.src = url;
+      blogModal.classList.add('open');
+      blogModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBlog() {
+      blogModal.classList.remove('open');
+      blogModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      blogIframe.src = 'about:blank';
+      currentBlogUrl = '';
+    }
+
+    blogIframe.addEventListener('load', () => {
+      if (blogIframe.src !== 'about:blank') {
+        blogLoading.classList.add('hidden');
+      }
+    });
+
+    blogCloseBtn.addEventListener('click', closeBlog);
+    blogModal.addEventListener('click', e => {
+      if (e.target === blogModal) closeBlog();
+    });
+    blogExternalBtn.addEventListener('click', () => {
+      if (currentBlogUrl) window.open(currentBlogUrl, '_blank', 'noopener,noreferrer');
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && blogModal.classList.contains('open')) {
+        closeBlog();
+      }
+    });
+
+    ENTRIES.forEach((e, i) => {
+      const num = String(i + 1).padStart(2, '0');
+      const src = e.video ? OLD + e.video : OLD + e.image;
+      const isVideo = !!e.video;
+      const isBlog = !!e.blog;
+      const isExternal = !!e.href;
+      const blogUrl = isBlog ? OLD + e.blog : null;
+      const hasPage = isBlog || isExternal;
+
+      const mediaEl = isVideo
+        ? `<video src="${src}" loop muted playsinline preload="metadata" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:#111"></video>`
+        : `<img src="${src}" alt="${e.title}" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:#111">`;
+
+      let wrappedMedia = mediaEl;
+      let titleEl = e.title;
+      let btn = '';
+
+      if (isBlog) {
+        wrappedMedia = `<div class="block cursor-pointer js-open-blog">${mediaEl}</div>`;
+        titleEl = `<button type="button" class="title-link text-left js-open-blog">${e.title}</button>`;
+        btn = `<button type="button" class="btn mt-7 js-open-blog"><span class="material-symbols-outlined text-lg">arrow_outward</span> Read Article</button>`;
+      } else if (isExternal) {
+        wrappedMedia = `<a href="${e.href}" target="_blank" rel="noopener noreferrer" class="block">${mediaEl}</a>`;
+        titleEl = `<a href="${e.href}" target="_blank" rel="noopener noreferrer" class="title-link">${e.title}</a>`;
+        btn = `<a href="${e.href}" target="_blank" rel="noopener noreferrer" class="btn mt-7"><img src="https://cdn.simpleicons.org/github/ffffff" alt="" style="height:16px;width:16px"> Open Repository</a>`;
+      }
+
+      const statusCls = e.status === 'WIP' ? 'background:#ca8a04' : e.status === 'Legacy' ? 'background:#64748b' : e.status === 'Editor Tool' ? 'background:#7c3aed' : 'background:rgba(255,255,255,.12)';
+
+      const art = document.createElement('article');
+      art.className = 'entry reveal md:grid md:grid-cols-[130px_1fr] md:gap-10';
+      art.innerHTML = `
+      <div class="rail hidden md:block">
+        <div class="sticky top-28">
+          <p class="font-display text-5xl font-extrabold tracking-tight text-white leading-none">${num}</p>
+          <p class="mt-3 text-[10px] tracking-[.25em] uppercase text-white/35" style="border-radius:4px;display:inline-block;padding:.2rem .5rem;border:1px solid rgba(255,255,255,.15);${statusCls}">${e.status}</p>
+        </div>
+      </div>
+      <div>
+        <p class="md:hidden mb-3 text-[11px] tracking-[.2em] uppercase text-white/55">#${num} · ${e.status}</p>
+        ${wrappedMedia}
+        <h2 class="font-display text-2xl md:text-4xl font-bold tracking-tight text-white mt-6">${titleEl}</h2>
+        <p class="mt-3 max-w-2xl text-sm leading-7 text-white/65 font-light">${e.desc}</p>
+        <div class="mt-5 flex flex-wrap gap-2">${e.tags.map(x => `<span class="tag">${x}</span>`).join('')}</div>
+        ${btn}
+      </div>`;
+
+      if (isBlog) {
+        art.querySelectorAll('.js-open-blog').forEach(el => {
+          el.addEventListener('click', () => openBlog(blogUrl, e.title));
+        });
+      }
+
+      feed.appendChild(art);
+
+      if (isVideo) {
+        const vid = art.querySelector('video');
+        const obs = new IntersectionObserver(([en]) => { en.isIntersecting ? vid.play().catch(() => { }) : vid.pause(); }, { threshold: .25 });
+        obs.observe(vid);
+      }
+    });
+
+    // Reveal: immediately reveal any items already above or in the viewport, and observe remaining with generous margin
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting || e.boundingClientRect.top < window.innerHeight) {
+        e.target.classList.add('show');
+        io.unobserve(e.target);
+      }
+    }), { threshold: 0, rootMargin: '200px 0px 40px 0px' });
+
+    reveals.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom <= window.innerHeight || rect.top < window.innerHeight) {
+        el.classList.add('show');
+      } else {
+        io.observe(el);
+      }
+    });
+
+    // Header hide / solid
+    const header = document.getElementById('header');
+    let lastY = 0, ticking = false;
+    addEventListener('scroll', () => {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const y = scrollY;
+        header.classList.toggle('solid', y > 40);
+        header.classList.toggle('hide', y > lastY && y > 300);
+        lastY = y; ticking = false;
+      });
+    }, { passive: true });
+
+    // Mobile menu
+    const mm = document.getElementById('mobileMenu'), mb = document.getElementById('menuBtn');
+    mb.addEventListener('click', () => {
+      const open = mm.classList.toggle('hidden') === false;
+      mm.classList.toggle('flex', open);
+      mb.textContent = open ? 'close' : 'menu';
+    });
+
+    // Live dithered shader backdrop (WebGL)
+    (function () {
+      const cv = document.getElementById('gl');
+      const gl = cv.getContext('webgl', { antialias: false, alpha: false });
+      if (!gl) { cv.remove(); return; }
+      const vs = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+      const fs = `
+      #ifdef GL_FRAGMENT_PRECISION_HIGH
+      precision highp float;
+      #else
+      precision mediump float;
+      #endif
+      uniform vec2 r; uniform float t; uniform vec2 m;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+        return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+      float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p*=2.;a*=.5;}return v;}
+      float b2(vec2 p){p=mod(floor(p),2.);return mod(p.x*2.+p.y*3.,4.);}
+      void main(){
+        vec2 uv=gl_FragCoord.xy/r.y;
+        vec2 p=uv*2.4;
+        float q=fbm(p+vec2(t*.03,0.)+m*.4);
+        float v=fbm(p+3.*q+vec2(0.,t*.04));
+        float lum=smoothstep(.3,.95,v);
+        float d=(4.*b2(gl_FragCoord.xy)+b2(floor(gl_FragCoord.xy*.5)))/16.;
+        float o=step(d,lum)*.17;
+        gl_FragColor=vec4(vec3(o),1.);
+      }`;
+      const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
+      const v = sh(gl.VERTEX_SHADER, vs), f = sh(gl.FRAGMENT_SHADER, fs);
+      if (!v || !f) { cv.remove(); return; }
+      const pr = gl.createProgram(); gl.attachShader(pr, v); gl.attachShader(pr, f); gl.linkProgram(pr);
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { cv.remove(); return; }
+      gl.useProgram(pr);
+      const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm');
+      const S = 3;
+      function resize() { cv.width = Math.ceil(innerWidth / S); cv.height = Math.ceil(innerHeight / S); gl.viewport(0, 0, cv.width, cv.height); }
+      resize(); addEventListener('resize', resize);
+      let mx = 0, my = 0, tx = 0, ty = 0;
+      addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = .5 - e.clientY / innerHeight; }, { passive: true });
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function draw(ms) {
+        mx += (tx - mx) * .05; my += (ty - my) * .05;
+        gl.uniform2f(uR, cv.width, cv.height); gl.uniform1f(uT, ms / 1000); gl.uniform2f(uM, mx, my);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        if (!still) requestAnimationFrame(draw);
+      }
+      requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARTWORKS</title>
+  <meta name="description" content="Art, animation highlights, character sprites, and concept works by YMNE.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      --wipe: cubic-bezier(.76, 0, .24, 1);
+    }
+
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    body {
+      background: #050505;
+      color: #e5e5e5;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Backdrop: crossfade between works, slow zoom linked to scroll */
+    .bg,
+    #bgVid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0;
+      scale: var(--bz, 1.04);
+      transition: opacity 1.2s var(--ease);
+      will-change: opacity, scale;
+      pointer-events: none;
+    }
+
+    .bg {
+      background-size: cover;
+      background-position: center;
+    }
+
+    .bg.on,
+    #bgVid.on {
+      opacity: .5;
+    }
+
+    #bgVid video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #bgShade {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(5, 5, 5, .72) 0%, rgba(5, 5, 5, .82) 40%, rgba(5, 5, 5, .94) 100%);
+    }
+
+    .screentone {
+      background-image: radial-gradient(rgba(0, 0, 0, .3) 1px, transparent 1px);
+      background-size: 4px 4px;
+      mix-blend-mode: multiply;
+      opacity: .5;
+    }
+
+    main,
+    footer {
+      position: relative;
+      z-index: 10;
+    }
+
+    #header {
+      transition: transform .6s var(--ease), background .4s, backdrop-filter .4s;
+    }
+
+    #header.hide {
+      transform: translateY(-100%);
+    }
+
+    #header.solid {
+      background: rgba(5, 5, 5, .6);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-link {
+      position: relative;
+      opacity: .55;
+      transition: opacity .3s;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      height: 1px;
+      width: 100%;
+      background: #fff;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .5s var(--ease);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      opacity: 1;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Masonry grid */
+    .masonry-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: 210px;
+      gap: 16px;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-bottom: 7rem;
+    }
+
+    @media (max-width: 1024px) {
+      .masonry-grid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 160px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .masonry-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 150px;
+        gap: 12px;
+      }
+    }
+
+    .masonry-1x1 {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+
+    .masonry-2x1 {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    .masonry-1x2 {
+      grid-column: span 1;
+      grid-row: span 2;
+    }
+
+    .masonry-2x2 {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .masonry-3x2 {
+      grid-column: span 3;
+      grid-row: span 2;
+    }
+
+    @media (max-width: 1024px) {
+      .masonry-3x2 {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .masonry-2x1,
+      .masonry-2x2,
+      .masonry-3x2 {
+        grid-column: span 2;
+      }
+    }
+
+    /* Scroll reveal: left-to-right wipe, plays once */
+    .reveal {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path .7s var(--wipe) var(--d, 0ms);
+    }
+
+    .reveal.show {
+      clip-path: inset(0 0 0 0);
+    }
+
+    .masonry-item {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      cursor: pointer;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      box-shadow: 0 14px 32px -10px rgba(0, 0, 0, .5);
+      transition: clip-path .7s var(--wipe) var(--d, 0ms), transform .4s cubic-bezier(.34, 1.5, .64, 1), box-shadow .35s ease, border-color .35s ease;
+      outline: none;
+      text-align: left;
+    }
+
+    /* Clip removed after the wipe so hover shadow and lift are not cropped */
+    .masonry-item.show.done {
+      clip-path: none;
+    }
+
+    .masonry-item:hover,
+    .masonry-item:focus-visible {
+      z-index: 10;
+      transform: translateY(-6px) scale(1.015);
+      border-color: rgba(255, 255, 255, .6);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, .8), 0 0 20px rgba(255, 255, 255, .1);
+    }
+
+    .masonry-item img,
+    .masonry-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+      transition: transform .8s cubic-bezier(.34, 1.2, .64, 1);
+      display: block;
+    }
+
+    .masonry-item:hover img,
+    .masonry-item:focus-visible img,
+    .masonry-item:hover video,
+    .masonry-item:focus-visible video {
+      transform: scale(1.05);
+    }
+
+    .masonry-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      border-radius: 15px;
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: linear-gradient(to top, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .45) 45%, transparent 80%);
+      pointer-events: none;
+      transition: background .4s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .masonry-item:hover .masonry-overlay,
+    .masonry-item:focus-visible .masonry-overlay {
+      background: linear-gradient(to top, rgba(0, 0, 0, .96) 0%, rgba(0, 0, 0, .6) 55%, transparent 85%);
+    }
+
+    .masonry-overlay h4 {
+      margin: 0 0 .25rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.12rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, .8);
+    }
+
+    .masonry-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: .5rem;
+      width: 100%;
+      margin-top: .5rem;
+      padding-top: .75rem;
+      border-top: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    .masonry-info span {
+      font-family: 'Space Grotesk', monospace;
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: rgba(255, 255, 255, .7);
+    }
+
+    .view-btn {
+      background: rgba(255, 255, 255, .1);
+      color: #fff;
+      font-family: 'Space Grotesk', monospace;
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      padding: .4rem 1.05rem;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 999px;
+      cursor: pointer;
+      pointer-events: auto;
+      backdrop-filter: blur(8px);
+      transition: all .35s var(--ease);
+    }
+
+    .masonry-item:hover .view-btn,
+    .masonry-item:focus-visible .view-btn {
+      background: #fff;
+      color: #050505;
+      border-color: #fff;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .masonry-overlay {
+        padding: .85rem 1rem;
+      }
+
+      .masonry-overlay h4 {
+        font-size: .95rem;
+      }
+    }
+
+    /* Lightbox */
+    #lb {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(5, 5, 5, .95);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .5s var(--ease);
+    }
+
+    #lb.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #lbTop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      z-index: 3;
+    }
+
+    .ibtn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .15);
+      transition: all .4s var(--ease);
+      color: #fff;
+    }
+
+    .ibtn:hover,
+    .ibtn.on {
+      background: #fff;
+      color: #050505;
+    }
+
+    .side {
+      position: absolute;
+      top: 50%;
+      margin-top: -21px;
+      z-index: 3;
+    }
+
+    .side.l {
+      left: 1rem;
+    }
+
+    .side.r {
+      right: 1rem;
+    }
+
+    @media (max-width: 767px) {
+      .side {
+        display: none;
+      }
+    }
+
+    #lbStage {
+      position: absolute;
+      inset: 0;
+      padding: 72px 16px 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    @media (min-width: 768px) {
+      #lbStage {
+        padding: 72px 90px 110px;
+      }
+    }
+
+    #lbStage img,
+    #lbStage video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 6px;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    #lbStage img {
+      cursor: zoom-in;
+      transition: transform .5s var(--ease);
+    }
+
+    #lbStage img.zoomed {
+      cursor: grab;
+    }
+
+    #lbStage img.drag {
+      transition: none;
+      cursor: grabbing;
+    }
+
+    .lbIn {
+      animation: lbIn .6s var(--ease);
+    }
+
+    @keyframes lbIn {
+      from {
+        opacity: 0;
+        transform: scale(.97);
+      }
+    }
+
+    #lbBottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1rem 1.25rem;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      pointer-events: none;
+    }
+
+    #lbBottom>* {
+      pointer-events: auto;
+    }
+
+    #lbInfo {
+      display: none;
+      max-width: 24rem;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, .65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    #lbInfo.on {
+      display: block;
+      animation: lbIn .5s var(--ease);
+    }
+
+    .no-scroll {
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        clip-path: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg" id="bgA"></div>
+  <div class="bg" id="bgB"></div>
+  <div id="bgVid"><video muted loop playsinline></video></div>
+  <div class="fixed inset-0 screentone pointer-events-none z-[1]"></div>
+  <div id="bgShade"></div>
+
+  <header id="header" class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-14 py-5">
+    <nav class="hidden md:flex items-center gap-10 text-xs tracking-[.18em] uppercase font-medium">
+      <a href="index.html" class="nav-link">Main</a>
+      <a href="game-works.html" class="nav-link">Game Works</a>
+      <a href="shader-works.html" class="nav-link">Shader Works</a>
+      <a href="artworks.html" class="nav-link active">Artworks</a>
+    </nav>
+    <button id="menuBtn" class="md:hidden material-symbols-outlined text-3xl" aria-label="Menu">menu</button>
+  </header>
+  <div id="mobileMenu"
+    class="hidden fixed inset-0 z-40 bg-black/95 backdrop-blur flex-col items-center justify-center gap-8 font-display text-3xl font-semibold">
+    <a href="index.html">Main</a><a href="game-works.html">Game Works</a><a href="shader-works.html">Shader Works</a><a
+      href="artworks.html">Artworks</a>
+  </div>
+
+  <main class="px-4 sm:px-8 md:px-14 max-w-[96rem] mx-auto">
+    <section class="pt-32 md:pt-40 pb-10 flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="reveal text-xs tracking-[.3em] uppercase text-white/60 mb-4 font-medium" style="--d:0ms">Visual
+          Creative Works</p>
+        <h1 class="reveal font-display text-5xl md:text-7xl font-extrabold tracking-tight text-white" style="--d:80ms">
+          ARTWORKS</h1>
+      </div>
+      <div class="reveal" style="--d:160ms">
+        <span
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur text-xs tracking-[.15em] uppercase font-mono text-white/80">
+          <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+          <b id="artCount" class="font-bold text-white text-sm">26</b> Works
+        </span>
+      </div>
+    </section>
+
+    <div id="art-grid" class="masonry-grid"></div>
+  </main>
+
+  <footer class="px-6 md:px-14 py-16">
+    <div class="max-w-7xl mx-auto md:pl-24">
+      <p class="mt-8 text-base text-white/60">© 2026 YMNE. All rights reserved.
+        the
+        property of their respective owners.</p>
+      <p class="mt-2 text-xs text-white/35">All trademarks, logos, and brand names are the property of their respective
+        owners. Use of these marks does not imply endorsement or affiliation.</p>
+    </div>
+  </footer>
+
+  <div id="lb" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="lbTop">
+      <span id="lbCount" class="text-xs tracking-[.2em] font-mono text-white/60"></span>
+      <div class="flex gap-2">
+        <button id="lbExternal" class="ibtn" aria-label="Open original" title="Open original in new tab"><span
+            class="material-symbols-outlined">open_in_new</span></button>
+        <button id="lbInfoBtn" class="ibtn" aria-label="Info" title="Info (I)"><span
+            class="material-symbols-outlined">info</span></button>
+        <button id="lbClose" class="ibtn" aria-label="Close" title="Close (Esc)"><span
+            class="material-symbols-outlined">close</span></button>
+      </div>
+    </div>
+    <button id="lbPrev" class="ibtn side l" aria-label="Previous"><span
+        class="material-symbols-outlined">chevron_left</span></button>
+    <button id="lbNext" class="ibtn side r" aria-label="Next"><span
+        class="material-symbols-outlined">chevron_right</span></button>
+    <div id="lbStage"></div>
+    <div id="lbBottom">
+      <div id="lbInfo"></div>
+    </div>
+  </div>
+
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
+    const ART = [
+      { k: 'video', title: 'Holo-Attack Opening Concept (2024)', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Opening layout concept animation for Holo-Attack.', src: 'Assets/Video/Art/Myth.webm' },
+      { k: 'video', title: 'Summer Animation (2023)', sub: 'Animation', year: 2023, span: 'masonry-3x2', desc: 'Personal summer scene animation practice.', src: 'Assets/Video/Art/Summer23.webm' },
+      { k: 'video', title: 'Background Animation (2024)', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Background parallax and environment animation study.', src: 'Assets/Video/Art/BG1.webm' },
+      { k: 'video', title: 'Gura Animation I', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Looping character animation study.', src: 'Assets/Video/Art/Gura2.webm' },
+      { k: 'video', title: 'Animation Practice - CSM (2025)', sub: 'Animation', year: 2025, span: 'masonry-2x2', desc: 'Chainsaw Man dynamic action sequence study.', src: 'Assets/Video/Art/Chenso.webm' },
+      { k: 'video', title: 'Gura Animation II', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Looping animated cut with expressive timing.', src: 'Assets/Video/Art/Gura1.webm' },
+      { k: 'img', title: 'Chainsaw Man (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Chainsaw Man digital illustration.', src: 'Assets/Images/Art/Chenso.jpg' },
+      { k: 'img', title: 'Emu Otori (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Project Sekai character portrait illustration.', src: 'Assets/Images/Art/Awawa.jpg' },
+      { k: 'img', title: 'Haru Urara (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Uma Musume Haru Urara character drawing.', src: 'Assets/Images/Art/Urara.jpg' },
+      { k: 'img', title: 'Kureji Ollie (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Hololive Indonesia Kureji Ollie illustration.', src: 'Assets/Images/Art/Ollie.jpg' },
+      { k: 'img', title: 'Mei Kinosaki (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Mei Kinosaki character artwork study.', src: 'Assets/Images/Art/Mei.jpg' },
+      { k: 'img', title: 'Otonose Kanade (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'ReGLOSS Otonose Kanade character drawing.', src: 'Assets/Images/Art/Kanade.jpg' },
+      { k: 'img', title: 'Holo-Attack Sprites', sub: 'Character Art', year: 2024, span: 'masonry-2x2', desc: 'In-game pixel & 2D character sprites authored for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Sprite.jpg' },
+      { k: 'img', title: 'HL-ATK Concept 1', sub: 'Concept', year: 2024, span: 'masonry-2x2', desc: 'Early visual development & concept sheet for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Concept1.jpg' },
+      { k: 'img', title: 'HL-ATK Concept 2', sub: 'Concept', year: 2024, span: 'masonry-2x2', desc: 'Visual environment & UI style exploration for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Concept2.jpg' },
+      { k: 'video', title: 'Holo-Attack Loading', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Loading screen animation loop crafted for Holo-Attack.', src: 'Assets/Video/Art/HL-ATK-Load.webm' },
+      { k: 'img', title: 'Kanna & Lia Sprites', sub: 'Character Art', year: 2024, span: 'masonry-2x2', desc: 'Game sprite sheets and pose iterations for Kanna & Lia.', src: 'Assets/Images/Art/KnL-Sprite.jpg' },
+      { k: 'video', title: 'Kanna & Lia Cut 4', sub: 'Animation', year: 2024, span: 'masonry-1x2', desc: 'Animated cinematic cutscene segment for Kanna & Lia.', src: 'Assets/Video/Art/KnL.webm' },
+      { k: 'img', title: 'Sameko Saba (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Sameko Saba portrait drawing.', src: 'Assets/Images/Art/Saba.jpg' },
+      { k: 'img', title: "esoragoto『I'll Forget You!』", sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: "Cover illustration and concept artwork inspired by esoragoto's song.", src: 'Assets/Images/Art/EsoragotoForget.jpg' },
+      { k: 'img', title: 'Emu Otori 2 (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Wonderlands x Showtime Emu Otori character study.', src: 'Assets/Images/Art/Awawa2.jpg' },
+      { k: 'img', title: 'Manhattan Cafe (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Manhattan Cafe atmospheric portrait.', src: 'Assets/Images/Art/Cafe.jpg' },
+      { k: 'img', title: 'Gold Ship (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Gold Ship expressive illustration.', src: 'Assets/Images/Art/Gorushi.jpg' },
+      { k: 'img', title: 'Agnes Tachyon (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Agnes Tachyon laboratory illustration.', src: 'Assets/Images/Art/Agnes.jpg' },
+      { k: 'video', title: 'Animation Practice, Rough Layout', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Keyframe action layout and timing animation practice.', src: 'Assets/Video/Art/CA1.webm' },
+      { k: 'img', title: 'Ayumu Fujino (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Look Back Ayumu Fujino manga artist tribute artwork.', src: 'Assets/Images/Art/Fujino.jpg' }
+    ].map((a, i) => ({ ...a, id: i + 1 }));
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canHover = matchMedia('(hover: hover)').matches;
+
+    const countEl = document.getElementById('artCount');
+    if (countEl) countEl.textContent = ART.length;
+
+    const grid = document.getElementById('art-grid');
+    ART.forEach(a => {
+      const b = document.createElement('div');
+      b.className = `masonry-item ${a.span} reveal`;
+      b.dataset.id = a.id;
+      b.setAttribute('tabindex', '0');
+      b.setAttribute('role', 'button');
+      b.setAttribute('aria-label', a.title);
+
+      const isVid = a.k === 'video';
+      if (isVid) b.dataset.vidBg = a.src;
+      else b.dataset.bg = a.src;
+      b.innerHTML = `
+        ${isVid
+          ? `<video muted loop playsinline preload="metadata" src="${a.src}#t=0.001"></video>`
+          : `<img src="${a.src}" alt="${a.title}" loading="lazy" draggable="false">`
+        }
+        <div class="masonry-overlay">
+          <h4>${a.title}</h4>
+          <div class="masonry-info">
+            <span>${a.sub}</span>
+            <button class="view-btn" tabindex="-1">View</button>
+          </div>
+        </div>
+      `;
+
+      b.addEventListener('click', () => openLb(a.id));
+      b.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(a.id); }
+      });
+      b.addEventListener('transitionend', e => { if (e.propertyName === 'clip-path' && b.classList.contains('show')) b.classList.add('done'); });
+      grid.appendChild(b);
+    });
+
+    const items = [...grid.children];
+
+    /* Reveal plays once per element */
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      if (items.includes(e.target)) e.target.style.setProperty('--d', (items.indexOf(e.target) % 6) * 50 + 'ms');
+      e.target.classList.add('show');
+      io.unobserve(e.target);
+    }), { threshold: 0, rootMargin: '0px 0px -4% 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* Video tiles: hover to play (desktop) / play when in view (touch) */
+    function playTile(t) {
+      const v = t.querySelector('video');
+      if (!v || reduce) return;
+      v.play().catch(() => { });
+    }
+    function stopTile(t) {
+      const v = t.querySelector('video');
+      if (v) v.pause();
+    }
+    const vTiles = items.filter(t => t.querySelector('video'));
+    if (canHover) {
+      vTiles.forEach(t => {
+        t.addEventListener('mouseenter', () => playTile(t));
+        t.addEventListener('mouseleave', () => stopTile(t));
+        t.addEventListener('focus', () => playTile(t));
+        t.addEventListener('blur', () => stopTile(t));
+      });
+    } else {
+      const vo = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? playTile(e.target) : stopTile(e.target)), { threshold: .5 });
+      vTiles.forEach(t => vo.observe(t));
+    }
+
+    /* Backdrop crossfade with video support */
+    const layers = [document.getElementById('bgA'), document.getElementById('bgB')];
+    const bgVidWrap = document.getElementById('bgVid');
+    const bgVidEl = bgVidWrap.querySelector('video');
+    let bgCur = 0, lastBg = '', hlItem = null;
+    function setBgImg(url) {
+      if (!url || url === lastBg) return;
+      lastBg = url;
+      const im = new Image();
+      im.onload = () => {
+        const next = layers[1 - bgCur];
+        next.style.backgroundImage = `url(${url})`;
+        next.classList.add('on');
+        layers[bgCur].classList.remove('on');
+        bgCur = 1 - bgCur;
+        bgVidWrap.classList.remove('on');
+        bgVidEl.pause();
+      };
+      im.src = url;
+    }
+    function setBgVid(src) {
+      if (src === lastBg) return;
+      lastBg = src;
+      bgVidEl.src = src;
+      bgVidEl.play().catch(() => { });
+      bgVidWrap.classList.add('on');
+      layers.forEach(l => l.classList.remove('on'));
+    }
+    function highlightItem(tile) {
+      if (hlItem === tile) return;
+      hlItem = tile;
+      if (tile.dataset.vidBg) setBgVid(tile.dataset.vidBg);
+      else if (tile.dataset.bg) setBgImg(tile.dataset.bg);
+    }
+    if (canHover) items.forEach(t => t.addEventListener('mouseenter', () => highlightItem(t)));
+    else {
+      const co = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) highlightItem(e.target); }), { rootMargin: '-42% 0px -42% 0px' });
+      items.forEach(t => co.observe(t));
+    }
+    if (items.length) highlightItem(items[0]);
+
+    /* Lightbox */
+    const lb = document.getElementById('lb'), stage = document.getElementById('lbStage');
+    const info = document.getElementById('lbInfo'), infoBtn = document.getElementById('lbInfoBtn');
+    const count = document.getElementById('lbCount'), externalBtn = document.getElementById('lbExternal');
+    let idx = 0, infoOn = false, lastFocus = null;
+    const Z = 2.4, z = { on: false, x: 0, y: 0 };
+    let curImg = null;
+    const cur = () => ART[idx];
+
+    function applyZoom(drag) {
+      if (!curImg) return;
+      curImg.classList.toggle('zoomed', z.on);
+      curImg.classList.toggle('drag', !!drag);
+      curImg.style.transform = z.on ? `translate(${z.x}px, ${z.y}px) scale(${Z})` : '';
+    }
+    const clamp = (v, max) => Math.max(-max, Math.min(max, v));
+    function resetZoom() { z.on = false; z.x = z.y = 0; }
+
+    function render() {
+      const a = cur();
+      resetZoom();
+      curImg = null;
+      stage.innerHTML = '';
+
+      if (a.k === 'video') {
+        const v = document.createElement('video');
+        v.src = a.src; v.controls = true; v.autoplay = true; v.loop = true; v.playsInline = true;
+        v.className = 'lbIn';
+        stage.appendChild(v);
+      } else {
+        const im = document.createElement('img');
+        im.src = a.src; im.alt = a.title; im.draggable = false; im.className = 'lbIn';
+        stage.appendChild(im);
+        curImg = im;
+      }
+
+      info.innerHTML = `
+        <p class="text-[10px] uppercase tracking-[.25em] font-mono text-white/60 font-semibold">${a.sub} · ${a.year}</p>
+        <h3 class="font-display text-xl font-bold tracking-tight text-white mt-1">${a.title}</h3>
+        <p class="text-sm leading-6 text-white/70 mt-2 font-light">${a.desc}</p>
+      `;
+      info.classList.toggle('on', infoOn);
+      infoBtn.classList.toggle('on', infoOn);
+      count.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(ART.length).padStart(2, '0')}`;
+
+      [1, -1].forEach(d => {
+        const n = ART[(idx + d + ART.length) % ART.length];
+        if (n.k !== 'video') new Image().src = n.src;
+      });
+    }
+
+    function openLb(id) {
+      idx = Math.max(0, ART.findIndex(a => a.id === id));
+      lastFocus = document.activeElement;
+      render();
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('no-scroll');
+      document.getElementById('lbClose').focus({ preventScroll: true });
+    }
+    function closeLb() {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.documentElement.classList.remove('no-scroll');
+      setTimeout(() => { stage.innerHTML = ''; }, 500);
+      lastFocus?.focus({ preventScroll: true });
+    }
+    function go(d) { idx = (idx + d + ART.length) % ART.length; render(); }
+
+    document.getElementById('lbClose').addEventListener('click', closeLb);
+    document.getElementById('lbPrev').addEventListener('click', () => go(-1));
+    document.getElementById('lbNext').addEventListener('click', () => go(1));
+    infoBtn.addEventListener('click', () => {
+      infoOn = !infoOn;
+      info.classList.toggle('on', infoOn);
+      infoBtn.classList.toggle('on', infoOn);
+    });
+    externalBtn.addEventListener('click', () => { const a = cur(); if (a && a.src) window.open(a.src, '_blank'); });
+
+    addEventListener('keydown', e => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLb();
+      else if (e.key === 'ArrowRight') go(1);
+      else if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key.toLowerCase() === 'i') infoBtn.click();
+    });
+
+    /* Stage: click to zoom, drag to pan, swipe to navigate, click empty area to close */
+    let ptr = null;
+    stage.addEventListener('pointerdown', e => {
+      if (e.target.closest('video')) return;
+      ptr = { x: e.clientX, y: e.clientY, ox: z.x, oy: z.y, moved: false };
+      stage.setPointerCapture(e.pointerId);
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!ptr) return;
+      const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
+      if (Math.abs(dx) + Math.abs(dy) > 6) ptr.moved = true;
+      if (z.on && curImg && ptr.moved) {
+        z.x = clamp(ptr.ox + dx, (Z - 1) * curImg.clientWidth / 2);
+        z.y = clamp(ptr.oy + dy, (Z - 1) * curImg.clientHeight / 2);
+        applyZoom(true);
+      }
+    });
+    stage.addEventListener('pointerup', e => {
+      if (!ptr) return;
+      const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y, p = ptr;
+      ptr = null;
+      applyZoom(false);
+      if (p.moved) {
+        if (!z.on && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+        return;
+      }
+      if (curImg && e.target === curImg) {
+        if (z.on) resetZoom();
+        else {
+          const r = curImg.getBoundingClientRect();
+          z.on = true;
+          z.x = clamp(-(e.clientX - (r.left + r.width / 2)) * (Z - 1), (Z - 1) * r.width / 2);
+          z.y = clamp(-(e.clientY - (r.top + r.height / 2)) * (Z - 1), (Z - 1) * r.height / 2);
+        }
+        applyZoom(false);
+      } else if (!e.target.closest('video')) {
+        closeLb();
+      }
+    });
+    stage.addEventListener('pointercancel', () => { ptr = null; applyZoom(false); });
+
+    /* Header and backdrop zoom (scroll-linked) */
+    const header = document.getElementById('header');
+    const zoomEls = [...layers, bgVidWrap];
+    let lastY = 0, ticking = false;
+    function onScroll() {
+      const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+      header.classList.toggle('solid', y > 40);
+      header.classList.toggle('hide', y > lastY && y > 300);
+      lastY = y;
+      const s = (1.04 + (max > 0 ? y / max : 0) * .12).toFixed(4);
+      zoomEls.forEach(l => l.style.setProperty('--bz', s));
+      ticking = false;
+    }
+    addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
+    onScroll();
+
+    const mm = document.getElementById('mobileMenu'), mb = document.getElementById('menuBtn');
+    mb.addEventListener('click', () => {
+      const open = mm.classList.toggle('hidden') === false;
+      mm.classList.toggle('flex', open);
+      mb.textContent = open ? 'close' : 'menu';
+    });
+    mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      mm.classList.add('hidden'); mm.classList.remove('flex'); mb.textContent = 'menu';
+    }));
+  </script>
+</body>
+
+</html>
