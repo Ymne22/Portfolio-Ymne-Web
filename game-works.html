@@ -539,7 +539,23 @@
 
     const GAMES = [
       {
-        id: 1, title: 'Tormented Souls II', year: 2025, month: 10, releaseDate: '23 Oct 2025', status: 'Released',
+        id: 1, title: 'Kanna and Lia the Witch', year: 2024, month: 10, releaseDate: 'Released', status: 'Released',
+        platforms: ['itch'], filterPlats: ['pc'],
+        engine: 'Godot Engine', involvement: 'Game Jam · Self Development', developer: 'Ymne Game', publisher: 'Ymne Game',
+        heroImage: '', heroVideo: 'Assets/Video/Game/Kanna_Hero.webm',
+        tasks: ['Complete solo game design and programming', 'Player movement physics and level mechanics', 'Audio, sprite animation and game jam release'],
+        link: 'https://ymne22.itch.io/kanna-and-lia-the-witch'
+      },
+      {
+        id: 2, title: 'HOLO-ATTACK (Demo)', year: 2025, month: 6, releaseDate: 'Demo Released', status: 'Demo',
+        platforms: ['itch'], filterPlats: ['pc'],
+        engine: 'Unity Engine 6.0 HDRP', involvement: 'Main Developer', developer: 'Ymne Game', publisher: 'Ymne Game',
+        heroImage: 'Assets/Images/Game/HoloAttack_Hero.webp',
+        tasks: ['Full gameplay programming and combo mechanics', 'Unity 6 HDRP visual stylization and destruction effects', 'Game Design of the core gameplay loop'],
+        link: 'https://ymne22.itch.io/project-hl-atk'
+      },
+      {
+        id: 3, title: 'Tormented Souls II', year: 2025, month: 10, releaseDate: '23 Oct 2025', status: 'Released',
         platforms: ['ps5', 'xs', 'switch2', 'steam', 'gog', 'epic'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch', 'pc'],
         engine: 'Unreal Engine 5.5 and 5.6 (Switch 2)', involvement: 'Technical Artist, Graphics Programmer, Additional Narrative Animation',
         developer: 'Dual Effect', publisher: 'PQube',
@@ -548,28 +564,20 @@
         link: 'https://pqube.co.uk/games/tormented-souls-2/'
       },
       {
-        id: 2, title: 'Maid of Sker VR', year: 2026, month: 3, releaseDate: '17 Mar 2026', status: 'Released',
+        id: 4, title: 'Loan Shark Console Edition', year: 2026, month: 1, releaseDate: '13 Jan 2026', status: 'Released',
+        platforms: ['ps5', 'xs', 'switch'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
+        engine: 'Godot Engine 4.4', involvement: 'Technical Artist & Graphics Programmer', developer: 'Studio Ortica', publisher: 'Dark Product',
+        heroImage: 'Assets/Images/Game/LoanShark_Hero.webp', logoImage: 'Assets/Images/Game/LoanShark_Logo.webp',
+        tasks: ['Shader reworks on multiple platforms', 'Godot console renderer optimizations', 'Performance profiling across handheld and console SKUs'],
+        link: 'https://www.darkproduct.com/post/loan-shark'
+      },
+      {
+        id: 5, title: 'Maid of Sker VR', year: 2026, month: 3, releaseDate: '17 Mar 2026', status: 'Released',
         platforms: ['ps5', 'meta', 'steam'], filterPlats: ['ps', 'ps5', 'vr', 'pc'],
         engine: 'Unity Engine 6.0 HDRP & URP', involvement: 'Technical Artist', developer: 'Wales Interactive', publisher: 'Wales Interactive',
         heroImage: 'Assets/Images/Game/MaidOfSkerVR_Hero.webp', logoImage: 'Assets/Images/Game/MaidOfSkerVR_Logo.webp',
         tasks: ['VR graphics pipeline and shader optimizations', 'Unity 6 HDRP / URP asset and performance tuning', 'Platform visual fidelity for PSVR2 and Meta Quest'],
         link: 'https://www.walesinteractive.com/maidofskervr'
-      },
-      {
-        id: 4, title: 'Sniper Dan Console Edition', year: 2026, month: 9, releaseDate: '17 Sep 2026', status: 'Released',
-        platforms: ['ps5', 'xs', 'switch1', 'switch2'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
-        engine: 'Unity Engine 6', involvement: 'Graphics Programmer', developer: 'Denki', publisher: 'PQube',
-        heroImage: 'Assets/Images/Game/SniperDan_Hero.webp', logoImage: 'Assets/Images/Game/SniperDan_Logo.webp',
-        tasks: ['Graphics programming and render feature implementation', 'Multi-platform render pipeline rework for PlayStation, Xbox and Switch', 'Engine shader optimization and new feature integration'],
-        link: 'https://pqube.co.uk/games/sniper-dan/'
-      },
-      {
-        id: 5, title: 'Port of Jumanah', year: 2026, month: 9, releaseDate: '7 Sep 2026', status: 'Released',
-        platforms: ['ps5', 'steam', 'epic'], filterPlats: ['ps', 'ps5', 'pc'],
-        engine: 'Unreal Engine 5.5', involvement: 'Port Art Optimization', developer: 'Agate International & Red Dunes Games', publisher: 'Red Dunes Games',
-        heroImage: 'Assets/Images/Game/PortofJumanah_Hero.webp', logoImage: 'Assets/Images/Game/PortOfJumanah_Logo.webp',
-        tasks: ['Port art optimization across target console hardware', 'VFX optimization', 'Shader adjustment and optimization'],
-        link: 'https://portofjumanah.agate.id/'
       },
       {
         id: 6, title: 'Birds Watching Console Edition', year: 2026, month: 8, releaseDate: '20 Aug 2026', status: 'Released',
@@ -580,15 +588,31 @@
         link: 'https://www.darkproduct.com/post/birds-watching'
       },
       {
-        id: 7, title: 'Loan Shark Console Edition', year: 2026, month: 1, releaseDate: '13 Jan 2026', status: 'Released',
-        platforms: ['ps5', 'xs', 'switch'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
-        engine: 'Godot Engine 4.4', involvement: 'Technical Artist & Graphics Programmer', developer: 'Studio Ortica', publisher: 'Dark Product',
-        heroImage: 'Assets/Images/Game/LoanShark_Hero.webp', logoImage: 'Assets/Images/Game/LoanShark_Logo.webp',
-        tasks: ['Shader reworks on multiple platforms', 'Godot console renderer optimizations', 'Performance profiling across handheld and console SKUs'],
-        link: 'https://www.darkproduct.com/post/loan-shark'
+        id: 7, title: 'Port of Jumanah', year: 2026, month: 9, releaseDate: '7 Sep 2026', status: 'Released',
+        platforms: ['ps5', 'steam', 'epic'], filterPlats: ['ps', 'ps5', 'pc'],
+        engine: 'Unreal Engine 5.5', involvement: 'Port Art Optimization', developer: 'Agate International & Red Dunes Games', publisher: 'Red Dunes Games',
+        heroImage: 'Assets/Images/Game/PortofJumanah_Hero.webp', logoImage: 'Assets/Images/Game/PortOfJumanah_Logo.webp',
+        tasks: ['Port art optimization across target console hardware', 'VFX optimization', 'Shader adjustment and optimization'],
+        link: 'https://portofjumanah.agate.id/'
       },
       {
-        id: 8, title: 'GigaBash Mobile', section: 'UPCOMING', year: 'UPCOMING', month: 12, releaseDate: 'TBA [Open Beta]', status: 'Released Beta', upcoming: true,
+        id: 8, title: 'Sniper Dan Console Edition', year: 2026, month: 9, releaseDate: '17 Sep 2026', status: 'Released',
+        platforms: ['ps5', 'xs', 'switch1', 'switch2'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
+        engine: 'Unity Engine 6', involvement: 'Graphics Programmer', developer: 'Denki', publisher: 'PQube',
+        heroImage: 'Assets/Images/Game/SniperDan_Hero.webp', logoImage: 'Assets/Images/Game/SniperDan_Logo.webp',
+        tasks: ['Graphics programming and render feature implementation', 'Multi-platform render pipeline rework for PlayStation, Xbox and Switch', 'Engine shader optimization and new feature integration'],
+        link: 'https://pqube.co.uk/games/sniper-dan/'
+      },
+      {
+        id: 9, title: 'Planted!', year: 2026, month: 10, releaseDate: '29 Oct 2026', status: 'Released',
+        platforms: ['steam', 'ps5', 'xs', 'switch'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch', 'pc'],
+        engine: 'Unity Engine 6', involvement: 'Graphics Programmer', developer: 'Cloth Cat Games', publisher: 'Curveball Games',
+        heroImage: 'Assets/Images/Game/Planted_Hero.webp', logoImage: 'Assets/Images/Game/Planted_Logo.webp',
+        tasks: ['Shader reworks on multiple platforms', 'Console renderer optimizations', 'Performance profiling across handheld and console SKUs'],
+        link: 'https://curveball-leisure.com/game/what-do-you-get-when-you-combine-gardening-and-extreme-sports-a-head-to-head-horticultural-combat-game-for-1-4-players-where-gardens-are-arenas-and-players-battle-for-resources-to/'
+      },
+      {
+        id: 10, title: 'GigaBash Mobile', year: 2026, month: 11, releaseDate: '11 Nov 2026', status: 'Released',
         platforms: ['android', 'ios'], filterPlats: ['mobile'],
         engine: 'Unreal Engine 5.5', involvement: 'Technical Artist', developer: 'Passion Republic Games', publisher: 'Passion Republic Games',
         heroImage: 'Assets/Images/Game/GigaBash_Hero.webp', logoImage: 'Assets/Images/Game/GigaBash_Logo.webp',
@@ -596,36 +620,12 @@
         link: 'https://passionrepublicgames.com/gigabash-mobile/'
       },
       {
-        id: 3, title: 'They Are Here: Alien Abduction Horror', section: 'UPCOMING', year: 'UPCOMING', month: 11, releaseDate: 'TBA', status: 'Announced', upcoming: true,
+        id: 11, title: 'They Are Here: Alien Abduction Horror', section: 'UPCOMING', year: 'UPCOMING', month: 11, releaseDate: 'TBA', status: 'Announced', upcoming: true,
         platforms: ['ps5', 'xs', 'switch', 'steam'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch', 'pc'],
         engine: 'Unreal Engine 4.27', involvement: 'Technical Artist', developer: 'DEKLAZON', publisher: 'PQube',
         heroImage: 'Assets/Images/Game/TheyAreHere_Hero.webp', logoImage: 'Assets/Images/Game/TheyAreHere_Logo.webp',
         tasks: ['Console visual profiling and memory optimization', 'Lighting and shader adjustments', 'Cross-platform technical art validation'],
         link: 'https://pqube.co.uk/games/theyarehere/'
-      },
-      {
-        id: 9, title: 'HOLO-ATTACK (Demo)', year: 2025, month: 6, releaseDate: 'Demo Released', status: 'Demo',
-        platforms: ['itch'], filterPlats: ['pc'],
-        engine: 'Unity Engine 6.0 HDRP', involvement: 'Main Developer', developer: 'Ymne Game', publisher: 'Ymne Game',
-        heroImage: 'Assets/Images/Game/HoloAttack_Hero.webp',
-        tasks: ['Full gameplay programming and combo mechanics', 'Unity 6 HDRP visual stylization and destruction effects', 'Game Design of the core gameplay loop'],
-        link: 'https://ymne22.itch.io/project-hl-atk'
-      },
-      {
-        id: 10, title: 'Kanna and Lia the Witch', year: 2024, month: 10, releaseDate: 'Released', status: 'Released',
-        platforms: ['itch'], filterPlats: ['pc'],
-        engine: 'Godot Engine', involvement: 'Game Jam · Self Development', developer: 'Ymne Game', publisher: 'Ymne Game',
-        heroImage: '', heroVideo: 'Assets/Video/Game/Kanna_Hero.webm',
-        tasks: ['Complete solo game design and programming', 'Player movement physics and level mechanics', 'Audio, sprite animation and game jam release'],
-        link: 'https://ymne22.itch.io/kanna-and-lia-the-witch'
-      },
-      {
-        id: 11, title: 'Planted!', year: 2026, month: 10, releaseDate: '29 Oct 2026', status: 'Released',
-        platforms: ['steam','ps5', 'xs', 'switch'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch', 'pc'],
-        engine: 'Unity Engine 6', involvement: 'Graphics Programmer', developer: 'Cloth Cat Games', publisher: 'Curveball Games',
-        heroImage: 'Assets/Images/Game/Planted_Hero.webp', logoImage: 'Assets/Images/Game/Planted_Logo.webp',
-        tasks: ['Shader reworks on multiple platforms', 'Console renderer optimizations', 'Performance profiling across handheld and console SKUs'],
-        link: 'https://curveball-leisure.com/game/what-do-you-get-when-you-combine-gardening-and-extreme-sports-a-head-to-head-horticultural-combat-game-for-1-4-players-where-gardens-are-arenas-and-players-battle-for-resources-to/'
       }
     ];
 
