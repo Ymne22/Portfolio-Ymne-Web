@@ -406,8 +406,7 @@
   <!-- Hero backdrop -->
   <div id="heroBackdrop" class="fixed inset-0 w-full h-[100lvh] -z-10 overflow-hidden pointer-events-none">
     <div id="heroSlideshow" class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-      <img id="heroSlideA" class="hero-slide active" src="Assets/Images/Game/GigaBash_Hero.webp" alt="Game Hero">
-      <img id="heroSlideB" class="hero-slide" src="Assets/Images/Game/TormentedSouls2_Hero.webp" alt="Game Hero">
+      <img id="heroSlideA" class="hero-slide active" src="Assets/Images/Game/HoloAttack_Hero.webp" alt="Game Hero">
     </div>
     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60 pointer-events-none"></div>
     <div class="absolute inset-0 glow pointer-events-none"></div>
@@ -610,7 +609,7 @@
   <!-- Works 01 -->
   <section data-section
     class="relative min-h-screen flex items-center px-6 md:px-14 py-24 overflow-hidden bg-[#050505]">
-    <img src="Assets/Images/Game/TormentedSouls2_Hero.webp" alt="Game Development Background"
+    <img src="Assets/Images/Game/GigaBash_Hero.webp" alt="Game Development Background"
       class="bg absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none">
     <div class="absolute inset-0 screentone pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/20 pointer-events-none"></div>
@@ -649,7 +648,7 @@
   <!-- Works 02 -->
   <section data-section
     class="relative min-h-screen flex items-center px-6 md:px-14 py-24 overflow-hidden bg-[#050505]">
-    <img src="Assets/Images/Game/GigaBash_Hero.webp" alt="Game Porting Background"
+    <img src="Assets/Images/Game/KuloNiku_Hero.webp" alt="Game Porting Background"
       class="bg absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none">
     <div class="absolute inset-0 screentone pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/20 pointer-events-none"></div>
@@ -790,36 +789,12 @@
     secs.forEach(s => so.observe(s));
 
     /* Hero slideshow */
-    const heroPool = [
-      'Assets/Images/Game/GigaBash_Hero.webp', 'Assets/Images/Game/TormentedSouls2_Hero.webp',
-      'Assets/Images/Game/HoloAttack_Hero.webp', 'Assets/Images/Game/TheyAreHere_Hero.webp',
-      'Assets/Images/Game/SniperDan_Hero.webp', 'Assets/Images/Game/BirdsWatching_Hero.webp',
-      'Assets/Images/Game/LoanShark_Hero.webp', 'Assets/Images/Game/MaidOfSkerVR_Hero.webp',
-      'Assets/Images/Game/PortofJumanah_Hero.webp'
-    ];
     const slideA = document.getElementById('heroSlideA');
-    const slideB = document.getElementById('heroSlideB');
     const heroSlideshow = document.getElementById('heroSlideshow');
     const heroDim = document.getElementById('heroDim');
-
-    if (slideA && slideB) {
-      let currentIndex = Math.floor(Math.random() * heroPool.length);
-      slideA.src = heroPool[currentIndex];
+    if (slideA) {
+      slideA.src = 'Assets/Images/Game/HoloAttack_Hero.webp';
       slideA.classList.add('active');
-      let currentSlide = slideA, nextSlide = slideB;
-
-      setInterval(() => {
-        let nextIndex;
-        do { nextIndex = Math.floor(Math.random() * heroPool.length); } while (nextIndex === currentIndex && heroPool.length > 1);
-        currentIndex = nextIndex;
-        currentSlide.classList.remove('active');
-        currentSlide.classList.add('outgoing');
-        nextSlide.src = heroPool[currentIndex];
-        nextSlide.classList.remove('outgoing', 'active');
-        void nextSlide.offsetWidth;
-        nextSlide.classList.add('active');
-        [currentSlide, nextSlide] = [nextSlide, currentSlide];
-      }, 5500);
     }
 
     /* Scroll: progress, header, hero blur, section parallax */

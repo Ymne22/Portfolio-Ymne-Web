@@ -564,7 +564,7 @@
         link: 'https://pqube.co.uk/games/tormented-souls-2/'
       },
       {
-        id: 4, title: 'Loan Shark Console Edition', year: 2026, month: 1, releaseDate: '13 Jan 2026', status: 'Released',
+        id: 4, title: 'Loan Shark | Console Edition', year: 2026, month: 1, releaseDate: '13 Jan 2026', status: 'Released',
         platforms: ['ps5', 'xs', 'switch'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
         engine: 'Godot Engine 4.4', involvement: 'Technical Artist & Graphics Programmer', developer: 'Studio Ortica', publisher: 'Dark Product',
         heroImage: 'Assets/Images/Game/LoanShark_Hero.webp', logoImage: 'Assets/Images/Game/LoanShark_Logo.webp',
@@ -580,7 +580,7 @@
         link: 'https://www.walesinteractive.com/maidofskervr'
       },
       {
-        id: 6, title: 'Birds Watching Console Edition', year: 2026, month: 8, releaseDate: '20 Aug 2026', status: 'Released',
+        id: 6, title: 'Birds Watching | Console Edition', year: 2026, month: 8, releaseDate: '20 Aug 2026', status: 'Released',
         platforms: ['ps5', 'xs', 'switch'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
         engine: 'Godot Engine 4.4', involvement: 'Graphics Programmer & 2D Artist', developer: 'Studio Ortica', publisher: 'Dark Product',
         heroImage: 'Assets/Images/Game/BirdsWatching_Hero.webp', logoImage: 'Assets/Images/Game/BirdsWatching_Logo.webp',
@@ -596,7 +596,7 @@
         link: 'https://portofjumanah.agate.id/'
       },
       {
-        id: 8, title: 'Sniper Dan Console Edition', year: 2026, month: 9, releaseDate: '17 Sep 2026', status: 'Released',
+        id: 8, title: 'Sniper Dan | Console Edition', year: 2026, month: 9, releaseDate: '17 Sep 2026', status: 'Released',
         platforms: ['ps5', 'xs', 'switch1', 'switch2'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch'],
         engine: 'Unity Engine 6', involvement: 'Graphics Programmer', developer: 'Denki', publisher: 'PQube',
         heroImage: 'Assets/Images/Game/SniperDan_Hero.webp', logoImage: 'Assets/Images/Game/SniperDan_Logo.webp',
@@ -620,7 +620,23 @@
         link: 'https://passionrepublicgames.com/gigabash-mobile/'
       },
       {
-        id: 11, title: 'They Are Here: Alien Abduction Horror', section: 'UPCOMING', year: 'UPCOMING', month: 11, releaseDate: 'TBA', status: 'Announced', upcoming: true,
+        id: 11, title: 'Adorable Adventures | Switch 2 Edition', year: 2026, month: 11, releaseDate: '12 Nov 2026', status: 'Released',
+        platforms: ['switch2'], filterPlats: ['switch'],
+        engine: 'Unreal Engine 5.7', involvement: 'Graphics Programmer', developer: 'Wild Sheep Studio', publisher: 'PQube',
+        heroImage: 'Assets/Images/Game/AdorableAdventures_Hero.webp', logoImage: 'Assets/Images/Game/AdorableAdventures_Logo.webp',
+        tasks: ['Game Enigne Engineer for Switch 2', 'Shader Reworks and Optimization', 'Fixing CPU issues and Memory Leaks on Target Platform'],
+        link: 'https://pqube.co.uk/games/adorable-adventures/'
+      },
+      {
+        id: 12, title: 'KuloNiku | Switch Edition', year: 2026, month: 11, releaseDate: '25 Nov 2026', status: 'Waiting for Release (Announced)',
+        platforms: ['switch', 'switch2'], filterPlats: ['switch'],
+        engine: 'Unity Engine 6', involvement: 'Graphics Programmer', developer: 'Gambir Studio', publisher: 'Raw Fury Games',
+        heroImage: 'Assets/Images/Game/KuloNiku_Hero.webp', logoImage: 'Assets/Images/Game/KuloNiku_Logo.webp',
+        tasks: ['Render Pipeline Reworks', 'Shader Reworks and Optimization', 'Fixing CPU issues and Memory Leaks on Target Platform'],
+        link: 'https://youtu.be/aZm5U7pqUU0'
+      },
+      {
+        id: 13, title: 'They Are Here: Alien Abduction Horror', section: 'UPCOMING', year: 'UPCOMING', month: 11, releaseDate: 'TBA', status: 'Announced', upcoming: true,
         platforms: ['ps5', 'xs', 'switch', 'steam'], filterPlats: ['ps', 'ps5', 'xbox', 'xs', 'switch', 'pc'],
         engine: 'Unreal Engine 4.27', involvement: 'Technical Artist', developer: 'DEKLAZON', publisher: 'PQube',
         heroImage: 'Assets/Images/Game/TheyAreHere_Hero.webp', logoImage: 'Assets/Images/Game/TheyAreHere_Logo.webp',
@@ -642,7 +658,7 @@
     const yearsEl = document.getElementById('years');
     const navEl = document.getElementById('yearNav');
     sections.forEach(secKey => {
-      const list = GAMES.filter(g => String(g.year) === String(secKey)).sort((a, b) => (b.month || 0) - (a.month || 0));
+      const list = GAMES.filter(g => String(g.year) === String(secKey)).sort((a, b) => ((b.month || 0) - (a.month || 0)) || (Number(b.id) - Number(a.id)));
       const sec = document.createElement('section');
       sec.className = 'year-sec';
       sec.id = 'y' + secKey;
