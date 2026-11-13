@@ -3,157 +3,462 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARTWORKS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ARTWORKS — YMNE</title>
   <meta name="description" content="Art, animation highlights, character sprites, and concept works by YMNE.">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Jost:wght@300;400;500;600&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0"
     rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['"Plus Jakarta Sans"', 'sans-serif'],
-            body: ['Inter', 'sans-serif'],
-            mono: ['"Space Grotesk"', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
   <style>
     :root {
-      --ease: cubic-bezier(.16, 1, .3, 1);
-      --wipe: cubic-bezier(.76, 0, .24, 1);
+      --ink: #111;
+      --bg: #fff;
+      --grey: #f1f1f1;
+      --line: #d9d9d9;
+      --mute: #888;
+      --dk: #111;
+      --acc: #111;
+      --acc2: #444;
+      --acc3: #888;
+      --ease: cubic-bezier(.77, 0, .18, 1);
+      --out: cubic-bezier(.16, 1, .3, 1);
+      --g: clamp(20px, 5.2vw, 80px);
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    html,
-    body {
-      max-width: 100%;
-      overflow-x: clip;
+    @media(prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --ink: #f2f2f2;
+        --bg: #101010;
+        --grey: #1b1b1b;
+        --line: #333;
+        --mute: #888;
+        --if: none;
+        --ih: brightness(0);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --ink: #f2f2f2;
+      --bg: #101010;
+      --grey: #1b1b1b;
+      --line: #333;
+      --if: none;
+      --ih: brightness(0);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: env(safe-area-inset-top, 0px);
+      height: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background: #050505;
-      color: #e5e5e5;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Jost', sans-serif;
+      color: var(--ink);
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Backdrop: crossfade between works, slow zoom linked to scroll */
-    .bg,
-    #bgVid {
+    @media(prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) body {
+        background-image:
+          linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      }
+    }
+
+    :root[data-theme="dark"] body {
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    }
+
+    body.lock {
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    ::selection {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* Custom Cursor */
+    .cur,
+    .cur-dot {
+      position: fixed;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      z-index: 9999;
+      border-radius: 50%;
+      mix-blend-mode: difference;
+    }
+
+    .cur {
+      width: 44px;
+      height: 44px;
+      border: 1px solid #fff;
+      margin: -22px 0 0 -22px;
+      transition: width .35s var(--out), height .35s var(--out), margin .35s var(--out), background .3s;
+    }
+
+    .cur-dot {
+      width: 6px;
+      height: 6px;
+      margin: -3px 0 0 -3px;
+      background: #fff;
+    }
+
+    .cur.big {
+      width: 90px;
+      height: 90px;
+      margin: -45px 0 0 -45px;
+      background: #fff;
+    }
+
+    @media(hover:none) {
+      .cur,
+      .cur-dot {
+        display: none;
+      }
+    }
+
+    .loader {
       position: fixed;
       inset: 0;
-      z-index: 0;
-      opacity: 0;
-      scale: var(--bz, 1.04);
-      transition: opacity 1.2s var(--ease);
-      will-change: opacity, scale;
-      pointer-events: none;
+      background: var(--dk);
+      color: #fff;
+      z-index: 9000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: var(--g);
+      transition: clip-path 1.1s var(--ease);
+      clip-path: inset(0);
     }
 
-    .bg {
-      background-size: cover;
-      background-position: center;
+    .loader.done {
+      clip-path: inset(0 0 100% 0);
     }
 
-    .bg.on,
-    #bgVid.on {
-      opacity: .5;
+    .loader .count {
+      font-family: 'Dela Gothic One', sans-serif;
+      font-size: clamp(80px, 22vw, 320px);
+      line-height: .8;
     }
 
-    #bgVid video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .loader .lbl {
+      font-size: 12px;
+      letter-spacing: .4em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      opacity: .7;
     }
 
-    #bgShade {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: linear-gradient(180deg, rgba(5, 5, 5, .72) 0%, rgba(5, 5, 5, .82) 40%, rgba(5, 5, 5, .94) 100%);
-    }
-
-    .screentone {
-      background-image: radial-gradient(rgba(0, 0, 0, .3) 1px, transparent 1px);
-      background-size: 4px 4px;
-      mix-blend-mode: multiply;
-      opacity: .5;
-    }
-
-    main,
-    footer {
-      position: relative;
-      z-index: 10;
-    }
-
-    #header {
-      transition: transform .6s var(--ease), background .4s, backdrop-filter .4s;
-    }
-
-    #header.hide {
-      transform: translateY(-100%);
-    }
-
-    #header.solid {
-      background: rgba(5, 5, 5, .6);
-      backdrop-filter: blur(14px);
-    }
-
-    .nav-link {
-      position: relative;
-      opacity: .55;
-      transition: opacity .3s;
-    }
-
-    .nav-link::after {
-      content: '';
+    .loader .bar {
       position: absolute;
       left: 0;
-      bottom: -6px;
-      height: 1px;
+      bottom: 0;
+      height: 6px;
+      background: var(--acc);
+      width: 0;
+    }
+
+    /* Header & Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 800;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: calc(22px + env(safe-area-inset-top, 0px)) 28px 22px;
+      mix-blend-mode: difference;
+      color: #fff;
+    }
+
+    .burger {
+      width: 24px;
+      height: 24px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .burger i {
+      position: absolute;
+      left: 0;
       width: 100%;
+      height: 1.5px;
       background: #fff;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .5s var(--ease);
+      transition: transform .6s var(--out), top .6s var(--out);
     }
 
-    .nav-link:hover,
-    .nav-link.active {
-      opacity: 1;
+    .burger i:nth-child(1) {
+      top: 7px;
     }
 
-    .nav-link:hover::after,
-    .nav-link.active::after {
-      transform: scaleX(1);
+    .burger i:nth-child(2) {
+      top: 15px;
     }
 
-    /* Masonry grid */
+    .burger.open i:nth-child(1) {
+      top: 11px;
+      transform: rotate(45deg);
+    }
+
+    .burger.open i:nth-child(2) {
+      top: 11px;
+      transform: rotate(-45deg);
+    }
+
+    .menu {
+      position: fixed;
+      inset: 0;
+      background: var(--dk);
+      color: #fff;
+      z-index: 700;
+      clip-path: circle(0 at calc(100% - 48px) 32px);
+      transition: clip-path 1s var(--ease);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 var(--g);
+    }
+
+    .menu.open {
+      clip-path: circle(150% at calc(100% - 48px) 32px);
+    }
+
+    .menu a {
+      font-family: 'Dela Gothic One', sans-serif;
+      font-size: clamp(40px, 9vw, 110px);
+      line-height: 1.08;
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .menu a em {
+      font-style: normal;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+      opacity: .5;
+      letter-spacing: .2em;
+    }
+
+    .menu a b {
+      display: block;
+      font-weight: 400;
+      transform: translateY(110%);
+      transition: transform .9s var(--out);
+    }
+
+    .menu.open a b {
+      transform: none;
+    }
+
+    .menu a:nth-child(1) b { transition-delay: .35s; }
+    .menu a:nth-child(2) b { transition-delay: .42s; }
+    .menu a:nth-child(3) b { transition-delay: .49s; }
+    .menu a:nth-child(4) b { transition-delay: .56s; }
+
+    .menu a:hover {
+      opacity: .5;
+    }
+
+    /* Fixed Side Indicators */
+    .side {
+      position: fixed;
+      z-index: 500;
+      font-size: 10px;
+      letter-spacing: .2em;
+      writing-mode: vertical-rl;
+      mix-blend-mode: difference;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      bottom: calc(34px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .side.l { left: 22px; }
+    .side.r { right: 22px; }
+
+    .side .prog {
+      width: 1px;
+      height: 70px;
+      background: rgba(255, 255, 255, .3);
+      position: relative;
+    }
+
+    .side .prog i {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 0;
+      background: #fff;
+    }
+
+    @media(max-width:700px) {
+      .side {
+        display: none;
+      }
+    }
+
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 2;
+      padding: clamp(100px, 14vw, 170px) var(--g) 80px;
+      min-height: 100vh;
+      max-width: 1720px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 900px) {
+      main {
+        padding-left: clamp(80px, 7vw, 120px);
+        padding-right: clamp(40px, 4.5vw, 80px);
+      }
+    }
+
+    .page-head {
+      margin-bottom: clamp(40px, 6vw, 60px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .page-tag {
+      font-size: 11px;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-bottom: 12px;
+    }
+
+    .page-title {
+      font-family: 'Dela Gothic One', sans-serif;
+      font-size: clamp(40px, 8vw, 110px);
+      line-height: .95;
+      letter-spacing: -.02em;
+    }
+
+    .count-pill {
+      border: 1px solid var(--ink);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-pill b {
+      font-weight: 600;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: clamp(30px, 4vw, 48px);
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+      color: var(--mute);
+      margin-right: 4px;
+    }
+
+    .chips-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid var(--ink);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink);
+      background: transparent;
+      transition: all .35s var(--out);
+      cursor: pointer;
+    }
+
+    .chip:hover {
+      background: var(--ink);
+      color: var(--bg);
+      transform: translateY(-2px);
+    }
+
+    .chip.on {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* Masonry Grid */
     .masonry-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       grid-auto-rows: 210px;
-      gap: 16px;
+      gap: 18px;
       width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding-bottom: 7rem;
     }
 
     @media (max-width: 1024px) {
       .masonry-grid {
         grid-template-columns: repeat(4, 1fr);
-        grid-auto-rows: 160px;
+        grid-auto-rows: 170px;
+        gap: 14px;
       }
     }
 
@@ -165,80 +470,39 @@
       }
     }
 
-    .masonry-1x1 {
-      grid-column: span 1;
-      grid-row: span 1;
-    }
-
-    .masonry-2x1 {
-      grid-column: span 2;
-      grid-row: span 1;
-    }
-
-    .masonry-1x2 {
-      grid-column: span 1;
-      grid-row: span 2;
-    }
-
-    .masonry-2x2 {
-      grid-column: span 2;
-      grid-row: span 2;
-    }
-
-    .masonry-3x2 {
-      grid-column: span 3;
-      grid-row: span 2;
-    }
+    .masonry-1x1 { grid-column: span 1; grid-row: span 1; }
+    .masonry-2x1 { grid-column: span 2; grid-row: span 1; }
+    .masonry-1x2 { grid-column: span 1; grid-row: span 2; }
+    .masonry-2x2 { grid-column: span 2; grid-row: span 2; }
+    .masonry-3x2 { grid-column: span 3; grid-row: span 2; }
 
     @media (max-width: 1024px) {
-      .masonry-3x2 {
-        grid-column: span 2;
-      }
+      .masonry-3x2 { grid-column: span 2; }
     }
 
     @media (max-width: 768px) {
-
       .masonry-2x1,
       .masonry-2x2,
-      .masonry-3x2 {
-        grid-column: span 2;
-      }
+      .masonry-3x2 { grid-column: span 2; }
     }
 
-    /* Scroll reveal: left-to-right wipe, plays once */
-    .reveal {
-      clip-path: inset(0 100% 0 0);
-      transition: clip-path .7s var(--wipe) var(--d, 0ms);
-    }
-
-    .reveal.show {
-      clip-path: inset(0 0 0 0);
-    }
-
+    /* Masonry Item Card */
     .masonry-item {
       position: relative;
+      background: var(--grey);
+      border: 1px solid var(--line);
       overflow: hidden;
-      background: #111;
       cursor: pointer;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, .08);
-      box-shadow: 0 14px 32px -10px rgba(0, 0, 0, .5);
-      transition: clip-path .7s var(--wipe) var(--d, 0ms), transform .4s cubic-bezier(.34, 1.5, .64, 1), box-shadow .35s ease, border-color .35s ease;
-      outline: none;
-      text-align: left;
+      display: flex;
+      flex-direction: column;
+      transition: transform .6s var(--out), border-color .4s, box-shadow .6s var(--out), opacity .4s;
     }
 
-    /* Clip removed after the wipe so hover shadow and lift are not cropped */
-    .masonry-item.show.done {
-      clip-path: none;
-    }
-
-    .masonry-item:hover,
-    .masonry-item:focus-visible {
-      z-index: 10;
-      transform: translateY(-6px) scale(1.015);
-      border-color: rgba(255, 255, 255, .6);
-      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, .8), 0 0 20px rgba(255, 255, 255, .1);
+    .masonry-item:hover {
+      border-color: var(--ink);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+      z-index: 5;
     }
 
     .masonry-item img,
@@ -246,664 +510,661 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 15px;
-      transition: transform .8s cubic-bezier(.34, 1.2, .64, 1);
+      object-position: center;
       display: block;
+      transition: transform 1.2s var(--out);
     }
 
     .masonry-item:hover img,
-    .masonry-item:focus-visible img,
-    .masonry-item:hover video,
-    .masonry-item:focus-visible video {
-      transform: scale(1.05);
+    .masonry-item:hover video {
+      transform: scale(1.06);
     }
 
     .masonry-overlay {
       position: absolute;
       inset: 0;
-      z-index: 15;
-      border-radius: 15px;
-      padding: 1.15rem;
+      z-index: 2;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      background: linear-gradient(to top, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .45) 45%, transparent 80%);
+      background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0.92) 100%);
+      color: #fff;
       pointer-events: none;
-      transition: background .4s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .masonry-item:hover .masonry-overlay,
-    .masonry-item:focus-visible .masonry-overlay {
-      background: linear-gradient(to top, rgba(0, 0, 0, .96) 0%, rgba(0, 0, 0, .6) 55%, transparent 85%);
     }
 
     .masonry-overlay h4 {
-      margin: 0 0 .25rem;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.12rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
+      font-family: 'Dela Gothic One', sans-serif;
+      font-size: clamp(14px, 1.2vw, 18px);
+      font-weight: 400;
       line-height: 1.2;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, .8);
+      margin-bottom: 4px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
     }
 
     .masonry-info {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: .5rem;
-      width: 100%;
-      margin-top: .5rem;
-      padding-top: .75rem;
-      border-top: 1px solid rgba(255, 255, 255, .15);
-    }
-
-    .masonry-info span {
-      font-family: 'Space Grotesk', monospace;
-      font-size: .65rem;
-      font-weight: 600;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.75);
+      letter-spacing: .1em;
       text-transform: uppercase;
-      letter-spacing: .15em;
-      color: rgba(255, 255, 255, .7);
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
     }
 
-    .view-btn {
-      background: rgba(255, 255, 255, .1);
-      color: #fff;
-      font-family: 'Space Grotesk', monospace;
-      font-size: .62rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .15em;
-      padding: .4rem 1.05rem;
-      border: 1px solid rgba(255, 255, 255, .25);
-      border-radius: 999px;
-      cursor: pointer;
-      pointer-events: auto;
-      backdrop-filter: blur(8px);
-      transition: all .35s var(--ease);
+    .masonry-item.dim {
+      opacity: .12 !important;
+      pointer-events: none;
+      transform: scale(.98);
+      filter: grayscale(1);
     }
 
-    .masonry-item:hover .view-btn,
-    .masonry-item:focus-visible .view-btn {
-      background: #fff;
-      color: #050505;
-      border-color: #fff;
-      transform: translateY(-1px);
+    /* Reveal */
+    .rv {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1s var(--out), transform 1.1s var(--out);
     }
 
-    @media (max-width: 768px) {
-      .masonry-overlay {
-        padding: .85rem 1rem;
-      }
-
-      .masonry-overlay h4 {
-        font-size: .95rem;
-      }
+    .rv.in {
+      opacity: 1;
+      transform: none;
     }
 
-    /* Lightbox */
-    #lb {
+    /* Modal / Lightbox */
+    #overlay {
       position: fixed;
       inset: 0;
-      z-index: 80;
-      background: rgba(5, 5, 5, .95);
-      backdrop-filter: blur(10px);
+      z-index: 900;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
       opacity: 0;
       pointer-events: none;
-      transition: opacity .5s var(--ease);
+      transition: opacity .4s var(--out);
     }
 
-    #lb.open {
+    #overlay.open {
       opacity: 1;
       pointer-events: auto;
     }
 
-    #lbTop {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.25rem;
-      z-index: 3;
+    #panel {
+      position: fixed;
+      z-index: 950;
+      top: 50%;
+      left: 50%;
+      width: min(960px, calc(100vw - 32px));
+      max-height: 90vh;
+      background: var(--bg);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -48%) scale(.97);
+      transition: transform .4s var(--out), opacity .4s var(--out);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
     }
 
-    .ibtn {
-      width: 42px;
-      height: 42px;
+    #panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .panel-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+      .panel-inner {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    .panel-media {
+      position: relative;
+      background: #000;
+      min-height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .panel-media img,
+    .panel-media video {
+      width: 100%;
+      height: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    .panel-content {
+      padding: clamp(24px, 4vw, 40px);
+      padding-top: clamp(48px, 6vw, 56px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .panel-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid rgba(255, 255, 255, .15);
-      transition: all .4s var(--ease);
-      color: #fff;
+      background: var(--bg);
+      color: var(--ink);
+      z-index: 20;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      transition: all .3s var(--out);
     }
 
-    .ibtn:hover,
-    .ibtn.on {
-      background: #fff;
-      color: #050505;
+    .panel-close .material-symbols-outlined {
+      font-size: 20px;
+      line-height: 1;
+      display: block;
     }
 
-    .side {
-      position: absolute;
-      top: 50%;
-      margin-top: -21px;
-      z-index: 3;
+    .panel-close:hover {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
     }
 
-    .side.l {
-      left: 1rem;
+    .panel-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+      color: var(--mute);
+      margin-bottom: 6px;
     }
 
-    .side.r {
-      right: 1rem;
+    .panel-title {
+      font-family: 'Dela Gothic One', sans-serif;
+      font-size: clamp(20px, 2.2vw, 28px);
+      line-height: 1.2;
+      font-weight: 400;
+      margin-bottom: 16px;
     }
 
-    @media (max-width: 767px) {
-      .side {
-        display: none;
-      }
+    .panel-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--mute);
+      margin-bottom: 24px;
     }
 
-    #lbStage {
-      position: absolute;
-      inset: 0;
-      padding: 72px 16px 110px;
-      display: flex;
+    .panel-nav-btn {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      touch-action: none;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      transition: all .3s var(--out);
+      cursor: pointer;
     }
 
-    @media (min-width: 768px) {
-      #lbStage {
-        padding: 72px 90px 110px;
-      }
+    .panel-nav-btn:hover {
+      background: var(--ink);
+      color: var(--bg);
     }
 
-    #lbStage img,
-    #lbStage video {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      border-radius: 6px;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    #lbStage img {
-      cursor: zoom-in;
-      transition: transform .5s var(--ease);
-    }
-
-    #lbStage img.zoomed {
-      cursor: grab;
-    }
-
-    #lbStage img.drag {
-      transition: none;
-      cursor: grabbing;
-    }
-
-    .lbIn {
-      animation: lbIn .6s var(--ease);
-    }
-
-    @keyframes lbIn {
-      from {
-        opacity: 0;
-        transform: scale(.97);
-      }
-    }
-
-    #lbBottom {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 1rem 1.25rem;
-      z-index: 3;
+    .panel-footer-actions {
       display: flex;
-      flex-direction: column;
-      gap: .75rem;
-      pointer-events: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
     }
 
-    #lbBottom>* {
-      pointer-events: auto;
-    }
-
-    #lbInfo {
-      display: none;
-      max-width: 24rem;
-      padding: 1rem 1.2rem;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, .65);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, .12);
-    }
-
-    #lbInfo.on {
-      display: block;
-      animation: lbIn .5s var(--ease);
-    }
-
-    .no-scroll {
+    .btn-all {
+      position: relative;
+      display: inline-flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 13px;
+      border: 1px solid var(--ink);
       overflow: hidden;
+      isolation: isolate;
+      cursor: pointer;
+      flex: 1;
     }
 
+    .btn-all span {
+      margin: 0 auto;
+    }
+
+    .btn-all::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform .4s var(--ease);
+      z-index: -1;
+    }
+
+    .btn-all:hover {
+      color: var(--bg);
+    }
+
+    .btn-all:hover::before {
+      transform: scaleY(1);
+    }
+
+    .btn-all b {
+      font-weight: 400;
+      transition: transform .3s var(--out);
+    }
+
+    .btn-all:hover b {
+      transform: translateX(6px);
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: clamp(60px, 8vw, 100px) var(--g) 40px;
+      border-top: 1px solid var(--ink);
+    }
+
+    footer .fl {
+      font-family: 'Dela Gothic One', sans-serif;
+      font-size: clamp(34px, 4vw, 56px);
+      line-height: 1;
+    }
+
+    footer small {
+      display: block;
+      font-size: 11px;
+      color: var(--mute);
+      margin-top: 16px;
+      max-width: 500px;
+      line-height: 1.7;
+    }
+
+    footer a {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, .2);
-      border-radius: 3px;
+      background: var(--ink);
+      opacity: .5;
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--ink) transparent;
     }
 
     @media (prefers-reduced-motion: reduce) {
-
       *,
       *::before,
       *::after {
         animation: none !important;
-        transition: none !important;
-      }
-
-      .reveal {
-        clip-path: none !important;
+        transition-duration: .01ms !important;
       }
     }
   </style>
 </head>
 
 <body>
-
-  <div class="bg" id="bgA"></div>
-  <div class="bg" id="bgB"></div>
-  <div id="bgVid"><video muted loop playsinline></video></div>
-  <div class="fixed inset-0 screentone pointer-events-none z-[1]"></div>
-  <div id="bgShade"></div>
-
-  <header id="header" class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-14 py-5">
-    <nav class="hidden md:flex items-center gap-10 text-xs tracking-[.18em] uppercase font-medium">
-      <a href="index.html" class="nav-link">Main</a>
-      <a href="game-works.html" class="nav-link">Game Works</a>
-      <a href="shader-works.html" class="nav-link">Shader Works</a>
-      <a href="artworks.html" class="nav-link active">Artworks</a>
-    </nav>
-    <button id="menuBtn" class="md:hidden material-symbols-outlined text-3xl" aria-label="Menu">menu</button>
-  </header>
-  <div id="mobileMenu"
-    class="hidden fixed inset-0 z-40 bg-black/95 backdrop-blur flex-col items-center justify-center gap-8 font-display text-3xl font-semibold">
-    <a href="index.html">Main</a><a href="game-works.html">Game Works</a><a href="shader-works.html">Shader Works</a><a
-      href="artworks.html">Artworks</a>
+  <div class="cur"></div>
+  <div class="cur-dot"></div>
+  <div class="loader" id="loader">
+    <div class="count"><span id="cnt">0</span></div>
+    <div class="lbl">YMNE — Artworks</div>
+    <div class="bar" id="bar"></div>
   </div>
 
-  <main class="px-4 sm:px-8 md:px-14 max-w-[96rem] mx-auto">
-    <section class="pt-32 md:pt-40 pb-10 flex flex-wrap items-end justify-between gap-6">
+  <header>
+    <button class="burger" id="burger" aria-label="Menu"><i></i><i></i></button>
+  </header>
+
+  <div class="menu" id="menu">
+    <a href="index.html"><em>01</em><b>Main</b></a>
+    <a href="game-works.html"><em>02</em><b>Game Works</b></a>
+    <a href="shader-works.html"><em>03</em><b>Shader Works</b></a>
+    <a href="artworks.html"><em>04</em><b>Artworks</b></a>
+  </div>
+
+  <div class="side l"><span id="cI">01</span> <span>/</span> <span id="tI">28</span></div>
+  <div class="side r">Scroll Down <div class="prog"><i id="sprog"></i></div></div>
+
+  <main>
+    <section class="page-head rv">
       <div>
-        <p class="reveal text-xs tracking-[.3em] uppercase text-white/60 mb-4 font-medium" style="--d:0ms">Visual
-          Creative Works</p>
-        <h1 class="reveal font-display text-5xl md:text-7xl font-extrabold tracking-tight text-white" style="--d:80ms">
-          ARTWORKS</h1>
+        <p class="page-tag">Visual Creative Works</p>
+        <h1 class="page-title">ARTWORKS</h1>
       </div>
-      <div class="reveal" style="--d:160ms">
-        <span
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur text-xs tracking-[.15em] uppercase font-mono text-white/80">
-          <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-          <b id="artCount" class="font-bold text-white text-sm">26</b> Works
-        </span>
+      <div>
+        <span class="count-pill"><b id="artCount">28</b> Works</span>
       </div>
     </section>
 
-    <div id="art-grid" class="masonry-grid"></div>
-  </main>
-
-  <footer class="px-6 md:px-14 py-16">
-    <div class="max-w-7xl mx-auto md:pl-24">
-      <p class="mt-8 text-base text-white/60">© 2026 YMNE. All rights reserved.
-        the
-        property of their respective owners.</p>
-      <p class="mt-2 text-xs text-white/35">All trademarks, logos, and brand names are the property of their respective
-        owners. Use of these marks does not imply endorsement or affiliation.</p>
-    </div>
-  </footer>
-
-  <div id="lb" role="dialog" aria-modal="true" aria-hidden="true">
-    <div id="lbTop">
-      <span id="lbCount" class="text-xs tracking-[.2em] font-mono text-white/60"></span>
-      <div class="flex gap-2">
-        <button id="lbExternal" class="ibtn" aria-label="Open original" title="Open original in new tab"><span
-            class="material-symbols-outlined">open_in_new</span></button>
-        <button id="lbInfoBtn" class="ibtn" aria-label="Info" title="Info (I)"><span
-            class="material-symbols-outlined">info</span></button>
-        <button id="lbClose" class="ibtn" aria-label="Close" title="Close (Esc)"><span
-            class="material-symbols-outlined">close</span></button>
+    <div class="filter-bar rv">
+      <span class="filter-label">Filter</span>
+      <div class="chips-group" id="fType">
+        <button class="chip on" data-val="all">All</button>
+        <button class="chip" data-val="Animation">Animation</button>
+        <button class="chip" data-val="Drawing">Drawing</button>
+        <button class="chip" data-val="Character Art">Character Art</button>
+        <button class="chip" data-val="Concept">Concept</button>
       </div>
     </div>
-    <button id="lbPrev" class="ibtn side l" aria-label="Previous"><span
-        class="material-symbols-outlined">chevron_left</span></button>
-    <button id="lbNext" class="ibtn side r" aria-label="Next"><span
-        class="material-symbols-outlined">chevron_right</span></button>
-    <div id="lbStage"></div>
-    <div id="lbBottom">
-      <div id="lbInfo"></div>
+
+    <div id="art-grid" class="masonry-grid"></div>
+    <p id="empty" style="display:none;text-align:center;padding:80px 0;font-size:14px;color:var(--mute);">No artworks match this filter.</p>
+  </main>
+
+  <footer>
+    <div>
+      <div class="fl">YMNE</div>
+      <small>© 2026 YMNE. All rights reserved. All trademarks, logos, and brand names are the property of their respective owners. Use of these marks does not imply endorsement or affiliation.</small>
     </div>
-  </div>
+    <a href="#top" id="backToTop">Back to top ↑</a>
+  </footer>
+
+  <div id="overlay"></div>
+  <aside id="panel" role="dialog" aria-modal="true" aria-hidden="true"></aside>
 
   <script>
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    window.scrollTo(0, 0);
+    (() => {
+      const $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
+      const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+      const lerp = (a, b, t) => a + (b - a) * t;
 
-    const ART = [
-      { k: 'video', title: 'Holo-Attack Opening Concept (2024)', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Opening layout concept animation for Holo-Attack.', src: 'Assets/Video/Art/Myth.webm' },
-      { k: 'video', title: 'Summer Animation (2023)', sub: 'Animation', year: 2023, span: 'masonry-3x2', desc: 'Personal summer scene animation practice.', src: 'Assets/Video/Art/Summer23.webm' },
-      { k: 'video', title: 'Background Animation (2024)', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Background parallax and environment animation study.', src: 'Assets/Video/Art/BG1.webm' },
-      { k: 'video', title: 'Gura Animation I', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Looping character animation study.', src: 'Assets/Video/Art/Gura2.webm' },
-      { k: 'video', title: 'Animation Practice - CSM (2025)', sub: 'Animation', year: 2025, span: 'masonry-2x2', desc: 'Chainsaw Man dynamic action sequence study.', src: 'Assets/Video/Art/Chenso.webm' },
-      { k: 'video', title: 'Gura Animation II', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Looping animated cut with expressive timing.', src: 'Assets/Video/Art/Gura1.webm' },
-      { k: 'img', title: 'Chainsaw Man (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Chainsaw Man digital illustration.', src: 'Assets/Images/Art/Chenso.jpg' },
-      { k: 'img', title: 'Emu Otori (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Project Sekai character portrait illustration.', src: 'Assets/Images/Art/Awawa.jpg' },
-      { k: 'img', title: 'Haru Urara (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Uma Musume Haru Urara character drawing.', src: 'Assets/Images/Art/Urara.jpg' },
-      { k: 'img', title: 'Kureji Ollie (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Hololive Indonesia Kureji Ollie illustration.', src: 'Assets/Images/Art/Ollie.jpg' },
-      { k: 'img', title: 'Mei Kinosaki (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Mei Kinosaki character artwork study.', src: 'Assets/Images/Art/Mei.jpg' },
-      { k: 'img', title: 'Otonose Kanade (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'ReGLOSS Otonose Kanade character drawing.', src: 'Assets/Images/Art/Kanade.jpg' },
-      { k: 'img', title: 'Holo-Attack Sprites', sub: 'Character Art', year: 2024, span: 'masonry-2x2', desc: 'In-game pixel & 2D character sprites authored for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Sprite.jpg' },
-      { k: 'img', title: 'HL-ATK Concept 1', sub: 'Concept', year: 2024, span: 'masonry-2x2', desc: 'Early visual development & concept sheet for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Concept1.jpg' },
-      { k: 'img', title: 'HL-ATK Concept 2', sub: 'Concept', year: 2024, span: 'masonry-2x2', desc: 'Visual environment & UI style exploration for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Concept2.jpg' },
-      { k: 'video', title: 'Holo-Attack Loading', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Loading screen animation loop crafted for Holo-Attack.', src: 'Assets/Video/Art/HL-ATK-Load.webm' },
-      { k: 'img', title: 'Kanna & Lia Sprites', sub: 'Character Art', year: 2024, span: 'masonry-2x2', desc: 'Game sprite sheets and pose iterations for Kanna & Lia.', src: 'Assets/Images/Art/KnL-Sprite.jpg' },
-      { k: 'video', title: 'Kanna & Lia Cut 4', sub: 'Animation', year: 2024, span: 'masonry-1x2', desc: 'Animated cinematic cutscene segment for Kanna & Lia.', src: 'Assets/Video/Art/KnL.webm' },
-      { k: 'img', title: 'Sameko Saba 1 (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Sameko Saba portrait drawing.', src: 'Assets/Images/Art/Saba.jpg' },
-      { k: 'img', title: "esoragoto『I'll Forget You!』", sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: "Cover illustration and concept artwork inspired by esoragoto's song.", src: 'Assets/Images/Art/EsoragotoForget.jpg' },
-      { k: 'img', title: 'Emu Otori 2 (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Wonderlands x Showtime Emu Otori character study.', src: 'Assets/Images/Art/Awawa2.jpg' },
-      { k: 'img', title: 'Manhattan Cafe (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Manhattan Cafe atmospheric portrait.', src: 'Assets/Images/Art/Cafe.jpg' },
-      { k: 'img', title: 'Gold Ship (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Gold Ship expressive illustration.', src: 'Assets/Images/Art/Gorushi.jpg' },
-      { k: 'img', title: 'Agnes Tachyon (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Agnes Tachyon laboratory illustration.', src: 'Assets/Images/Art/Agnes.jpg' },
-      { k: 'video', title: 'Animation Practice, Rough Layout', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Keyframe action layout and timing animation practice.', src: 'Assets/Video/Art/CA1.webm' },
-      { k: 'img', title: 'Ayumu Fujino (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Look Back Ayumu Fujino manga artist tribute artwork.', src: 'Assets/Images/Art/Fujino.jpg' },
-      { k: 'img', title: 'Ume (Fanart)', sub: 'Drawing', year: 2026, span: 'masonry-1x2', desc: 'Ume from KuloNiku fanart sketch', src: 'Assets/Images/Art/Ume.jpg' },
-      { k: 'img', title: 'Sameko Saba 2 (Fanart)', sub: 'Drawing', year: 2026, span: 'masonry-2x2', desc: 'Sameko Saba portrait drawing.', src: 'Assets/Images/Art/Saba2.jpg' },
-    ].map((a, i) => ({ ...a, id: i + 1 }));
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      window.scrollTo(0, 0);
 
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const canHover = matchMedia('(hover: hover)').matches;
+      const cnt = $('#cnt'), bar = $('#bar'), loader = $('#loader');
+      document.body.classList.add('lock');
+      let n = 0;
+      (function tick() {
+        n += Math.max(1, (100 - n) * .06) * (reduce ? 10 : 1);
+        if (n >= 100) n = 100;
+        cnt.textContent = Math.floor(n);
+        bar.style.width = n + '%';
+        if (n < 100) return requestAnimationFrame(tick);
+        setTimeout(() => {
+          loader.classList.add('done');
+          document.body.classList.remove('lock');
+        }, 250);
+      })();
 
-    const countEl = document.getElementById('artCount');
-    if (countEl) countEl.textContent = ART.length;
-
-    const grid = document.getElementById('art-grid');
-    ART.forEach(a => {
-      const b = document.createElement('div');
-      b.className = `masonry-item ${a.span} reveal`;
-      b.dataset.id = a.id;
-      b.setAttribute('tabindex', '0');
-      b.setAttribute('role', 'button');
-      b.setAttribute('aria-label', a.title);
-
-      const isVid = a.k === 'video';
-      if (isVid) b.dataset.vidBg = a.src;
-      else b.dataset.bg = a.src;
-      b.innerHTML = `
-        ${isVid
-          ? `<video muted loop playsinline preload="metadata" src="${a.src}#t=0.001"></video>`
-          : `<img src="${a.src}" alt="${a.title}" loading="lazy" draggable="false">`
-        }
-        <div class="masonry-overlay">
-          <h4>${a.title}</h4>
-          <div class="masonry-info">
-            <span>${a.sub}</span>
-            <button class="view-btn" tabindex="-1">View</button>
-          </div>
-        </div>
-      `;
-
-      b.addEventListener('click', () => openLb(a.id));
-      b.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(a.id); }
+      /* Custom cursor */
+      const cur = $('.cur'), dot = $('.cur-dot');
+      let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my;
+      addEventListener('pointermove', e => {
+        mx = e.clientX;
+        my = e.clientY;
+        if (dot) dot.style.transform = `translate(${mx}px,${my}px)`;
       });
-      b.addEventListener('transitionend', e => { if (e.propertyName === 'clip-path' && b.classList.contains('show')) b.classList.add('done'); });
-      grid.appendChild(b);
-    });
-
-    const items = [...grid.children];
-
-    /* Reveal plays once per element */
-    const io = new IntersectionObserver(es => es.forEach(e => {
-      if (!e.isIntersecting) return;
-      if (items.includes(e.target)) e.target.style.setProperty('--d', (items.indexOf(e.target) % 6) * 50 + 'ms');
-      e.target.classList.add('show');
-      io.unobserve(e.target);
-    }), { threshold: 0, rootMargin: '0px 0px -4% 0px' });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-    /* Video tiles: hover to play (desktop) / play when in view (touch) */
-    function playTile(t) {
-      const v = t.querySelector('video');
-      if (!v || reduce) return;
-      v.play().catch(() => { });
-    }
-    function stopTile(t) {
-      const v = t.querySelector('video');
-      if (v) v.pause();
-    }
-    const vTiles = items.filter(t => t.querySelector('video'));
-    if (canHover) {
-      vTiles.forEach(t => {
-        t.addEventListener('mouseenter', () => playTile(t));
-        t.addEventListener('mouseleave', () => stopTile(t));
-        t.addEventListener('focus', () => playTile(t));
-        t.addEventListener('blur', () => stopTile(t));
+      document.addEventListener('pointerover', e => {
+        if (e.target.closest('a, button, .masonry-item, .chip, .panel-close')) cur?.classList.add('big');
       });
-    } else {
-      const vo = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? playTile(e.target) : stopTile(e.target)), { threshold: .5 });
-      vTiles.forEach(t => vo.observe(t));
-    }
+      document.addEventListener('pointerout', e => {
+        if (e.target.closest('a, button, .masonry-item, .chip, .panel-close')) cur?.classList.remove('big');
+      });
 
-    /* Backdrop crossfade with video support */
-    const layers = [document.getElementById('bgA'), document.getElementById('bgB')];
-    const bgVidWrap = document.getElementById('bgVid');
-    const bgVidEl = bgVidWrap.querySelector('video');
-    let bgCur = 0, lastBg = '', hlItem = null;
-    function setBgImg(url) {
-      if (!url || url === lastBg) return;
-      lastBg = url;
-      const im = new Image();
-      im.onload = () => {
-        const next = layers[1 - bgCur];
-        next.style.backgroundImage = `url(${url})`;
-        next.classList.add('on');
-        layers[bgCur].classList.remove('on');
-        bgCur = 1 - bgCur;
-        bgVidWrap.classList.remove('on');
-        bgVidEl.pause();
+      /* Navigation Menu */
+      const burger = $('#burger'), menu = $('#menu');
+      const toggle = f => {
+        const o = f ?? !menu.classList.contains('open');
+        menu.classList.toggle('open', o);
+        burger.classList.toggle('open', o);
+        document.body.classList.toggle('lock', o);
       };
-      im.src = url;
-    }
-    function setBgVid(src) {
-      if (src === lastBg) return;
-      lastBg = src;
-      bgVidEl.src = src;
-      bgVidEl.play().catch(() => { });
-      bgVidWrap.classList.add('on');
-      layers.forEach(l => l.classList.remove('on'));
-    }
-    function highlightItem(tile) {
-      if (hlItem === tile) return;
-      hlItem = tile;
-      if (tile.dataset.vidBg) setBgVid(tile.dataset.vidBg);
-      else if (tile.dataset.bg) setBgImg(tile.dataset.bg);
-    }
-    if (canHover) items.forEach(t => t.addEventListener('mouseenter', () => highlightItem(t)));
-    else {
-      const co = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) highlightItem(e.target); }), { rootMargin: '-42% 0px -42% 0px' });
-      items.forEach(t => co.observe(t));
-    }
-    if (items.length) highlightItem(items[0]);
+      burger.onclick = () => toggle();
+      $$('#menu a').forEach(a => a.addEventListener('click', () => toggle(false)));
+      addEventListener('keydown', e => { if (e.key === 'Escape') toggle(false); });
 
-    /* Lightbox */
-    const lb = document.getElementById('lb'), stage = document.getElementById('lbStage');
-    const info = document.getElementById('lbInfo'), infoBtn = document.getElementById('lbInfoBtn');
-    const count = document.getElementById('lbCount'), externalBtn = document.getElementById('lbExternal');
-    let idx = 0, infoOn = false, lastFocus = null;
-    const Z = 2.4, z = { on: false, x: 0, y: 0 };
-    let curImg = null;
-    const cur = () => ART[idx];
+      const ART = [
+        { k: 'video', title: 'Holo-Attack Opening Concept (2024)', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Opening layout concept animation for Holo-Attack.', src: 'Assets/Video/Art/Myth.webm' },
+        { k: 'video', title: 'Summer Animation (2023)', sub: 'Animation', year: 2023, span: 'masonry-3x2', desc: 'Personal summer scene animation practice.', src: 'Assets/Video/Art/Summer23.webm' },
+        { k: 'video', title: 'Background Animation (2024)', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Background parallax and environment animation study.', src: 'Assets/Video/Art/BG1.webm' },
+        { k: 'video', title: 'Gura Animation I', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Looping character animation study.', src: 'Assets/Video/Art/Gura2.webm' },
+        { k: 'video', title: 'Animation Practice - CSM (2025)', sub: 'Animation', year: 2025, span: 'masonry-2x2', desc: 'Chainsaw Man dynamic action sequence study.', src: 'Assets/Video/Art/Chenso.webm' },
+        { k: 'video', title: 'Gura Animation II', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Looping animated cut with expressive timing.', src: 'Assets/Video/Art/Gura1.webm' },
+        { k: 'img', title: 'Chainsaw Man (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Chainsaw Man digital illustration.', src: 'Assets/Images/Art/Chenso.jpg' },
+        { k: 'img', title: 'Emu Otori (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Project Sekai character portrait illustration.', src: 'Assets/Images/Art/Awawa.jpg' },
+        { k: 'img', title: 'Haru Urara (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Uma Musume Haru Urara character drawing.', src: 'Assets/Images/Art/Urara.jpg' },
+        { k: 'img', title: 'Kureji Ollie (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Hololive Indonesia Kureji Ollie illustration.', src: 'Assets/Images/Art/Ollie.jpg' },
+        { k: 'img', title: 'Mei Kinosaki (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Mei Kinosaki character artwork study.', src: 'Assets/Images/Art/Mei.jpg' },
+        { k: 'img', title: 'Otonose Kanade (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'ReGLOSS Otonose Kanade character drawing.', src: 'Assets/Images/Art/Kanade.jpg' },
+        { k: 'img', title: 'Holo-Attack Sprites', sub: 'Character Art', year: 2024, span: 'masonry-2x2', desc: 'In-game pixel & 2D character sprites authored for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Sprite.jpg' },
+        { k: 'img', title: 'HL-ATK Concept 1', sub: 'Concept', year: 2024, span: 'masonry-2x2', desc: 'Early visual development & concept sheet for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Concept1.jpg' },
+        { k: 'img', title: 'HL-ATK Concept 2', sub: 'Concept', year: 2024, span: 'masonry-2x2', desc: 'Visual environment & UI style exploration for Holo-Attack.', src: 'Assets/Images/Art/HL-ATK-Concept2.jpg' },
+        { k: 'video', title: 'Holo-Attack Loading', sub: 'Animation', year: 2024, span: 'masonry-3x2', desc: 'Loading screen animation loop crafted for Holo-Attack.', src: 'Assets/Video/Art/HL-ATK-Load.webm' },
+        { k: 'img', title: 'Kanna & Lia Sprites', sub: 'Character Art', year: 2024, span: 'masonry-2x2', desc: 'Game sprite sheets and pose iterations for Kanna & Lia.', src: 'Assets/Images/Art/KnL-Sprite.jpg' },
+        { k: 'video', title: 'Kanna & Lia Cut 4', sub: 'Animation', year: 2024, span: 'masonry-1x2', desc: 'Animated cinematic cutscene segment for Kanna & Lia.', src: 'Assets/Video/Art/KnL.webm' },
+        { k: 'img', title: 'Sameko Saba 1 (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Sameko Saba portrait drawing.', src: 'Assets/Images/Art/Saba.jpg' },
+        { k: 'img', title: "esoragoto『I'll Forget You!』", sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: "Cover illustration and concept artwork inspired by esoragoto's song.", src: 'Assets/Images/Art/EsoragotoForget.jpg' },
+        { k: 'img', title: 'Emu Otori 2 (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-3x2', desc: 'Wonderlands x Showtime Emu Otori character study.', src: 'Assets/Images/Art/Awawa2.jpg' },
+        { k: 'img', title: 'Manhattan Cafe (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Manhattan Cafe atmospheric portrait.', src: 'Assets/Images/Art/Cafe.jpg' },
+        { k: 'img', title: 'Gold Ship (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Gold Ship expressive illustration.', src: 'Assets/Images/Art/Gorushi.jpg' },
+        { k: 'img', title: 'Agnes Tachyon (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-2x2', desc: 'Uma Musume Agnes Tachyon laboratory illustration.', src: 'Assets/Images/Art/Agnes.jpg' },
+        { k: 'video', title: 'Animation Practice, Rough Layout', sub: 'Animation', year: 2024, span: 'masonry-2x2', desc: 'Keyframe action layout and timing animation practice.', src: 'Assets/Video/Art/CA1.webm' },
+        { k: 'img', title: 'Ayumu Fujino (Fanart)', sub: 'Drawing', year: 2024, span: 'masonry-1x2', desc: 'Look Back Ayumu Fujino manga artist tribute artwork.', src: 'Assets/Images/Art/Fujino.jpg' },
+        { k: 'img', title: 'Ume (Fanart)', sub: 'Drawing', year: 2026, span: 'masonry-1x2', desc: 'Ume from KuloNiku fanart sketch', src: 'Assets/Images/Art/Ume.jpg' },
+        { k: 'img', title: 'Sameko Saba 2 (Fanart)', sub: 'Drawing', year: 2026, span: 'masonry-2x2', desc: 'Sameko Saba portrait drawing.', src: 'Assets/Images/Art/Saba2.jpg' },
+      ].map((a, i) => ({ ...a, id: i + 1 }));
 
-    function applyZoom(drag) {
-      if (!curImg) return;
-      curImg.classList.toggle('zoomed', z.on);
-      curImg.classList.toggle('drag', !!drag);
-      curImg.style.transform = z.on ? `translate(${z.x}px, ${z.y}px) scale(${Z})` : '';
-    }
-    const clamp = (v, max) => Math.max(-max, Math.min(max, v));
-    function resetZoom() { z.on = false; z.x = z.y = 0; }
+      const countEl = $('#artCount');
+      if (countEl) countEl.textContent = ART.length;
+      $('#tI').textContent = String(ART.length).padStart(2, '0');
 
-    function render() {
-      const a = cur();
-      resetZoom();
-      curImg = null;
-      stage.innerHTML = '';
+      const grid = $('#art-grid');
+      ART.forEach(a => {
+        const item = document.createElement('article');
+        item.className = `masonry-item ${a.span} rv`;
+        item.dataset.id = a.id;
+        item.dataset.sub = a.sub;
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-label', a.title);
 
-      if (a.k === 'video') {
-        const v = document.createElement('video');
-        v.src = a.src; v.controls = true; v.autoplay = true; v.loop = true; v.playsInline = true;
-        v.className = 'lbIn';
-        stage.appendChild(v);
-      } else {
-        const im = document.createElement('img');
-        im.src = a.src; im.alt = a.title; im.draggable = false; im.className = 'lbIn';
-        stage.appendChild(im);
-        curImg = im;
-      }
-
-      info.innerHTML = `
-        <p class="text-[10px] uppercase tracking-[.25em] font-mono text-white/60 font-semibold">${a.sub} · ${a.year}</p>
-        <h3 class="font-display text-xl font-bold tracking-tight text-white mt-1">${a.title}</h3>
-        <p class="text-sm leading-6 text-white/70 mt-2 font-light">${a.desc}</p>
-      `;
-      info.classList.toggle('on', infoOn);
-      infoBtn.classList.toggle('on', infoOn);
-      count.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(ART.length).padStart(2, '0')}`;
-
-      [1, -1].forEach(d => {
-        const n = ART[(idx + d + ART.length) % ART.length];
-        if (n.k !== 'video') new Image().src = n.src;
+        const isVid = a.k === 'video';
+        item.innerHTML = `
+          ${isVid
+            ? `<video muted loop playsinline preload="metadata" src="${a.src}#t=0.001"></video>`
+            : `<img src="${a.src}" alt="${a.title}" loading="lazy">`
+          }
+          <div class="masonry-overlay">
+            <h4>${a.title}</h4>
+            <div class="masonry-info">
+              <span>${a.sub}</span>
+              <span>${a.year}</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(item);
       });
-    }
 
-    function openLb(id) {
-      idx = Math.max(0, ART.findIndex(a => a.id === id));
-      lastFocus = document.activeElement;
-      render();
-      lb.classList.add('open');
-      lb.setAttribute('aria-hidden', 'false');
-      document.documentElement.classList.add('no-scroll');
-      document.getElementById('lbClose').focus({ preventScroll: true });
-    }
-    function closeLb() {
-      lb.classList.remove('open');
-      lb.setAttribute('aria-hidden', 'true');
-      document.documentElement.classList.remove('no-scroll');
-      setTimeout(() => { stage.innerHTML = ''; }, 500);
-      lastFocus?.focus({ preventScroll: true });
-    }
-    function go(d) { idx = (idx + d + ART.length) % ART.length; render(); }
-
-    document.getElementById('lbClose').addEventListener('click', closeLb);
-    document.getElementById('lbPrev').addEventListener('click', () => go(-1));
-    document.getElementById('lbNext').addEventListener('click', () => go(1));
-    infoBtn.addEventListener('click', () => {
-      infoOn = !infoOn;
-      info.classList.toggle('on', infoOn);
-      infoBtn.classList.toggle('on', infoOn);
-    });
-    externalBtn.addEventListener('click', () => { const a = cur(); if (a && a.src) window.open(a.src, '_blank'); });
-
-    addEventListener('keydown', e => {
-      if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLb();
-      else if (e.key === 'ArrowRight') go(1);
-      else if (e.key === 'ArrowLeft') go(-1);
-      else if (e.key.toLowerCase() === 'i') infoBtn.click();
-    });
-
-    /* Stage: click to zoom, drag to pan, swipe to navigate, click empty area to close */
-    let ptr = null;
-    stage.addEventListener('pointerdown', e => {
-      if (e.target.closest('video')) return;
-      ptr = { x: e.clientX, y: e.clientY, ox: z.x, oy: z.y, moved: false };
-      stage.setPointerCapture(e.pointerId);
-    });
-    stage.addEventListener('pointermove', e => {
-      if (!ptr) return;
-      const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
-      if (Math.abs(dx) + Math.abs(dy) > 6) ptr.moved = true;
-      if (z.on && curImg && ptr.moved) {
-        z.x = clamp(ptr.ox + dx, (Z - 1) * curImg.clientWidth / 2);
-        z.y = clamp(ptr.oy + dy, (Z - 1) * curImg.clientHeight / 2);
-        applyZoom(true);
-      }
-    });
-    stage.addEventListener('pointerup', e => {
-      if (!ptr) return;
-      const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y, p = ptr;
-      ptr = null;
-      applyZoom(false);
-      if (p.moved) {
-        if (!z.on && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
-        return;
-      }
-      if (curImg && e.target === curImg) {
-        if (z.on) resetZoom();
-        else {
-          const r = curImg.getBoundingClientRect();
-          z.on = true;
-          z.x = clamp(-(e.clientX - (r.left + r.width / 2)) * (Z - 1), (Z - 1) * r.width / 2);
-          z.y = clamp(-(e.clientY - (r.top + r.height / 2)) * (Z - 1), (Z - 1) * r.height / 2);
+      /* Scroll reveal observer */
+      const io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
         }
-        applyZoom(false);
-      } else if (!e.target.closest('video')) {
-        closeLb();
+      }), { threshold: 0.1 });
+      $$('.rv').forEach(el => io.observe(el));
+
+      /* Hover/touch play video */
+      const canHover = matchMedia('(hover: hover)').matches;
+      const vTiles = $$('.masonry-item').filter(t => t.querySelector('video'));
+      if (canHover) {
+        vTiles.forEach(t => {
+          const v = t.querySelector('video');
+          t.addEventListener('mouseenter', () => v?.play().catch(() => {}));
+          t.addEventListener('mouseleave', () => v?.pause());
+          t.addEventListener('focus', () => v?.play().catch(() => {}));
+          t.addEventListener('blur', () => v?.pause());
+        });
+      } else {
+        const vo = new IntersectionObserver(es => es.forEach(e => {
+          const v = e.target.querySelector('video');
+          if (e.isIntersecting) v?.play().catch(() => {});
+          else v?.pause();
+        }), { threshold: 0.5 });
+        vTiles.forEach(t => vo.observe(t));
       }
-    });
-    stage.addEventListener('pointercancel', () => { ptr = null; applyZoom(false); });
 
-    /* Header and backdrop zoom (scroll-linked) */
-    const header = document.getElementById('header');
-    const zoomEls = [...layers, bgVidWrap];
-    let lastY = 0, ticking = false;
-    function onScroll() {
-      const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
-      header.classList.toggle('solid', y > 40);
-      header.classList.toggle('hide', y > lastY && y > 300);
-      lastY = y;
-      const s = (1.04 + (max > 0 ? y / max : 0) * .12).toFixed(4);
-      zoomEls.forEach(l => l.style.setProperty('--bz', s));
-      ticking = false;
-    }
-    addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
-    onScroll();
+      /* Filtering */
+      let curFilter = 'all';
+      const fType = $('#fType');
+      fType.addEventListener('click', e => {
+        const btn = e.target.closest('.chip');
+        if (!btn) return;
+        curFilter = btn.dataset.val;
+        fType.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === btn));
 
-    const mm = document.getElementById('mobileMenu'), mb = document.getElementById('menuBtn');
-    mb.addEventListener('click', () => {
-      const open = mm.classList.toggle('hidden') === false;
-      mm.classList.toggle('flex', open);
-      mb.textContent = open ? 'close' : 'menu';
-    });
-    mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      mm.classList.add('hidden'); mm.classList.remove('flex'); mb.textContent = 'menu';
-    }));
+        let visibleCount = 0;
+        $$('.masonry-item').forEach(item => {
+          const match = curFilter === 'all' || item.dataset.sub === curFilter;
+          item.classList.toggle('dim', !match);
+          if (match) visibleCount++;
+        });
+        $('#empty').style.display = visibleCount === 0 ? 'block' : 'none';
+      });
+
+      /* Detail Modal / Panel */
+      const panel = $('#panel'), overlay = $('#overlay');
+      let curId = 1, lastFocus = null;
+
+      function openPanel(id) {
+        const a = ART.find(x => x.id === id);
+        if (!a) return;
+        curId = id;
+        lastFocus = document.activeElement;
+
+        const isVid = a.k === 'video';
+        const mediaHtml = isVid
+          ? `<video src="${a.src}" autoplay loop controls playsinline></video>`
+          : `<img src="${a.src}" alt="${a.title}">`;
+
+        panel.innerHTML = `
+          <div class="panel-inner">
+            <div class="panel-media">
+              ${mediaHtml}
+            </div>
+            <div class="panel-content">
+              <button class="panel-close" id="closeBtn" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+              <div>
+                <p class="panel-tag">${a.sub} · ${a.year}</p>
+                <h3 class="panel-title">${a.title}</h3>
+                <p class="panel-desc">${a.desc}</p>
+              </div>
+              <div class="panel-footer-actions">
+                <div style="display:flex;gap:8px;">
+                  <button class="panel-nav-btn" id="prevBtn" aria-label="Previous"><span class="material-symbols-outlined">chevron_left</span></button>
+                  <button class="panel-nav-btn" id="nextBtn" aria-label="Next"><span class="material-symbols-outlined">chevron_right</span></button>
+                </div>
+                <a href="${a.src}" target="_blank" rel="noopener noreferrer" class="btn-all"><span>View Original</span><b>→</b></a>
+              </div>
+            </div>
+          </div>`;
+
+        panel.setAttribute('aria-hidden', 'false');
+        overlay.classList.add('open');
+        panel.classList.add('open');
+        document.body.classList.add('lock');
+        panel.scrollTop = 0;
+
+        $('#closeBtn').addEventListener('click', closePanel);
+        $('#prevBtn').addEventListener('click', () => navigate(-1));
+        $('#nextBtn').addEventListener('click', () => navigate(1));
+        $('#closeBtn').focus({ preventScroll: true });
+      }
+
+      function navigate(dir) {
+        const idx = ART.findIndex(x => x.id === curId);
+        const nextIdx = (idx + dir + ART.length) % ART.length;
+        openPanel(ART[nextIdx].id);
+      }
+
+      function closePanel() {
+        panel.classList.remove('open');
+        overlay.classList.remove('open');
+        panel.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('lock');
+        setTimeout(() => { panel.innerHTML = ''; }, 400);
+        lastFocus?.focus({ preventScroll: true });
+      }
+
+      overlay.addEventListener('click', closePanel);
+      addEventListener('keydown', e => {
+        if (!panel.classList.contains('open')) return;
+        if (e.key === 'Escape') closePanel();
+        else if (e.key === 'ArrowLeft') navigate(-1);
+        else if (e.key === 'ArrowRight') navigate(1);
+      });
+
+      /* Item clicks */
+      $$('.masonry-item').forEach(item => {
+        item.addEventListener('click', () => openPanel(+item.dataset.id));
+        item.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openPanel(+item.dataset.id);
+          }
+        });
+      });
+
+      /* Scroll progress indicator */
+      const sprog = $('#sprog');
+      function loop() {
+        cx = lerp(cx, mx, .18);
+        cy = lerp(cy, my, .18);
+        if (cur) cur.style.transform = `translate(${cx}px,${cy}px)`;
+
+        const y = scrollY;
+        const max = document.documentElement.scrollHeight - innerHeight;
+        if (sprog) sprog.style.height = (max > 0 ? (y / max) * 100 : 0) + '%';
+
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
   </script>
 </body>
 
