@@ -198,10 +198,15 @@
       }
     }
 
-    /* Section background zoom (scroll-linked) */
     .bg {
-      scale: var(--sc, 1.06);
-      will-change: scale;
+      position: absolute;
+      top: -20%;
+      left: 0;
+      width: 100%;
+      height: 140%;
+      object-fit: cover;
+      transform: translateY(var(--ty, 0px)) scale(var(--sc, 1.1));
+      will-change: transform;
     }
 
     .chip {
@@ -516,7 +521,7 @@
           <span class="material-symbols-outlined text-accent text-3xl flex-shrink-0">blur_on</span>
           <div class="space-y-1">
             <h3 class="text-sm font-semibold text-white">Graphics Programming</h3>
-            <p class="text-xs text-white/60 leading-relaxed">Lighting pipelines, HLSL shaders, SSGI, and optimization.
+            <p class="text-xs text-white/60 leading-relaxed">Lighting pipelines, HLSL shaders, and optimization.
             </p>
           </div>
         </div>
@@ -614,7 +619,8 @@
     <div class="absolute inset-0 screentone pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/20 pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
-    <div class="relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center">
+    <div
+      class="content-layer relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center will-change-transform">
       <div class="hidden md:block col-span-1"><span
           class="vertical text-[10px] uppercase text-white/45 border-t border-white/25 pt-4 inline-block">Works
           01</span></div>
@@ -653,7 +659,8 @@
     <div class="absolute inset-0 screentone pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/20 pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
-    <div class="relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center">
+    <div
+      class="content-layer relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center will-change-transform">
       <div class="hidden md:block col-span-1"><span
           class="vertical text-[10px] uppercase text-white/45 border-t border-white/25 pt-4 inline-block">Works
           02</span></div>
@@ -666,7 +673,7 @@
             class="chip px-4 py-1.5">Mobile</span>
         </div>
         <p class="text-sm leading-8 text-white/70 font-light">Porting existing titles to console platforms (Switch,
-          PS4/PS5, Xbox) with strict TRC certification compliance and target frame-rates.</p>
+          PS4/PS5, Xbox) with TRC certification compliance and target frame-rates.</p>
         <ul class="mt-6 space-y-3 text-sm text-white/65">
           <li class="flex gap-2"><span
               class="material-symbols-outlined text-accent text-base">chevron_right</span>Platform SDK integration</li>
@@ -690,7 +697,8 @@
     <div class="absolute inset-0 screentone pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/20 pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
-    <div class="relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center">
+    <div
+      class="content-layer relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center will-change-transform">
       <div class="hidden md:block col-span-1"><span
           class="vertical text-[10px] uppercase text-white/45 border-t border-white/25 pt-4 inline-block">Works
           03</span></div>
@@ -727,7 +735,8 @@
     <div class="absolute inset-0 screentone pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/20 pointer-events-none"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
-    <div class="relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center">
+    <div
+      class="content-layer relative w-full grid md:grid-cols-12 gap-10 max-w-7xl mx-auto items-center will-change-transform">
       <div class="hidden md:block col-span-1"><span
           class="vertical text-[10px] uppercase text-white/45 border-t border-white/25 pt-4 inline-block">Works
           04</span></div>
@@ -801,6 +810,7 @@
     const header = document.getElementById('header');
     const bar = document.getElementById('progress');
     const bgs = $('.bg');
+    const contentLayers = $('.content-layer');
     let lastY = 0, ticking = false;
     function onScroll() {
       const y = window.scrollY;
@@ -813,11 +823,22 @@
       heroSlideshow.style.filter = `blur(${(p * 16).toFixed(1)}px)`;
       heroSlideshow.style.scale = 1 + p * .08;
       heroDim.style.opacity = (p * .55).toFixed(2);
-      if (!reduced) bgs.forEach(b => {
-        const r = b.parentElement.getBoundingClientRect();
-        const t = Math.min(Math.max((innerHeight - r.top) / (innerHeight + r.height), 0), 1);
-        b.style.setProperty('--sc', (1.04 + t * .12).toFixed(4));
-      });
+      if (!reduced) {
+        bgs.forEach(b => {
+          const r = b.parentElement.getBoundingClientRect();
+          const t = Math.min(Math.max((innerHeight - r.top) / (innerHeight + r.height), 0), 1);
+          const progress = t - 0.5;
+          const translateY = progress * 200;
+          const scale = 1.15 + t * 0.22;
+          b.style.setProperty('--ty', `${translateY.toFixed(1)}px`);
+          b.style.setProperty('--sc', scale.toFixed(3));
+        });
+        contentLayers.forEach(el => {
+          const r = el.parentElement.getBoundingClientRect();
+          const t = Math.min(Math.max((innerHeight - r.top) / (innerHeight + r.height), 0), 1) - 0.5;
+          el.style.transform = `translateY(${(-t * 60).toFixed(1)}px)`;
+        });
+      }
       ticking = false;
     }
     addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
