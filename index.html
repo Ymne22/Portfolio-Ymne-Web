@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Jost:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Jost:wght@300;400;500;600;700&family=Archivo:wdth,wght@62..125,500..900&display=swap"
     rel="stylesheet">
   <style>
     :root {
@@ -130,6 +130,42 @@
       .cur-dot {
         display: none
       }
+    }
+
+    .hv-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      mix-blend-mode: multiply;
+      clip-path: inset(0 100% 100% 0)
+    }
+
+    .hv,
+    .hv-ov {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%
+    }
+
+    .hv {
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.2) brightness(1.15)
+    }
+
+    .hv-ov {
+      background-image: radial-gradient(rgba(var(--rgb), .04) 1px, transparent 1.2px);
+      background-size: 4px 4px
+    }
+
+    :root[data-theme="dark"] .hv-wrap {
+      mix-blend-mode: screen
+    }
+
+    :root[data-theme="dark"] .hv {
+      filter: grayscale(1) invert(1) contrast(1.3)
     }
 
     .loader {
@@ -415,7 +451,7 @@
     }
 
     body.ready .sheet {
-      opacity: .5
+      opacity: .75
     }
 
     .sheet-top {
@@ -446,7 +482,7 @@
       transform: translate(-50%, -50%);
       width: 12px;
       height: 12px;
-      border: 1.5px solid var(--ink);
+      border: 2.5px solid var(--ink);
       border-radius: 50%
     }
 
@@ -456,7 +492,7 @@
       transform: translateY(-50%);
       width: clamp(38px, 4.5vw, 64px);
       height: 11px;
-      border: 1.5px solid var(--ink);
+      border: 2.5px solid var(--ink);
       border-radius: 99px
     }
 
@@ -471,7 +507,7 @@
     .frame {
       position: relative;
       flex: 1;
-      border: 1px dotted var(--ink);
+      border: 2px dotted var(--ink);
       overflow: hidden
     }
 
@@ -481,12 +517,12 @@
 
     .f-std {
       inset: clamp(14px, 2.2vw, 36px);
-      border: 1px solid var(--ink)
+      border: 2px solid var(--ink)
     }
 
     .f-safe {
       inset: clamp(30px, 4.4vw, 72px);
-      border: 1px dashed var(--ink)
+      border: 2px dashed var(--ink)
     }
 
     .tag {
@@ -509,9 +545,10 @@
     .logo {
       position: relative;
       z-index: 2;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Archivo', 'Arial Narrow', sans-serif;
+      font-stretch: 72%;
       font-weight: 800;
-      font-size: clamp(42px, 8.5vw, 120px);
+      font-size: clamp(52px, 10.5vw, 150px);
       line-height: .95;
       display: flex;
       letter-spacing: .02em;
@@ -527,11 +564,9 @@
 
     .logo .ch span {
       display: inline-block;
-      color: #fff;
-      -webkit-text-stroke: 1px var(--ink);
-      paint-order: stroke fill;
+      color: var(--ink);
       transform: translateY(115%) rotate(12deg);
-      transition: transform 1.2s var(--out), color .5s, -webkit-text-stroke-color .5s
+      transition: transform 1.2s var(--out), color .5s
     }
 
     .logo .ch:nth-child(1) span {
@@ -576,6 +611,7 @@
       position: relative;
       z-index: 2;
       margin-top: 18px;
+      font-weight: 400;
       font-size: clamp(10px, 1.1vw, 14px);
       letter-spacing: .6em;
       padding-left: .6em;
@@ -588,6 +624,75 @@
     body.ready .sub {
       opacity: 1;
       transform: none
+    }
+
+    .sub .nm {
+      display: block;
+      margin-bottom: .9em;
+      font-size: 2.1em;
+      font-weight: 700;
+      letter-spacing: .6em
+    }
+
+    .sub span {
+      display: block
+    }
+
+    body.vid .sub {
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: opacity 1.2s var(--out), transform 1.2s var(--out)
+    }
+
+    .cue {
+      position: absolute;
+      left: 50%;
+      bottom: calc(clamp(16px, 3.2vw, 48px) + clamp(30px, 4.4vw, 72px) + 8px);
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .4em;
+      padding-left: .4em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 1s 2.4s var(--out)
+    }
+
+    body.ready .cue {
+      opacity: 1
+    }
+
+    .cue i {
+      position: relative;
+      display: block;
+      width: 1px;
+      height: 56px;
+      overflow: hidden;
+      background: rgba(var(--rgb), .25)
+    }
+
+    .cue i::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      animation: cue 1.9s var(--ease) infinite
+    }
+
+    @keyframes cue {
+      0% {
+        transform: translateY(-100%)
+      }
+
+      70%,
+      100% {
+        transform: translateY(100%)
+      }
     }
 
     section.s {
@@ -658,7 +763,8 @@
     }
 
     .co-head h2 {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Archivo', 'Arial Narrow', sans-serif;
+      font-stretch: 72%;
       font-size: clamp(18px, 1.8vw, 24px);
       font-weight: 800;
       letter-spacing: .02em
@@ -709,7 +815,8 @@
     }
 
     .co-who strong {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Archivo', 'Arial Narrow', sans-serif;
+      font-stretch: 72%;
       font-size: clamp(22px, 2.2vw, 28px);
       font-weight: 800;
       letter-spacing: .02em;
@@ -996,6 +1103,10 @@
 </head>
 
 <body>
+  <div class="hv-wrap" id="hvw">
+    <video class="hv" id="hv" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+    <div class="hv-ov"></div>
+  </div>
   <canvas id="grid"></canvas>
   <div class="cur"></div>
   <div class="cur-dot"></div>
@@ -1017,8 +1128,10 @@
     <button class="hbtn" id="burger" aria-label="Menu"><span class="burger"><i></i><i></i></span></button>
   </header>
   <div class="menu" id="menu">
-    <a href="index.html"><em>01</em><b>MAIN</b></a><a href="game-works.html"><em>02</em><b>GAMEWORKS</b></a><a
-      href="shader-works.html"><em>03</em><b>SHADER WORKS</b></a><a href="artworks.html"><em>04</em><b>ARTWORKS</b></a>
+    <a href="index.html"><em>01</em><b>MAIN</b></a>
+    <a href="game-works.html"><em>02</em><b>GAMEWORKS</b></a>
+    <a href="shader-works.html"><em>03</em><b>SHADER WORKS</b></a>
+    <a href="artworks.html"><em>04</em><b>ARTWORKS</b></a>
   </div>
   <div class="side l"><span id="cI">01</span> <span>/</span> <span id="tI">07</span></div>
   <div class="side r">Scroll Down <div class="prog"><i id="sprog"></i></div>
@@ -1038,8 +1151,8 @@
         <span class="tag b">STD. FRAME / SAFE AREA</span>
       </div>
     </div>
-    <h1 class="logo" id="logo" aria-label="YMNE"></h1>
-    <p class="sub">Game Development, Art &amp; Animation</p>
+    <h1 class="sub"><b class="nm">YMNE</b><span>Game Development, Art &amp; Animation</span></h1>
+    <div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>
   </section>
 
   <section class="s" id="profile" data-sec>
@@ -1059,6 +1172,10 @@
         </div>
         <dl class="co-list">
           <div class="co-row">
+            <dt>Name</dt>
+            <dd>YMNE</dd>
+          </div>
+          <div class="co-row">
             <dt>Representative</dt>
             <dd>Myko [美優ミーコ]</dd>
           </div>
@@ -1067,8 +1184,8 @@
             <dd>
               <ul>
                 <li>Game development</li>
-                <li>Game porting</li>
-                <li>Graphics programming</li>
+                <li>Graphics programming &amp; shader authoring</li>
+                <li>Console porting &amp; certification</li>
                 <li>Art &amp; animation production</li>
               </ul>
             </dd>
@@ -1115,7 +1232,7 @@
       const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches, lerp = (a, b, t) => a + (b - a) * t, clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 
       const logo = $('#logo');
-      'YMNE'.split('').forEach(c => { const d = document.createElement('span'); d.className = 'ch'; d.innerHTML = `<span>${c}</span>`; logo.appendChild(d) });
+      if (logo) 'YMNE'.split('').forEach(c => { const d = document.createElement('span'); d.className = 'ch'; d.innerHTML = `<span>${c}</span>`; logo.appendChild(d) });
 
       const W = [
         ['GAME DEVELOPMENT', ['Gameplay', 'Systems', 'Art', 'Game Programming', 'VR'], 'Game development, from mechanics and gameplay systems to shader authoring, pipeline tools, concept art, bug fixes, and release builds.', ['Gameplay & systems programming (Unity, Unreal, Godot)', 'Visual concept, direction, shading & rendering', 'Tools programming (Unity, Unreal, Godot, and many more)'], 'game-works.html'],
@@ -1180,11 +1297,11 @@
       const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); dw = innerWidth; dh = innerHeight; cv.width = dw * dpr; cv.height = dh * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0) };
       size(); addEventListener('resize', size);
       const S = 80, TICK = 8;
-      const INTRO_DELAY = 1200, INTRO_DUR = 3600;
+      const INTRO_DELAY = 200, INTRO_DUR = 3600;
       const A_LINE = .13, A_TICK = .28, A_GLOW = .34;
       const mod = (v, m) => ((v % m) + m) % m;
       const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-      function drawGrid(y) {
+      function drawGrid(y, hr, ha) {
         ctx.clearRect(0, 0, dw, dh);
         const iv = reduce ? 1 : clamp(introT, 0, 1), e = easeIO(iv);
         if (e <= 0) return;
@@ -1212,9 +1329,40 @@
         for (let x = S; x < dw; x += S) { const px = Math.round(x) + .5; ctx.moveTo(px, 0); ctx.lineTo(px, TICK); ctx.moveTo(px, dh - TICK); ctx.lineTo(px, dh) }
         for (let yy = oy; yy <= dh + S; yy += S) { const py = Math.round(yy) + .5; ctx.moveTo(0, py); ctx.lineTo(TICK, py); ctx.moveTo(dw - TICK, py); ctx.lineTo(dw, py) }
         ctx.stroke();
+        if (hr && ha > .001) { ctx.save(); ctx.globalCompositeOperation = 'destination-out'; ctx.globalAlpha = ha; ctx.fillRect(hr.left, hr.top, hr.width, hr.height); ctx.restore() }
       }
 
-      const sprog = $('#sprog'), prof = $('#profile'); let sy = scrollY, lastT = 0, introClock = 0;
+      const sprog = $('#sprog'), prof = $('#profile'), hero = $('#top'), hv = $('#hv');
+      const lowData = navigator.connection && navigator.connection.saveData;
+      if (lowData || reduce) hv.removeAttribute('autoplay');
+      const hvw = $('#hvw'), frm = $('#frame');
+      if (lowData) hvw.remove();
+      let hvA = 0;
+      const reels = [
+        { src: 'Assets/Video/Art/Gura1.webm', zoom: 1.25, pos: '50% 50%' },
+        { src: 'Assets/Video/Art/Myth.webm', zoom: 1.0, pos: '50% 50%' },
+        { src: 'Assets/Video/Art/Chenso.webm', zoom: 1.25, pos: '50% 50%' }
+      ];
+      let ri = 0, bad = 0;
+      const apply = i => {
+        const r = reels[i], pos = r.pos || '50% 50%';
+        hv.src = r.src; hv.style.objectPosition = pos; hv.style.transformOrigin = pos; hv.style.transform = `scale(${r.zoom || 1})`;
+      };
+      const warm = i => { const v = document.createElement('video'); v.preload = 'auto'; v.muted = true; v.src = reels[i].src };
+      const next = () => { ri = (ri + 1) % reels.length; apply(ri); hv.play().catch(() => { }); warm((ri + 1) % reels.length) };
+      if (!lowData) {
+        apply(0);
+        if (reels.length === 1) hv.loop = true;
+        else {
+          hv.addEventListener('ended', next);
+          hv.addEventListener('canplay', () => { if (playing) hv.play().catch(() => { }) });
+          hv.addEventListener('loadeddata', () => { bad = 0 });
+          hv.addEventListener('error', () => { if (++bad < reels.length) next() });
+          warm(1);
+        }
+      }
+      const VIDEO_DELAY = 3200;
+      let heroOn = null, readyT = 0, vidGo = false, playing = false; let sy = scrollY, lastT = 0, introClock = 0;
       function loop(t) {
         const dtt = Math.min(t - lastT, 50); lastT = t;
         if (introOn && introT < 1) { introClock += dtt; introT = clamp((introClock - INTRO_DELAY) / INTRO_DUR, 0, 1) }
@@ -1222,7 +1370,19 @@
         sy = lerp(sy, scrollY, .12);
         const max = document.documentElement.scrollHeight - innerHeight; sprog.style.height = (max > 0 ? scrollY / max * 100 : 0) + '%';
         const pr = prof.getBoundingClientRect(); document.body.classList.toggle('on-profile', pr.top < innerHeight * .5 && pr.bottom > innerHeight * .5);
-        drawGrid(sy);
+        const hr = hero.getBoundingClientRect(), atHero = hr.bottom > innerHeight * .35;
+        if (atHero !== heroOn) { heroOn = atHero; document.body.classList.toggle('at-hero', atHero) }
+        if (!readyT && document.body.classList.contains('ready')) readyT = t;
+        vidGo = readyT > 0 && t - readyT > VIDEO_DELAY;
+        if (vidGo && !lowData) document.body.classList.add('vid');
+        const want = atHero && vidGo && !lowData && !reduce;
+        if (want !== playing) { playing = want; if (want) hv.play().catch(() => { }); else hv.pause() }
+        const hvT = vidGo ? clamp(1 - scrollY / (innerHeight * .75), 0, 1) : 0;
+        hvA = lerp(hvA, hvT, .08);
+        const fr = frm.getBoundingClientRect();
+        hvw.style.clipPath = `inset(${Math.max(fr.top, 0)}px ${Math.max(innerWidth - fr.right, 0)}px ${Math.max(innerHeight - fr.bottom, 0)}px ${Math.max(fr.left, 0)}px)`;
+        hvw.style.opacity = (hvA * 1).toFixed(3);
+        drawGrid(sy, fr, hvA);
         if (!reduce) {
           $$('.bg').forEach(b => { const r = b.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; const k = clamp((innerHeight - r.top) / (innerHeight + r.height), 0, 1); b.style.setProperty('--ty', ((k - .5) * 200).toFixed(1) + 'px'); b.style.setProperty('--sc', (1.15 + k * .22).toFixed(3)) });
           $$('.fs .pn').forEach(p => { const r = p.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; const k = clamp((innerHeight - r.top) / (innerHeight + r.height), 0, 1) - .5; p.style.translate = `0 ${(-k * 60).toFixed(1)}px` });
