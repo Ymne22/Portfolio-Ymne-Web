@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Jost:wght@300;400;500;600;700&family=Archivo:wdth,wght@62..125,500..900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Jost:wght@300;400;500;600;700&family=Archivo:wdth,wght@62..125,500..900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
     rel="stylesheet">
   <style>
     :root {
@@ -97,9 +97,11 @@
       left: 0;
       top: 0;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 2147483647;
       border-radius: 50%;
-      mix-blend-mode: difference
+      mix-blend-mode: difference;
+      will-change: transform;
+      isolation: auto
     }
 
     .cur {
@@ -124,6 +126,13 @@
       background: #fff
     }
 
+    .cur.card {
+      width: 64px;
+      height: 64px;
+      margin: -32px 0 0 -32px;
+      background: #fff
+    }
+
     @media(hover:none) {
 
       .cur,
@@ -134,12 +143,15 @@
 
     .hv-wrap {
       position: fixed;
-      inset: 0;
-      z-index: -1;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      z-index: 3;
       pointer-events: none;
       opacity: 0;
-      mix-blend-mode: multiply;
-      clip-path: inset(0 100% 100% 0)
+      overflow: hidden;
+      mix-blend-mode: multiply
     }
 
     .hv,
@@ -153,6 +165,26 @@
     .hv {
       object-fit: cover;
       filter: grayscale(1) contrast(1.2) brightness(1.15)
+    }
+
+    .hv-b {
+      position: absolute;
+      inset: 0;
+      pointer-events: none
+    }
+
+    .hv-b.a {
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      -webkit-mask-image: linear-gradient(to right, #000 0, #000 1.5%, transparent 4%, transparent 96%, #000 98.5%, #000 100%), linear-gradient(to bottom, #000 0, #000 1.5%, transparent 4%, transparent 96%, #000 98.5%, #000 100%);
+      mask-image: linear-gradient(to right, #000 0, #000 1.5%, transparent 4%, transparent 96%, #000 98.5%, #000 100%), linear-gradient(to bottom, #000 0, #000 1.5%, transparent 4%, transparent 96%, #000 98.5%, #000 100%)
+    }
+
+    .hv-b.b {
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
+      -webkit-mask-image: linear-gradient(to right, #000 0, transparent 6%, transparent 94%, #000 100%), linear-gradient(to bottom, #000 0, transparent 6%, transparent 94%, #000 100%);
+      mask-image: linear-gradient(to right, #000 0, transparent 6%, transparent 94%, #000 100%), linear-gradient(to bottom, #000 0, transparent 6%, transparent 94%, #000 100%)
     }
 
     .hv-ov {
@@ -440,9 +472,20 @@
       overflow: hidden
     }
 
+    .hero {
+      --m: clamp(16px, 3.2vw, 48px);
+      --top: clamp(22px, 2.4vw, 30px);
+      --H: max(100svh, 640px);
+      --fw: min(100vw - var(--m) * 2, (var(--H) - var(--m) * 2 - var(--top)) * 16 / 9);
+      --fh: calc(var(--fw) * 9 / 16)
+    }
+
     .sheet {
       position: absolute;
-      inset: clamp(16px, 3.2vw, 48px);
+      left: 50%;
+      top: 50%;
+      width: var(--fw);
+      transform: translate(-50%, -50%);
       z-index: 1;
       display: flex;
       flex-direction: column;
@@ -459,8 +502,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 4px 10px;
-      font-size: clamp(9px, .95vw, 12px);
+      height: var(--top);
+      padding: 0 4px;
+      white-space: nowrap;
+      font-size: clamp(8px, .95vw, 12px);
       font-weight: 600;
       letter-spacing: .08em;
       font-variant-numeric: tabular-nums
@@ -506,7 +551,8 @@
 
     .frame {
       position: relative;
-      flex: 1;
+      width: 100%;
+      aspect-ratio: 16 / 9;
       border: 2px dotted var(--ink);
       overflow: hidden
     }
@@ -516,12 +562,12 @@
     }
 
     .f-std {
-      inset: clamp(14px, 2.2vw, 36px);
+      inset: 3.5%;
       border: 2px solid var(--ink)
     }
 
     .f-safe {
-      inset: clamp(30px, 4.4vw, 72px);
+      inset: 7%;
       border: 2px dashed var(--ink)
     }
 
@@ -539,7 +585,7 @@
 
     .tag.b {
       bottom: 6px;
-      left: clamp(16px, 2.4vw, 40px)
+      left: 4%
     }
 
     .logo {
@@ -638,16 +684,10 @@
       display: block
     }
 
-    body.vid .sub {
-      opacity: 0;
-      transform: translateY(-12px);
-      transition: opacity 1.2s var(--out), transform 1.2s var(--out)
-    }
-
     .cue {
       position: absolute;
       left: 50%;
-      bottom: calc(clamp(16px, 3.2vw, 48px) + clamp(30px, 4.4vw, 72px) + 8px);
+      bottom: calc((var(--H) - var(--top) - var(--fh)) / 2 + var(--fh) * .07 + 8px);
       transform: translateX(-50%);
       z-index: 2;
       display: flex;
@@ -913,6 +953,7 @@
     .fs {
       position: relative;
       z-index: 2;
+      isolation: auto;
       height: 100svh;
       display: flex;
       align-items: center;
@@ -1036,7 +1077,6 @@
       height: 140%;
       object-fit: cover;
       transform: translateY(var(--ty, 0px)) scale(var(--sc, 1.1));
-      will-change: transform;
       z-index: 0;
       pointer-events: none;
       opacity: .35
@@ -1090,6 +1130,146 @@
       scrollbar-color: var(--ink) transparent
     }
 
+    @media(max-width:700px) {
+      .hero {
+        --m: 14px;
+        --top: 20px
+      }
+
+      .sheet-top .tm,
+      .pegs .slot {
+        display: none
+      }
+
+      .sheet-top {
+        font-size: 8px;
+        letter-spacing: .04em
+      }
+
+      .pegs .hole {
+        width: 9px;
+        height: 9px;
+        border-width: 2px
+      }
+
+      .frame {
+        border-width: 1.5px
+      }
+
+      .f-std,
+      .f-safe {
+        border-width: 1.5px
+      }
+
+      .tag {
+        font-size: 7px
+      }
+
+      .tag.a {
+        top: 3px;
+        right: 5px
+      }
+
+      .tag.b {
+        bottom: 3px
+      }
+
+      .sub {
+        font-size: 8px;
+        letter-spacing: .3em;
+        padding-left: .3em;
+        margin-top: 0;
+        width: calc(var(--fw) * .8)
+      }
+
+      .sub .nm {
+        font-size: 2.4em;
+        letter-spacing: .4em;
+        margin-bottom: .6em
+      }
+
+      .cue {
+        bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+        gap: 8px
+      }
+
+      .cue i {
+        height: 38px
+      }
+    }
+
+    /*  language switch */
+    .hbtn.lang {
+      width: auto;
+      min-width: 42px;
+      padding: 0 14px;
+      font-size: 11px;
+      letter-spacing: .08em
+    }
+
+    .hbtn.lang b {
+      font-weight: 600;
+      opacity: .4;
+      transition: opacity .3s
+    }
+
+    .hbtn.lang b.on {
+      opacity: 1
+    }
+
+    .hbtn.lang i {
+      font-style: normal;
+      opacity: .4;
+      margin: 0 1px
+    }
+
+    html[lang="ja"] body,
+    html[lang="ja"] .co-lead,
+    html[lang="ja"] .pn p,
+    html[lang="ja"] .pn li,
+    html[lang="ja"] .chip,
+    html[lang="ja"] .btn-all,
+    html[lang="ja"] .co-row dt,
+    html[lang="ja"] .co-row dd,
+    html[lang="ja"] .co-who span,
+    html[lang="ja"] .sub {
+      font-family: 'Jost', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif
+    }
+
+    html[lang="ja"] .pn h3,
+    html[lang="ja"] .menu a {
+      font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif
+    }
+
+    html[lang="ja"] .pn h3 {
+      font-weight: 900;
+      letter-spacing: .02em
+    }
+
+    html[lang="ja"] .menu a b {
+      font-weight: 700
+    }
+
+    html[lang="ja"] .co-head h2 {
+      font-family: 'Archivo', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      font-stretch: 100%
+    }
+
+    html[lang="ja"] .pn p,
+    html[lang="ja"] .co-lead {
+      line-height: 2.1;
+      letter-spacing: .04em
+    }
+
+    html[lang="ja"] .sub {
+      letter-spacing: .3em
+    }
+
+    html[lang="ja"] .pn h3 {
+      font-size: clamp(26px, 3.4vw, 48px);
+      line-height: 1.25
+    }
+
     @media(prefers-reduced-motion:reduce) {
       * {
         animation: none !important;
@@ -1105,6 +1285,8 @@
 <body>
   <div class="hv-wrap" id="hvw">
     <video class="hv" id="hv" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+    <div class="hv-b b"></div>
+    <div class="hv-b a"></div>
     <div class="hv-ov"></div>
   </div>
   <canvas id="grid"></canvas>
@@ -1125,16 +1307,19 @@
         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
       </svg>
     </button>
+    <button class="hbtn lang" id="lang" aria-label="Language / 言語"><b class="on" data-l="en">EN</b><i>/</i><b
+        data-l="ja">日本語</b></button>
     <button class="hbtn" id="burger" aria-label="Menu"><span class="burger"><i></i><i></i></span></button>
   </header>
   <div class="menu" id="menu">
-    <a href="index.html"><em>01</em><b>MAIN</b></a>
-    <a href="game-works.html"><em>02</em><b>GAMEWORKS</b></a>
-    <a href="shader-works.html"><em>03</em><b>SHADER WORKS</b></a>
-    <a href="artworks.html"><em>04</em><b>ARTWORKS</b></a>
+    <a href="index.html"><em>01</em><b class="lt" data-t="mMain">MAIN</b></a>
+    <a href="game-works.html"><em>02</em><b class="lt" data-t="mGame">GAMEWORKS</b></a>
+    <a href="shader-works.html"><em>03</em><b class="lt" data-t="mShader">SHADERWORKS</b></a>
+    <a href="artworks.html"><em>04</em><b class="lt" data-t="mArt">ARTWORKS</b></a>
   </div>
   <div class="side l"><span id="cI">01</span> <span>/</span> <span id="tI">07</span></div>
-  <div class="side r">Scroll Down <div class="prog"><i id="sprog"></i></div>
+  <div class="side r"><span class="lt" data-t="scrollDown">Scroll Down</span>
+    <div class="prog"><i id="sprog"></i></div>
   </div>
 
   <section class="hero" id="top" data-sec>
@@ -1142,7 +1327,7 @@
       <div class="sheet-top">
         <span>TITLE. YMNE</span>
         <div class="pegs"><span class="slot l"></span><span class="hole"></span><span class="slot r"></span></div>
-        <span>NO. 077 &nbsp; S. 04 &nbsp; C. 05 &nbsp; TIME ( 3+05 )</span>
+        <span>NO. 000 &nbsp; S. 00 &nbsp; C. 00<span class="tm"> &nbsp; TIME ( 0+00 )</span></span>
       </div>
       <div class="frame" id="frame">
         <span class="tag a">100%</span>
@@ -1151,59 +1336,62 @@
         <span class="tag b">STD. FRAME / SAFE AREA</span>
       </div>
     </div>
-    <h1 class="sub"><b class="nm">YMNE</b><span>Game Development, Art &amp; Animation</span></h1>
-    <div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>
+    <h1 class="sub"><b class="nm">YMNE</b><span class="lt" data-t="heroSub">Game Development, Art &amp; Animation</span>
+    </h1>
+    <div class="cue" aria-hidden="true"><span class="lt" data-t="scroll">Scroll</span><i></i></div>
   </section>
 
   <section class="s" id="profile" data-sec>
     <div class="co rv">
       <div class="co-head">
-        <h2>Profile</h2>
+        <h2 class="lt" data-t="profile">Profile</h2>
       </div>
       <div class="co-main">
         <div class="co-intro">
           <div class="co-id">
             <div class="co-av"><img src="https://avatars.githubusercontent.com/u/126408995?v=4" alt="Avatar"></div>
-            <div class="co-who"><strong>YMNE</strong><span>Game Developer, Graphics Programmer &amp; Artist</span></div>
+            <div class="co-who"><strong>YMNE</strong><span class="lt" data-t="role">Game Developer, Graphics Programmer
+                &amp; Artist</span></div>
           </div>
-          <p class="co-lead">I’m a person who enjoys making things, mostly art creation, animation, and whatever
+          <p class="co-lead lt" data-t="lead">I’m a person who enjoys making things, mostly art creation, animation, and
+            whatever
             interesting idea happens to come to mind. My work often sits somewhere between game development, graphics
             programming, and art creation, where I get to work with both the creative and technical sides of things.</p>
         </div>
         <dl class="co-list">
           <div class="co-row">
-            <dt>Name</dt>
+            <dt class="lt" data-t="penName">Pen Name</dt>
             <dd>YMNE</dd>
           </div>
           <div class="co-row">
-            <dt>Representative</dt>
+            <dt class="lt" data-t="name">Name</dt>
             <dd>Myko [美優ミーコ]</dd>
           </div>
           <div class="co-row">
-            <dt>Business</dt>
+            <dt class="lt" data-t="skills">Field</dt>
             <dd>
               <ul>
-                <li>Game development</li>
-                <li>Graphics programming &amp; shader authoring</li>
-                <li>Console porting &amp; certification</li>
-                <li>Art &amp; animation production</li>
+                <li class="lt" data-t="sk1">Game Development</li>
+                <li class="lt" data-t="sk2">Graphics Programming &amp; Technical Art</li>
+                <li class="lt" data-t="sk3">Console Porting &amp; Certification</li>
+                <li class="lt" data-t="sk4">Art Creation &amp; Animation production</li>
               </ul>
             </dd>
           </div>
           <div class="co-row">
-            <dt>Engines</dt>
-            <dd>Unreal Engine, Unity Engine, Godot Engine</dd>
+            <dt class="lt" data-t="engines">Engines</dt>
+            <dd class="lt" data-t="engV">Unreal Engine, Unity Engine, Godot Engine</dd>
           </div>
           <div class="co-row">
-            <dt>Tools</dt>
+            <dt class="lt" data-t="tools">Tools</dt>
             <dd>Blender, Adobe CC, Clip Studio Paint, Houdini</dd>
           </div>
           <div class="co-row">
-            <dt>Platforms</dt>
-            <dd>Switch, PlayStation, Xbox, Steam (PC), Mobile, VR</dd>
+            <dt class="lt" data-t="platforms">Platforms</dt>
+            <dd class="lt" data-t="platV">Switch, PlayStation, Xbox, Steam (PC), Mobile, VR</dd>
           </div>
           <div class="co-row">
-            <dt>Contact</dt>
+            <dt class="lt" data-t="contact">Contact</dt>
             <dd>
               <a class="ln" href="mailto:ymneshaa22@gmail.com">ymneshaa22@gmail.com</a>
               <a class="ln" href="https://github.com/Ymne22" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
@@ -1221,29 +1409,80 @@
   <section class="fs" id="art" data-sec data-i="3" data-img="Assets/Images/Art/Awawa2.jpg"></section>
 
   <footer>
-    <div><small>© 2026 YMNE. All rights reserved. All trademarks, logos, and brand names are the property of their
+    <div><small class="lt" data-t="legal">© 2026 YMNE. All rights reserved. All trademarks, logos, and brand names are
+        the property of their
         respective owners. Use of these marks does not imply endorsement or affiliation.</small></div>
-    <a href="#top">Back to top ↑</a>
+    <a href="#top" class="lt" data-t="top">Back to top ↑</a>
   </footer>
 
   <script>
     (() => {
       const $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
       const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches, lerp = (a, b, t) => a + (b - a) * t, clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+      const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
       const logo = $('#logo');
       if (logo) 'YMNE'.split('').forEach(c => { const d = document.createElement('span'); d.className = 'ch'; d.innerHTML = `<span>${c}</span>`; logo.appendChild(d) });
 
       const W = [
-        ['GAME DEVELOPMENT', ['Gameplay', 'Systems', 'Art', 'Game Programming', 'VR'], 'Game development, from mechanics and gameplay systems to shader authoring, pipeline tools, concept art, bug fixes, and release builds.', ['Gameplay & systems programming (Unity, Unreal, Godot)', 'Visual concept, direction, shading & rendering', 'Tools programming (Unity, Unreal, Godot, and many more)'], 'game-works.html'],
+        ['GAME DEVELOPMENT & CO-DEV', ['Gameplay', 'Systems', 'Art', 'Game Programming', 'VR'], 'Game development, from mechanics and gameplay systems to shader authoring, pipeline tools, concept art, bug fixes, and release builds.', ['Gameplay & systems programming (Unity, Unreal, Godot)', 'Visual concept, direction, shading & rendering', 'Tools programming (Unity, Unreal, Godot, and many more)'], 'game-works.html'],
         ['GAME PORTING', ['Switch', 'PlayStation', 'Xbox', 'PC / Steam', 'Mobile'], 'Porting existing titles to console platforms (Switch, PS4/PS5, Xbox) with TRC certification compliance and target frame-rates.', ['Platform SDK integration', 'Target platform optimization & profiling', 'Lotcheck, TRC certification delivery'], 'game-works.html'],
         ['GRAPHICS & SHADERS', ['HLSL / GLSL', 'Lighting', 'Post-Processing'], 'Designing, modifying, and optimizing custom shaders to meet specific client requirements. Focus on rendering pipelines, lighting models, shading techniques, and mathematical computations to achieve the desired visual quality and performance.', ['Custom render pipeline', 'SSGI, SSR, SSAO & volumetric rendering stacks', 'Open-source tools & editor utilities'], 'shader-works.html'],
         ['ARTWORKS', ['2D', 'Concept Art', 'Animation'], 'Visual assets for games and illustration works, including character sprites, concept designs, keyframes, and 2D frame animation.', ['Character sprites & visual designs', 'Concept illustration & background work', '2D animation cuts & layouts'], 'artworks.html']];
       const esc = s => s.replace(/&/g, '&amp;');
-      $$('.fs').forEach(el => {
-        const i = +el.dataset.i, w = W[i];
-        el.innerHTML = `<img class="bg" src="${el.dataset.img}" alt="${esc(w[0])}"><div class="ov"></div><div class="pn rv"><div class="no">WORKS 0${i + 1}</div><h3>${esc(w[0])}</h3><div class="chips">${w[1].map(c => `<span class="chip">${c}</span>`).join('')}</div><p>${w[2]}</p><ul>${w[3].map(l => `<li>${esc(l)}</li>`).join('')}</ul><a class="btn-all" href="${w[4]}"><span>See works</span><b>→</b></a></div>`
-      });
+      const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('in', e.isIntersecting)), { threshold: .1 });
+
+      const JA = {
+        title: 'YMNE — ゲームデベロッパー、グラフィックスプログラマー＆アーティスト',
+        heroSub: 'ゲーム開発・アート・アニメーション', scroll: 'スクロール', scrollDown: 'スクロール',
+        profile: 'プロフィール', role: 'ゲームデベロッパー／グラフィックスプログラマー／アーティスト',
+        lead: '何かを作ることが好きで、主にアート制作やアニメーション、ふと思いついた面白いアイデアを形にしています。ゲーム開発、グラフィックスプログラミング、アート制作の間を行き来しながら、クリエイティブと技術の両面に携わっています。',
+        penName: 'ペンネーム', name: '名前', skills: '職種', engines: 'エンジン', tools: 'ツール', platforms: 'プラットフォーム', contact: '連絡先',
+        sk1: 'ゲーム開発', sk2: 'グラフィックスプログラミング＆テクニカルアート', sk3: 'コンソール移植＆認証対応', sk4: 'アート制作＆アニメーション制作',
+        engV: 'Unreal Engine、Unity、Godot Engine', platV: 'Switch、PlayStation、Xbox、Steam（PC）、モバイル、VR',
+        mMain: 'ホーム', mGame: 'ゲーム制作', mShader: 'シェーダー作品', mArt: 'イラスト',
+        legal: '© 2026 YMNE. All rights reserved. すべての商標、ロゴ、ブランド名は各権利者に帰属します。これらの使用は、推奨や提携を示すものではありません。',
+        top: 'トップへ戻る ↑', see: '作品を見る'
+      };
+      const WJ = [
+        ['ゲーム開発・共同開発', ['ゲームプレイ', 'システム', 'アート', 'ゲームプログラミング', 'VR'], 'メカニクスやゲームプレイシステムの設計から、シェーダー制作、パイプラインツール、コンセプトアート、バグ修正、リリースビルドまで、ゲーム開発を幅広く担当します。', ['ゲームプレイ／システムプログラミング（Unity、Unreal、Godot）', 'ビジュアルコンセプト、ディレクション、シェーディング＆レンダリング', 'ツールプログラミング（Unity、Unreal、Godot ほか多数）']],
+        ['ゲーム移植', ['Switch', 'PlayStation', 'Xbox', 'PC / Steam', 'モバイル'], '既存タイトルをコンソール機（Switch、PS4/PS5、Xbox）へ移植し、TRC認証要件と目標フレームレートを満たします。', ['プラットフォームSDKの統合', '対象機種向けの最適化とプロファイリング', 'Lotcheck・TRC認証の提出対応']],
+        ['グラフィックス＆シェーダー', ['HLSL / GLSL', 'ライティング', 'ポストプロセス'], 'クライアントの要件に合わせて、カスタムシェーダーの設計・改修・最適化を行います。レンダリングパイプライン、ライティングモデル、シェーディング技法、数理計算に注力し、求められる画質とパフォーマンスを実現します。', ['カスタムレンダーパイプライン', 'SSGI・SSR・SSAO・ボリュームレンダリングスタック', 'オープンソースツール＆エディタ拡張']],
+        ['アートワーク', ['2D', 'コンセプトアート', 'アニメーション'], 'キャラクタースプライト、コンセプトデザイン、原画、2Dフレームアニメーションなど、ゲーム用素材とイラスト作品を制作します。', ['キャラクタースプライト＆ビジュアルデザイン', 'コンセプトイラスト＆背景制作', '2Dアニメーションのカット＆レイアウト']]
+      ];
+      const EN = {}; $$('[data-t]').forEach(el => EN[el.dataset.t] = el.innerHTML); EN.title = document.title; EN.see = 'See works';
+      let lang = 'en';
+      const renderFs = () => {
+        $$('.fs').forEach(el => {
+          const i = +el.dataset.i, base = W[i], ja = lang === 'ja', w = ja ? WJ[i] : base;
+          el.innerHTML = `<img class="bg" src="${el.dataset.img}" alt="${esc(base[0])}"><div class="ov"></div><div class="pn rv in"><div class="no">WORKS 0${i + 1}</div><h3>${esc(w[0])}</h3><div class="chips">${w[1].map(c => `<span class="chip">${c}</span>`).join('')}</div><p>${w[2]}</p><ul>${w[3].map(l => `<li>${esc(l)}</li>`).join('')}</ul><a class="btn-all" href="${base[4]}"><span>${ja ? JA.see : EN.see}</span><b>→</b></a></div>`;
+          io.observe($('.pn', el));
+        });
+      };
+
+      const SEL = '.lt, .pn .no, .pn h3, .pn p, .pn li, .chip, .btn-all span';
+      const vis = () => $$(SEL).filter(el => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight * 1.1 });
+      const dl = el => clamp(el.getBoundingClientRect().top, 0, innerHeight) / innerHeight * 220;
+      const fx = (el, from, to, o) => el.animate([from, to], { fill: 'both', easing: 'cubic-bezier(.16,1,.3,1)', ...o });
+      let busy = false;
+      const applyLang = (l, instant) => {
+        const run = () => {
+          lang = l; document.documentElement.lang = l;
+          $$('[data-t]').forEach(el => { const k = el.dataset.t; el.innerHTML = l === 'ja' ? JA[k] : EN[k] });
+          document.title = l === 'ja' ? JA.title : EN.title;
+          $$('#lang b').forEach(b => b.classList.toggle('on', b.dataset.l === l));
+          renderFs();
+        };
+        if (instant || reduce) return run();
+        if (busy) return; busy = true;
+        const out = vis().map(el => fx(el, { opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: 'translateY(-.35em)', filter: 'blur(5px)' }, { duration: 260, delay: dl(el) }));
+        setTimeout(() => {
+          out.forEach(a => a.cancel()); run();
+          vis().forEach(el => fx(el, { opacity: 0, transform: 'translateY(.5em)', filter: 'blur(6px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }, { duration: 800, delay: dl(el) }));
+          setTimeout(() => { busy = false }, 900);
+        }, 520);
+      };
+      renderFs();
 
       const cnt = $('#cnt'), bar = $('#bar'), loader = $('#loader'); document.body.classList.add('lock');
       let n = 0, introT = 0, introOn = false;
@@ -1264,6 +1503,8 @@
           $$('header .hbtn').forEach(btn => btn.classList.remove('visible'));
         }
       };
+      $('#lang').onclick = () => { const l = lang === 'en' ? 'ja' : 'en'; try { localStorage.setItem('ymne-lang', l) } catch (e) { } applyLang(l) };
+      try { const sl = localStorage.getItem('ymne-lang'); if (sl === 'ja' || (!sl && /^ja/i.test(navigator.language || ''))) applyLang('ja', true) } catch (e) { }
       burger.onclick = () => toggle(); $$('#menu a').forEach(a => a.addEventListener('click', () => toggle(false)));
       addEventListener('keydown', e => { if (e.key === 'Escape') toggle(false) });
 
@@ -1278,10 +1519,10 @@
 
       const cur = $('.cur'), dot = $('.cur-dot'); let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my;
       addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; dot.style.transform = `translate(${mx}px,${my}px)` });
-      document.addEventListener('pointerover', e => { if (e.target.closest('a,button')) cur.classList.add('big') });
-      document.addEventListener('pointerout', e => { if (e.target.closest('a,button')) cur.classList.remove('big') });
+      const HOT = 'a,button', CARD = '.chip,.fs .pn li,.co-row,.co-av';
+      document.addEventListener('pointerover', e => { if (!e.target.closest) return; if (e.target.closest(HOT)) cur.classList.add('big'); else if (e.target.closest(CARD)) cur.classList.add('card') });
+      document.addEventListener('pointerout', e => { if (!e.target.closest) return; if (e.target.closest(HOT)) cur.classList.remove('big'); if (e.target.closest(CARD)) cur.classList.remove('card') });
 
-      const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('in', e.isIntersecting)), { threshold: .1 });
       $$('.rv').forEach(el => io.observe(el));
       const secs = $$('[data-sec]'); $('#tI').textContent = String(secs.length).padStart(2, '0');
       const headerBtns = $$('header .hbtn');
@@ -1300,7 +1541,6 @@
       const INTRO_DELAY = 200, INTRO_DUR = 3600;
       const A_LINE = .13, A_TICK = .28, A_GLOW = .34;
       const mod = (v, m) => ((v % m) + m) % m;
-      const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
       function drawGrid(y, hr, ha) {
         ctx.clearRect(0, 0, dw, dh);
         const iv = reduce ? 1 : clamp(introT, 0, 1), e = easeIO(iv);
@@ -1339,9 +1579,7 @@
       if (lowData) hvw.remove();
       let hvA = 0;
       const reels = [
-        { src: 'Assets/Video/Art/Gura1.webm', zoom: 1.25, pos: '50% 50%' },
-        { src: 'Assets/Video/Art/Myth.webm', zoom: 1.0, pos: '50% 50%' },
-        { src: 'Assets/Video/Art/Chenso.webm', zoom: 1.25, pos: '50% 50%' }
+        { src: 'Assets/Video/Art/Gura1.webm', zoom: 1.5, pos: '50% 50%' }
       ];
       let ri = 0, bad = 0;
       const apply = i => {
@@ -1361,7 +1599,7 @@
           warm(1);
         }
       }
-      const VIDEO_DELAY = 3200;
+      const VIDEO_DELAY = 3200, HV_OPACITY = .5;
       let heroOn = null, readyT = 0, vidGo = false, playing = false; let sy = scrollY, lastT = 0, introClock = 0;
       function loop(t) {
         const dtt = Math.min(t - lastT, 50); lastT = t;
@@ -1380,8 +1618,9 @@
         const hvT = vidGo ? clamp(1 - scrollY / (innerHeight * .75), 0, 1) : 0;
         hvA = lerp(hvA, hvT, .08);
         const fr = frm.getBoundingClientRect();
-        hvw.style.clipPath = `inset(${Math.max(fr.top, 0)}px ${Math.max(innerWidth - fr.right, 0)}px ${Math.max(innerHeight - fr.bottom, 0)}px ${Math.max(fr.left, 0)}px)`;
-        hvw.style.opacity = (hvA * 1).toFixed(3);
+        hvw.style.width = fr.width + 'px'; hvw.style.height = fr.height + 'px';
+        hvw.style.transform = `translate(${fr.left}px,${fr.top}px)`;
+        hvw.style.opacity = (hvA * HV_OPACITY).toFixed(3);
         drawGrid(sy, fr, hvA);
         if (!reduce) {
           $$('.bg').forEach(b => { const r = b.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; const k = clamp((innerHeight - r.top) / (innerHeight + r.height), 0, 1); b.style.setProperty('--ty', ((k - .5) * 200).toFixed(1) + 'px'); b.style.setProperty('--sc', (1.15 + k * .22).toFixed(3)) });
