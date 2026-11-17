@@ -1198,7 +1198,6 @@
       }
     }
 
-    /*  language switch */
     .hbtn.lang {
       width: auto;
       min-width: 42px;
@@ -1417,9 +1416,13 @@
 
   <script>
     (() => {
+      const HERO = { sheet: false, video: false };
+
       const $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
       const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches, lerp = (a, b, t) => a + (b - a) * t, clamp = (v, a, b) => Math.min(Math.max(v, a), b);
       const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+      if (!HERO.sheet) $('.sheet')?.remove();
 
       const logo = $('#logo');
       if (logo) 'YMNE'.split('').forEach(c => { const d = document.createElement('span'); d.className = 'ch'; d.innerHTML = `<span>${c}</span>`; logo.appendChild(d) });
@@ -1489,7 +1492,7 @@
       (function tick() {
         n += Math.max(1, (100 - n) * .06) * (reduce ? 10 : 1); if (n >= 100) n = 100; cnt.textContent = Math.floor(n); bar.style.width = n + '%';
         if (n < 100) return requestAnimationFrame(tick);
-        setTimeout(() => { loader.classList.add('done'); document.body.classList.remove('lock'); introOn = true; setTimeout(() => document.body.classList.add('ready'), 350) }, 250)
+        setTimeout(() => { loader.classList.add('done'); document.body.classList.remove('lock'); introOn = true; setTimeout(() => document.body.classList.add('ready'), 350); setTimeout(() => { cueShown = true; syncHdr() }, 3800) }, 250)
       })();
 
       const burger = $('#burger'), menu = $('#menu');
@@ -1500,7 +1503,7 @@
         document.body.classList.toggle('lock', o);
         if (o) $$('header .hbtn').forEach(btn => btn.classList.add('visible'));
         else if (secs.indexOf($$('[data-sec]').find(s => s.getBoundingClientRect().top <= innerHeight / 2 && s.getBoundingClientRect().bottom >= innerHeight / 2)) === 0) {
-          $$('header .hbtn').forEach(btn => btn.classList.remove('visible'));
+          syncHdr();
         }
       };
       $('#lang').onclick = () => { const l = lang === 'en' ? 'ja' : 'en'; try { localStorage.setItem('ymne-lang', l) } catch (e) { } applyLang(l) };
@@ -1526,11 +1529,13 @@
       $$('.rv').forEach(el => io.observe(el));
       const secs = $$('[data-sec]'); $('#tI').textContent = String(secs.length).padStart(2, '0');
       const headerBtns = $$('header .hbtn');
+      let cueShown = false, curIdx = 0;
+      const syncHdr = () => headerBtns.forEach(btn => btn.classList.toggle('visible', cueShown || curIdx > 0));
       const so = new IntersectionObserver(es => es.forEach(e => {
         if (e.isIntersecting) {
           const idx = secs.indexOf(e.target);
           $('#cI').textContent = String(idx + 1).padStart(2, '0');
-          headerBtns.forEach(btn => btn.classList.toggle('visible', idx > 0));
+          curIdx = idx; syncHdr();
         }
       }), { rootMargin: '-45% 0px -45% 0px' }); secs.forEach(s => so.observe(s));
 
@@ -1539,7 +1544,7 @@
       size(); addEventListener('resize', size);
       const S = 80, TICK = 8;
       const INTRO_DELAY = 200, INTRO_DUR = 3600;
-      const A_LINE = .13, A_TICK = .28, A_GLOW = .34;
+      const A_LINE = .2, A_TICK = .55, A_GLOW = .1;
       const mod = (v, m) => ((v % m) + m) % m;
       function drawGrid(y, hr, ha) {
         ctx.clearRect(0, 0, dw, dh);
@@ -1573,9 +1578,9 @@
       }
 
       const sprog = $('#sprog'), prof = $('#profile'), hero = $('#top'), hv = $('#hv');
-      const lowData = navigator.connection && navigator.connection.saveData;
+      const lowData = !HERO.video || (navigator.connection && navigator.connection.saveData);
       if (lowData || reduce) hv.removeAttribute('autoplay');
-      const hvw = $('#hvw'), frm = $('#frame');
+      const hvw = $('#hvw'), frm = $('#frame') || hero;
       if (lowData) hvw.remove();
       let hvA = 0;
       const reels = [
@@ -1615,7 +1620,7 @@
         if (vidGo && !lowData) document.body.classList.add('vid');
         const want = atHero && vidGo && !lowData && !reduce;
         if (want !== playing) { playing = want; if (want) hv.play().catch(() => { }); else hv.pause() }
-        const hvT = vidGo ? clamp(1 - scrollY / (innerHeight * .75), 0, 1) : 0;
+        const hvT = (vidGo && !lowData) ? clamp(1 - scrollY / (innerHeight * .75), 0, 1) : 0;
         hvA = lerp(hvA, hvT, .08);
         const fr = frm.getBoundingClientRect();
         hvw.style.width = fr.width + 'px'; hvw.style.height = fr.height + 'px';
